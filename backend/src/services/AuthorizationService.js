@@ -7,7 +7,7 @@
 // this service is the one you call from route handlers for a fast,
 // friendly denial before the query even reaches the database.
 
-const { createClient } = require('@supabase/supabase-js');
+const { createClient } = require("@supabase/supabase-js");
 
 class AuthorizationService {
   constructor(supabaseUrl, supabaseServiceRoleKey) {
@@ -22,12 +22,12 @@ class AuthorizationService {
    */
   async can(userId, hospitalId, permission) {
     const { data, error } = await this.supabase.rpc(
-      'rbac_effective_hospital_permission',
+      "rbac_effective_hospital_permission",
       {
         p_user_id: userId,
         p_hospital_id: hospitalId,
         p_permission: permission,
-      }
+      },
     );
 
     if (error) {
@@ -45,9 +45,9 @@ class AuthorizationService {
     const allowed = await this.can(userId, hospitalId, permission);
     if (!allowed) {
       const err = new Error(
-        `User ${userId} lacks '${permission}' on hospital ${hospitalId}`
+        `User ${userId} lacks '${permission}' on hospital ${hospitalId}`,
       );
-      err.code = 'FORBIDDEN';
+      err.code = "FORBIDDEN";
       throw err;
     }
   }

@@ -1,11 +1,11 @@
 // Responsibility: Render empty state message with optional primary/secondary action buttons
 
-import { type LucideIcon } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
-import { Button } from '@/components/ui/Button';
+import { type LucideIcon } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/Button";
 
 export interface EmptyStateProps {
   icon: LucideIcon;
@@ -34,9 +34,7 @@ export const EmptyState = ({
       <Heading level={3} className="text-lg font-semibold text-gray-900 mb-2">
         {title}
       </Heading>
-      <Text className="text-gray-600 mb-6 max-w-md mx-auto">
-        {description}
-      </Text>
+      <Text className="text-gray-600 mb-6 max-w-md mx-auto">{description}</Text>
       {(onAction || onSecondaryAction) && (
         <Flex align="center" justify="center" gap={3}>
           {onAction && actionLabel && (

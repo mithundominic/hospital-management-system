@@ -1,15 +1,16 @@
 // Responsibility: Modal container for creating prescriptions with itemized medications
 
-import { Plus } from 'lucide-react';
-import { Modal } from '@/components/ui/Modal';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { Text } from '@/components/ui/Text';
-import { PrescriptionItemRow } from './PrescriptionItemRow';
-import { usePrescriptionForm } from './usePrescriptionForm';
-import type { PrescriptionFormModalProps } from './prescription.types';
+import { Plus } from "lucide-react";
+import { Modal } from "@/components/ui/Modal";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
+import { Text } from "@/components/ui/Text";
+import { ModalFooter } from "@/components/common/ModalFooter";
+import { PrescriptionItemRow } from "./PrescriptionItemRow";
+import { usePrescriptionForm } from "./usePrescriptionForm";
+import type { PrescriptionFormModalProps } from "./prescription.types";
 
 export const PrescriptionFormModal = ({
   onClose,
@@ -30,10 +31,10 @@ export const PrescriptionFormModal = ({
   } = usePrescriptionForm(onClose, onSuccess, encounterId, patientId);
 
   const encounterOptions = [
-    { value: '', label: 'Select Encounter' },
+    { value: "", label: "Select Encounter" },
     ...encounters.map((enc) => ({
       value: enc.id,
-      label: `${enc.chief_complaint || 'General Visit'} (${enc.created_at ? new Date(enc.created_at).toLocaleDateString() : 'N/A'})`,
+      label: `${enc.chief_complaint || "General Visit"} (${enc.created_at ? new Date(enc.created_at).toLocaleDateString() : "N/A"})`,
     })),
   ];
 
@@ -44,14 +45,12 @@ export const PrescriptionFormModal = ({
       title="Create Prescription"
       maxWidth="2xl"
       footer={
-        <Flex justify="end" gap={3}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button onClick={submit} isLoading={loading}>
-            Create Prescription
-          </Button>
-        </Flex>
+        <ModalFooter
+          onCancel={onClose}
+          onSubmit={submit}
+          isLoading={loading}
+          submitLabel="Create Prescription"
+        />
       }
     >
       <Box className="space-y-4">
@@ -65,8 +64,15 @@ export const PrescriptionFormModal = ({
         )}
 
         <Flex justify="between" align="center">
-          <Text weight="semibold" size="sm">Medications</Text>
-          <Button variant="outline" size="sm" icon={<Plus className="h-4 w-4" />} onClick={addItem}>
+          <Text weight="semibold" size="sm">
+            Medications
+          </Text>
+          <Button
+            variant="outline"
+            size="sm"
+            icon={<Plus className="h-4 w-4" />}
+            onClick={addItem}
+          >
             Add Medicine
           </Button>
         </Flex>

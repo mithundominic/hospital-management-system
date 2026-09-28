@@ -1,10 +1,17 @@
+// Responsibility: Clinical encounter and prescription routes delegating to services
 // backend/src/routes/encounters.ts
-// Responsibility: Encounter and prescription API routes
 
 import { Router } from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
+import { PERMISSIONS } from "../constants";
 import { sendData } from "../utils/respond";
 import { createPrescription } from "../services/prescriptions/PrescriptionService";
+import {
+  queryEncounters,
+  createNewEncounter,
+  updateExistingEncounter,
+  queryPrescriptions,
+} from "../services/encounters/EncounterService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
 const router = Router();
@@ -12,84 +19,54 @@ const router = Router();
 const getEncounters: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    let query = authReq.supabase
-      .from("encounters")
-      .select("*")
-      .eq("hospital_id", authReq.params.hospitalId);
-
-    if (authReq.query.patient_id) {
-      query = query.eq("patient_id", authReq.query.patient_id);
-    }
-
-    const { data, error } = await query.order("started_at", {
-      ascending: false,
-    });
-    if (error) throw error;
+    const data = await queryEncounters(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.query.patient_id as string | undefined,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
   }
 };
 
-const createEncounter: RouteHandler = async (req, res, next) => {
+const createEncounterRoute: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const {
-      patient_id,
-      appointment_id,
-      doctor_membership_id,
-      department_id,
-      encounter_type,
-      chief_complaint,
-      vitals,
-    } = authReq.body;
-    const { data, error } = await authReq.supabase
-      .from("encounters")
-      .insert({
-        hospital_id: authReq.params.hospitalId,
-        patient_id,
-        appointment_id,
-        doctor_membership_id,
-        department_id,
-        encounter_type,
-        chief_complaint,
-        vitals,
-      })
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await createNewEncounter(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.body,
+    );
     sendData(res, data, 201);
   } catch (err) {
     next(err);
   }
 };
 
-const updateEncounter: RouteHandler = async (req, res, next) => {
+const updateEncounterRoute: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("encounters")
-      .update(authReq.body)
-      .eq("id", authReq.params.encId)
-      .eq("hospital_id", authReq.params.hospitalId)
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await updateExistingEncounter(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.params.encId!,
+      authReq.body,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
   }
 };
 
-const getPrescriptions: RouteHandler = async (req, res, next) => {
+const getPrescriptionsRoute: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("prescriptions")
-      .select("*, prescription_items(*)")
-      .eq("encounter_id", authReq.params.encId)
-      .eq("hospital_id", authReq.params.hospitalId);
-    if (error) throw error;
+    const data = await queryPrescriptions(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.params.encId!,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -114,27 +91,27 @@ const createPrescriptionRoute: RouteHandler = async (req, res, next) => {
 
 router.get(
   "/hospitals/:hospitalId/encounters",
-  requireHospitalPermission("encounters.read"),
+  requireHospitalPermission(PERMISSIONS.ENCOUNTERS_READ),
   getEncounters,
 );
 router.post(
   "/hospitals/:hospitalId/encounters",
-  requireHospitalPermission("encounters.write"),
-  createEncounter,
+  requireHospitalPermission(PERMISSIONS.ENCOUNTERS_WRITE),
+  createEncounterRoute,
 );
 router.patch(
   "/hospitals/:hospitalId/encounters/:encId",
-  requireHospitalPermission("encounters.write"),
-  updateEncounter,
+  requireHospitalPermission(PERMISSIONS.ENCOUNTERS_WRITE),
+  updateEncounterRoute,
 );
 router.get(
   "/hospitals/:hospitalId/encounters/:encId/prescriptions",
-  requireHospitalPermission("prescriptions.read"),
-  getPrescriptions,
+  requireHospitalPermission(PERMISSIONS.PRESCRIPTIONS_READ),
+  getPrescriptionsRoute,
 );
 router.post(
   "/hospitals/:hospitalId/encounters/:encId/prescriptions",
-  requireHospitalPermission("prescriptions.write"),
+  requireHospitalPermission(PERMISSIONS.PRESCRIPTIONS_WRITE),
   createPrescriptionRoute,
 );
 

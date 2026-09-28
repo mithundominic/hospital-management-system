@@ -10,11 +10,11 @@ import {
   Tooltip,
   LineChart,
   Line,
-} from 'recharts';
-import { Card } from '@/components/ui/Card';
-import { Grid } from '@/components/ui/Grid';
-import { Heading } from '@/components/ui/Heading';
-import { weeklyRevenueData, todayAppointmentData } from './dashboard.data';
+} from "recharts";
+import { Card } from "@/components/ui/Card";
+import { Grid } from "@/components/ui/Grid";
+import { Heading } from "@/components/ui/Heading";
+import { weeklyRevenueData, todayAppointmentData } from "./dashboard.data";
 
 export const DashboardCharts = () => {
   return (

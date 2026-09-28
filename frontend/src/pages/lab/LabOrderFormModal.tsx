@@ -1,16 +1,16 @@
 // Responsibility: Modal container for creating and editing diagnostic laboratory test orders
 
-import { Modal } from '@/components/ui/Modal';
-import { Box } from '@/components/ui/Box';
-import { Grid } from '@/components/ui/Grid';
-import { Flex } from '@/components/ui/Flex';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Textarea } from '@/components/ui/Textarea';
-import { Button } from '@/components/ui/Button';
-import { sampleTypeOptions, urgencyOptions, commonLabTests } from './lab.data';
-import { useLabOrderForm } from './useLabOrderForm';
-import type { LabOrder } from '@/types';
+import { Modal } from "@/components/ui/Modal";
+import { Box } from "@/components/ui/Box";
+import { Grid } from "@/components/ui/Grid";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
+import { Form } from "@/components/ui/Form";
+import { ModalFooter } from "@/components/common/ModalFooter";
+import { sampleTypeOptions, urgencyOptions, testNameOptions } from "./lab.data";
+import { useLabOrderForm } from "./useLabOrderForm";
+import type { LabOrder } from "@/types";
 
 export interface LabOrderFormModalProps {
   onClose: () => void;
@@ -18,79 +18,78 @@ export interface LabOrderFormModalProps {
   labOrder?: LabOrder | null;
 }
 
-export const LabOrderFormModal = ({ onClose, onSuccess, labOrder }: LabOrderFormModalProps) => {
-  const { loading, formData, updateField, encounters, handleSubmit } =
+export const LabOrderFormModal = ({
+  onClose,
+  onSuccess,
+  labOrder,
+}: LabOrderFormModalProps) => {
+  const { loading, formData, updateField, encounterOptions, handleSubmit } =
     useLabOrderForm(onClose, onSuccess, labOrder);
-
-  const encounterOpts = [
-    { value: '', label: 'Select Encounter' },
-    ...encounters.map((e) => ({ value: e.id, label: e.chief_complaint || `Encounter #${e.id.slice(0, 8)}` })),
-  ];
-
-  const testNameOpts = [
-    { value: '', label: 'Select a common test or type below...' },
-    ...commonLabTests.map((t) => ({ value: t, label: t })),
-  ];
 
   return (
     <Modal
       isOpen={true}
       onClose={onClose}
-      title={labOrder ? 'Edit Lab Order' : 'Create Lab Order'}
+      title={labOrder ? "Edit Lab Order" : "Create Lab Order"}
       maxWidth="xl"
       footer={
-        <Flex justify="end" gap={3}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button onClick={(e) => handleSubmit(e)} isLoading={loading}>
-            {labOrder ? 'Update Order' : 'Create Order'}
-          </Button>
-        </Flex>
+        <ModalFooter
+          onCancel={onClose}
+          onSubmit={handleSubmit}
+          isLoading={loading}
+          submitLabel={labOrder ? "Update Order" : "Create Order"}
+        />
       }
     >
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Box className="space-y-4">
           <Select
             label="Encounter *"
             value={formData.encounter_id}
-            onChange={(e) => updateField('encounter_id', e.target.value)}
-            options={encounterOpts}
+            onChange={(e) => updateField("encounter_id", e.target.value)}
+            options={encounterOptions}
             required
           />
           <Select
             label="Common Diagnostic Tests"
             value={formData.test_name}
-            onChange={(e) => updateField('test_name', e.target.value)}
-            options={testNameOpts}
+            onChange={(e) => updateField("test_name", e.target.value)}
+            options={testNameOptions}
           />
           <Input
             label="Test Name *"
             placeholder="e.g. Complete Blood Count (CBC)"
             value={formData.test_name}
-            onChange={(e) => updateField('test_name', e.target.value)}
+            onChange={(e) => updateField("test_name", e.target.value)}
             required
           />
           <Grid cols={2} gap={4}>
             <Select
               label="Sample Type"
               value={formData.sample_type}
-              onChange={(e) => updateField('sample_type', e.target.value)}
+              onChange={(e) => updateField("sample_type", e.target.value)}
               options={sampleTypeOptions}
             />
             <Select
               label="Priority"
               value={formData.priority}
-              onChange={(e) => updateField('priority', e.target.value as 'routine' | 'urgent' | 'stat')}
+              onChange={(e) =>
+                updateField(
+                  "priority",
+                  e.target.value as "routine" | "urgent" | "stat",
+                )
+              }
               options={urgencyOptions}
             />
           </Grid>
           <Textarea
             label="Special Instructions"
             value={formData.instructions}
-            onChange={(e) => updateField('instructions', e.target.value)}
+            onChange={(e) => updateField("instructions", e.target.value)}
             placeholder="Fasting instructions, clinical indications, etc."
           />
         </Box>
-      </form>
+      </Form>
     </Modal>
   );
 };

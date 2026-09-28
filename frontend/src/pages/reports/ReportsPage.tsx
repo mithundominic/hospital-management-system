@@ -1,65 +1,60 @@
 // Responsibility: Container page for operational analytics, charts, and inventory stock reports
 
-import { useQuery } from '@tanstack/react-query';
-import { Download } from 'lucide-react';
-import { useHospital } from '@/contexts/HospitalContext';
-import { api } from '@/lib/api';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
-import { Button } from '@/components/ui/Button';
-import { ReportsStatCards } from './ReportsStatCards';
-import { ReportsCharts } from './ReportsCharts';
-import { ReportsLowStockTable } from './ReportsLowStockTable';
-import type { BedOccupancy, RevenueData, LowStockItem } from '@/types';
+import { useQuery } from "@tanstack/react-query";
+import { Download } from "lucide-react";
+import { useHospital } from "@/contexts/HospitalContext";
+import { api } from "@/lib/api";
+import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import { Box } from "@/components/ui/Box";
+import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/common/PageHeader";
+import { ReportsStatCards } from "./ReportsStatCards";
+import { ReportsCharts } from "./ReportsCharts";
+import { ReportsLowStockTable } from "./ReportsLowStockTable";
+import type { BedOccupancy, RevenueData, LowStockItem } from "@/types";
 
 export default function ReportsPage() {
   const { currentHospital } = useHospital();
 
   const { data: bedOccupancy } = useQuery<BedOccupancy | null>({
-    queryKey: ['reports-bed-occupancy', currentHospital?.id],
+    queryKey: QUERY_KEYS.hospitals.reports.bedOccupancy(currentHospital?.id),
     queryFn: async () => {
       if (!currentHospital) return null;
-      return api.get(`/hospitals/${currentHospital.id}/reports/bed-occupancy`);
+      return api.get(API_ROUTES.hospitals.reports.bedOccupancy(currentHospital.id));
     },
     enabled: !!currentHospital,
   });
 
   const { data: revenue = [] } = useQuery<RevenueData[]>({
-    queryKey: ['reports-revenue', currentHospital?.id],
+    queryKey: QUERY_KEYS.hospitals.reports.revenue(currentHospital?.id),
     queryFn: async () => {
       if (!currentHospital) return [];
-      return api.get(`/hospitals/${currentHospital.id}/reports/daily-revenue`);
+      return api.get(API_ROUTES.hospitals.reports.dailyRevenue(currentHospital.id));
     },
     enabled: !!currentHospital,
   });
 
   const { data: lowStock = [] } = useQuery<LowStockItem[]>({
-    queryKey: ['reports-low-stock', currentHospital?.id],
+    queryKey: QUERY_KEYS.hospitals.reports.lowStock(currentHospital?.id),
     queryFn: async () => {
       if (!currentHospital) return [];
-      return api.get(`/hospitals/${currentHospital.id}/reports/low-stock`);
+      return api.get(API_ROUTES.hospitals.reports.lowStock(currentHospital.id));
     },
     enabled: !!currentHospital,
   });
 
   return (
     <Box className="space-y-6">
-      <Flex align="center" justify="between">
-        <Box>
-          <Heading level={1} className="text-2xl font-bold text-gray-900">
-            Reports & Analytics
-          </Heading>
-          <Text size="sm" variant="muted">
-            View hospital performance metrics and insights
-          </Text>
-        </Box>
-        <Button variant="secondary" className="flex items-center gap-2">
-          <Download className="h-4 w-4" />
-          Export Reports
-        </Button>
-      </Flex>
+      <PageHeader
+        title="Reports & Analytics"
+        description="View hospital performance metrics and insights"
+        action={
+          <Button variant="secondary" className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            Export Reports
+          </Button>
+        }
+      />
 
       <ReportsStatCards
         bedOccupancy={bedOccupancy ?? null}
@@ -67,10 +62,7 @@ export default function ReportsPage() {
         lowStock={lowStock}
       />
 
-      <ReportsCharts
-        bedOccupancy={bedOccupancy ?? null}
-        revenue={revenue}
-      />
+      <ReportsCharts bedOccupancy={bedOccupancy ?? null} revenue={revenue} />
 
       <ReportsLowStockTable lowStock={lowStock} />
     </Box>

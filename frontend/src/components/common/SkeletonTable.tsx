@@ -7,8 +7,8 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from '@/components/ui/Table';
-import { Box } from '@/components/ui/Box';
+} from "@/components/ui/Table";
+import { Box } from "@/components/ui/Box";
 
 export interface SkeletonTableProps {
   rows?: number;

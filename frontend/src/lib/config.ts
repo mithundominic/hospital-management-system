@@ -19,19 +19,19 @@ function validateConfig(): Config {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
-      'Missing required environment variables. Please check your .env file:\n' +
-      '- VITE_SUPABASE_URL\n' +
-      '- VITE_SUPABASE_ANON_KEY'
+      "Missing required environment variables. Please check your .env file:\n" +
+        "- VITE_SUPABASE_URL\n" +
+        "- VITE_SUPABASE_ANON_KEY",
     );
   }
 
   return {
     supabase: {
-      url: supabaseUrl || '',
-      anonKey: supabaseAnonKey || '',
+      url: supabaseUrl || "",
+      anonKey: supabaseAnonKey || "",
     },
     api: {
-      baseUrl: apiUrl || 'http://localhost:3000',
+      baseUrl: apiUrl || "http://localhost:3000",
     },
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,

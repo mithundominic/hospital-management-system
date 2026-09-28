@@ -1,6 +1,6 @@
 // Responsibility: TypeScript interfaces for invoice creation, items, and tax calculations
 
-import type { Invoice } from '@/types';
+import type { Invoice } from "@/types";
 
 export interface InvoiceLineItemForm {
   description: string;

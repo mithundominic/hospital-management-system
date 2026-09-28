@@ -1,9 +1,15 @@
 // Responsibility: React context providing authentication state and login/logout methods
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
-import toast from 'react-hot-toast';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+import toast from "react-hot-toast";
 
 export interface AuthContextType {
   user: User | null;
@@ -43,9 +49,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) throw error;
 
       setUser(data.user);
-      toast.success('Signed in successfully');
+      toast.success("Signed in successfully");
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Failed to sign in';
+      const msg = error instanceof Error ? error.message : "Failed to sign in";
       toast.error(msg);
       throw error;
     }
@@ -57,9 +63,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) throw error;
 
       setUser(null);
-      toast.success('Signed out successfully');
+      toast.success("Signed out successfully");
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Failed to sign out';
+      const msg = error instanceof Error ? error.message : "Failed to sign out";
       toast.error(msg);
       throw error;
     }
@@ -75,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

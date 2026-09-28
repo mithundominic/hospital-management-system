@@ -1,21 +1,22 @@
 // Responsibility: Render patient demographics summary header card
 
-import { UserCircle } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Flex } from '@/components/ui/Flex';
-import { Box } from '@/components/ui/Box';
-import { Grid } from '@/components/ui/Grid';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
-import { calculateAge } from './patient.utils';
-import type { Patient } from '@/types';
+import { UserCircle } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Flex } from "@/components/ui/Flex";
+import { Box } from "@/components/ui/Box";
+import { Grid } from "@/components/ui/Grid";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
+import { calculateAge } from "./patient.utils";
+import type { Patient } from "@/types";
 
 export interface PatientDetailHeaderProps {
   patient: Patient;
 }
 
 export const PatientDetailHeader = ({ patient }: PatientDetailHeaderProps) => {
-  const mrn = patient.patient_registrations?.[0]?.hospital_patient_number || 'N/A';
+  const mrn =
+    patient.patient_registrations?.[0]?.hospital_patient_number || "N/A";
   const age = calculateAge(patient.dob);
 
   return (
@@ -28,20 +29,32 @@ export const PatientDetailHeader = ({ patient }: PatientDetailHeaderProps) => {
           </Heading>
           <Grid cols={4} gap={4} className="mt-4">
             <Box>
-              <Text size="xs" variant="muted">MRN</Text>
-              <Text weight="medium" className="font-mono">{mrn}</Text>
+              <Text size="xs" variant="muted">
+                MRN
+              </Text>
+              <Text weight="medium" className="font-mono">
+                {mrn}
+              </Text>
             </Box>
             <Box>
-              <Text size="xs" variant="muted">Age / Gender</Text>
-              <Text weight="medium">{age} yrs / {patient.gender}</Text>
+              <Text size="xs" variant="muted">
+                Age / Gender
+              </Text>
+              <Text weight="medium">
+                {age} yrs / {patient.gender}
+              </Text>
             </Box>
             <Box>
-              <Text size="xs" variant="muted">Blood Group</Text>
-              <Text weight="medium">{patient.blood_group || 'Unknown'}</Text>
+              <Text size="xs" variant="muted">
+                Blood Group
+              </Text>
+              <Text weight="medium">{patient.blood_group || "Unknown"}</Text>
             </Box>
             <Box>
-              <Text size="xs" variant="muted">Phone</Text>
-              <Text weight="medium">{patient.phone || 'N/A'}</Text>
+              <Text size="xs" variant="muted">
+                Phone
+              </Text>
+              <Text weight="medium">{patient.phone || "N/A"}</Text>
             </Box>
           </Grid>
         </Box>

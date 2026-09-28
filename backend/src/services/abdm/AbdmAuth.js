@@ -3,12 +3,18 @@
 
 const config = require("../../config/env");
 
-const { gatewayUrl: GATEWAY_URL, clientId: CLIENT_ID, clientSecret: CLIENT_SECRET } = config.abdm;
+const {
+  gatewayUrl: GATEWAY_URL,
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+} = config.abdm;
 
 class AbdmAuth {
   constructor() {
     if (!CLIENT_ID || !CLIENT_SECRET) {
-      console.warn("AbdmAuth: ABDM_CLIENT_ID/SECRET not set -- calls will fail.");
+      console.warn(
+        "AbdmAuth: ABDM_CLIENT_ID/SECRET not set -- calls will fail.",
+      );
     }
   }
 
@@ -25,11 +31,11 @@ class AbdmAuth {
         clientSecret: CLIENT_SECRET,
       }),
     });
-    
+
     if (!res.ok) {
       throw new Error(`ABDM auth failed: ${res.status}`);
     }
-    
+
     const data = await res.json();
     return data.accessToken;
   }
@@ -45,11 +51,11 @@ class AbdmAuth {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
-    
+
     if (actorId) {
       headers["X-HIP-ID"] = actorId;
     }
-    
+
     return headers;
   }
 }

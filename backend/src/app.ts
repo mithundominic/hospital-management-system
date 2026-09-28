@@ -11,6 +11,17 @@ import hospitalsRouter from "./routes/hospitals";
 import patientsRouter from "./routes/patients";
 import billingRouter from "./routes/billing";
 import encountersRouter from "./routes/encounters";
+import abdmRouter from "./routes/abdm";
+import abdmCallbacksRouter from "./routes/abdmCallbacks";
+import appointmentsRouter from "./routes/appointments";
+import insuranceRouter from "./routes/insurance";
+import ipdRouter from "./routes/ipd";
+import labRouter from "./routes/lab";
+import membershipsRouter from "./routes/memberships";
+import pharmacyRouter from "./routes/pharmacy";
+import reportsRouter from "./routes/reports";
+import shiftsRouter from "./routes/shifts";
+import staffRouter from "./routes/staff";
 
 const app = express();
 
@@ -19,15 +30,29 @@ app.use(express.json());
 
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
+// CRITICAL: ABDM callbacks mounted BEFORE auth middleware
+// These endpoints receive calls from ABDM gateway (no user JWT)
+app.use(abdmCallbacksRouter);
+
 // Global authentication middleware
-// Note: abdmCallbacks will be mounted before this when migrated
+// All routes below require authenticated user
 app.use(auth);
 
 // Mount routers
 app.use(hospitalsRouter);
 app.use(patientsRouter);
-app.use(billingRouter);
+app.use(appointmentsRouter);
 app.use(encountersRouter);
+app.use(labRouter);
+app.use(ipdRouter);
+app.use(pharmacyRouter);
+app.use(billingRouter);
+app.use(insuranceRouter);
+app.use(shiftsRouter);
+app.use(reportsRouter);
+app.use(staffRouter);
+app.use(membershipsRouter);
+app.use(abdmRouter);
 
 // Global error handler (must be last)
 app.use(errorHandler);

@@ -1,5 +1,5 @@
-// backend/src/services/abdm/AbdmM1Service.ts
 // Responsibility: M1 - ABHA verification and linking workflows
+// backend/src/services/abdm/AbdmM1Service.ts
 
 import config from "../../config/env";
 import { AbdmAuth } from "./AbdmAuth";

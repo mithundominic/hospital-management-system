@@ -1,9 +1,9 @@
-// backend/src/config/supabase.ts
 // Responsibility: Supabase client factories with proper typing
+// backend/src/config/supabase.ts
 // Rule 15 Compliance: Uses centralized env config
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import config from './env';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import config from "./env";
 
 const { url, anonKey, serviceRoleKey } = config.supabase;
 
@@ -13,7 +13,7 @@ const { url, anonKey, serviceRoleKey } = config.supabase;
  * - JWT verification (auth.getUser)
  * - AuthorizationService RBAC checks
  * - ABDM callbacks (no user JWT available)
- * 
+ *
  * NEVER use for route data operations - bypasses RLS
  */
 export const adminClient: SupabaseClient = createClient(url, serviceRoleKey, {

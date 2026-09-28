@@ -23,3 +23,12 @@ export interface PrescriptionFormModalProps {
   encounterId?: string;
   patientId?: string;
 }
+
+export const createDefaultPrescriptionItem = (): PrescriptionItem => ({
+  medicine_name: "",
+  dosage: "",
+  frequency: "",
+  duration_days: "",
+  route: "oral",
+  instructions: "",
+});

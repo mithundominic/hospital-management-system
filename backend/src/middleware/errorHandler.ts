@@ -1,5 +1,5 @@
-// backend/src/middleware/errorHandler.ts
 // Responsibility: Global error handler for uncaught route errors
+// backend/src/middleware/errorHandler.ts
 
 import { Request, Response, NextFunction } from "express";
 import { sendError } from "../utils/respond";

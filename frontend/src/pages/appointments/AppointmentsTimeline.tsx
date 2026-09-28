@@ -1,12 +1,12 @@
 // Responsibility: Render chronological appointments list or skeleton/empty fallback
 
-import { Calendar } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Box } from '@/components/ui/Box';
-import { SkeletonTimelineItem } from '@/components/common/SkeletonList';
-import { EmptyState } from '@/components/common/EmptyState';
-import { AppointmentItemCard } from './AppointmentItemCard';
-import type { Appointment } from '@/types';
+import { Calendar } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Box } from "@/components/ui/Box";
+import { SkeletonTimelineItem } from "@/components/common/SkeletonList";
+import { EmptyState } from "@/components/common/EmptyState";
+import { AppointmentItemCard } from "./AppointmentItemCard";
+import type { Appointment } from "@/types";
 
 export interface AppointmentsTimelineProps {
   isLoading: boolean;

@@ -1,15 +1,15 @@
-// backend/src/services/prescriptions/PrescriptionService.ts
 // Responsibility: Create prescriptions with items (insert-only ledger)
+// backend/src/services/prescriptions/PrescriptionService.ts
 
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Prescription, PrescriptionItem } from '../../types';
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Prescription, PrescriptionItem } from "../../types";
 
 interface PrescriptionParams {
   hospital_id: string;
   encounter_id: string;
   prescribed_by: string;
   notes?: string;
-  items?: Array<Omit<PrescriptionItem, 'id' | 'prescription_id'>>;
+  items?: Array<Omit<PrescriptionItem, "id" | "prescription_id">>;
 }
 
 interface PrescriptionWithItems extends Prescription {
@@ -24,12 +24,18 @@ interface PrescriptionWithItems extends Prescription {
  */
 export async function createPrescription(
   supabaseClient: SupabaseClient,
-  params: PrescriptionParams
+  params: PrescriptionParams,
 ): Promise<PrescriptionWithItems> {
-  const { hospital_id, encounter_id, prescribed_by, notes, items = [] } = params;
+  const {
+    hospital_id,
+    encounter_id,
+    prescribed_by,
+    notes,
+    items = [],
+  } = params;
 
   const { data: prescription, error: rxError } = await supabaseClient
-    .from('prescriptions')
+    .from("prescriptions")
     .insert({
       hospital_id,
       encounter_id,
@@ -38,16 +44,18 @@ export async function createPrescription(
     })
     .select()
     .single();
-  
+
   if (rxError) throw rxError;
 
   let prescriptionItems: PrescriptionItem[] = [];
   if (items.length > 0) {
     const { data: itemRows, error: itemsError } = await supabaseClient
-      .from('prescription_items')
-      .insert(items.map((item) => ({ ...item, prescription_id: prescription.id })))
+      .from("prescription_items")
+      .insert(
+        items.map((item) => ({ ...item, prescription_id: prescription.id })),
+      )
       .select();
-    
+
     if (itemsError) throw itemsError;
     prescriptionItems = itemRows as PrescriptionItem[];
   }

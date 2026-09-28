@@ -1,5 +1,5 @@
-// backend/src/types/express.types.ts
 // Responsibility: Express.js type extensions and request/response types
+// backend/src/types/express.types.ts
 
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { SupabaseClient } from "@supabase/supabase-js";

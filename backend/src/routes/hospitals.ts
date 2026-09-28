@@ -1,8 +1,9 @@
-// backend/src/routes/hospitals.ts
 // Responsibility: Hospital management API routes
+// backend/src/routes/hospitals.ts
 
 import { Router } from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
+import { PERMISSIONS } from "../constants";
 import { sendData, sendError } from "../utils/respond";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
@@ -66,7 +67,7 @@ router.get("/hospitals", getHospitals);
 router.get("/hospitals/:hospitalId", getHospital);
 router.patch(
   "/hospitals/:hospitalId",
-  requireHospitalPermission("hospital.manage"),
+  requireHospitalPermission(PERMISSIONS.HOSPITAL_MANAGE),
   updateHospital,
 );
 

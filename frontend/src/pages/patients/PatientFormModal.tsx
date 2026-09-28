@@ -1,13 +1,14 @@
 // Responsibility: Modal container for registering and updating patient demographics and MRN
 
 import { Modal } from '@/components/ui/Modal';
+import { Form } from '@/components/ui/Form';
 import { Box } from '@/components/ui/Box';
 import { Grid } from '@/components/ui/Grid';
-import { Flex } from '@/components/ui/Flex';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
+import { ModalFooter } from '@/components/common/ModalFooter';
 import { usePatientForm } from './usePatientForm';
+import { genderOptions, bloodOptions } from './patient.data';
 import type { Patient } from '@/types';
 
 export interface PatientFormModalProps {
@@ -15,24 +16,6 @@ export interface PatientFormModalProps {
   onSuccess: () => void;
   patient?: (Patient & { hospital_patient_number?: string }) | null;
 }
-
-const genderOptions = [
-  { value: 'Male', label: 'Male' },
-  { value: 'Female', label: 'Female' },
-  { value: 'Other', label: 'Other' },
-];
-
-const bloodOptions = [
-  { value: '', label: 'Select...' },
-  { value: 'A+', label: 'A+' },
-  { value: 'A-', label: 'A-' },
-  { value: 'B+', label: 'B+' },
-  { value: 'B-', label: 'B-' },
-  { value: 'AB+', label: 'AB+' },
-  { value: 'AB-', label: 'AB-' },
-  { value: 'O+', label: 'O+' },
-  { value: 'O-', label: 'O-' },
-];
 
 export const PatientFormModal = ({ onClose, onSuccess, patient }: PatientFormModalProps) => {
   const { loading, isEditMode, formData, updateField, handleSubmit } =
@@ -45,15 +28,15 @@ export const PatientFormModal = ({ onClose, onSuccess, patient }: PatientFormMod
       title={isEditMode ? 'Edit Patient' : 'Register New Patient'}
       maxWidth="2xl"
       footer={
-        <Flex justify="end" gap={3}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button onClick={(e) => handleSubmit(e)} isLoading={loading}>
-            {isEditMode ? 'Update Patient' : 'Register Patient'}
-          </Button>
-        </Flex>
+        <ModalFooter
+          onCancel={onClose}
+          onSubmit={handleSubmit}
+          submitLabel={isEditMode ? 'Update Patient' : 'Register Patient'}
+          isLoading={loading}
+        />
       }
     >
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Box className="space-y-4">
           <Input
             label="Full Name *"
@@ -104,7 +87,7 @@ export const PatientFormModal = ({ onClose, onSuccess, patient }: PatientFormMod
             />
           </Grid>
         </Box>
-      </form>
+      </Form>
     </Modal>
   );
 };

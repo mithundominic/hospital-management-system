@@ -1,8 +1,8 @@
 // Responsibility: Primitive modal dialog container wrapping raw dialog and overlay elements
 
-import { type ReactNode, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { type ReactNode, useEffect } from "react";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface ModalProps {
   isOpen: boolean;
@@ -10,16 +10,16 @@ export interface ModalProps {
   title: string;
   children: ReactNode;
   footer?: ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl';
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl";
 }
 
 const maxWidthMap = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-  '4xl': 'max-w-4xl',
+  sm: "max-w-sm",
+  md: "max-w-md",
+  lg: "max-w-lg",
+  xl: "max-w-xl",
+  "2xl": "max-w-2xl",
+  "4xl": "max-w-4xl",
 } as const;
 
 export const Modal = ({
@@ -28,14 +28,14 @@ export const Modal = ({
   title,
   children,
   footer,
-  maxWidth = 'md',
+  maxWidth = "md",
 }: ModalProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) onClose();
+      if (e.key === "Escape" && isOpen) onClose();
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -49,8 +49,8 @@ export const Modal = ({
         />
         <div
           className={cn(
-            'relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full',
-            maxWidthMap[maxWidth]
+            "relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full",
+            maxWidthMap[maxWidth],
           )}
         >
           <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">

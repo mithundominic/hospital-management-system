@@ -2,6 +2,7 @@
 
 import { Plus } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
+import { Form } from '@/components/ui/Form';
 import { Box } from '@/components/ui/Box';
 import { Flex } from '@/components/ui/Flex';
 import { Grid } from '@/components/ui/Grid';
@@ -9,6 +10,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
+import { ModalFooter } from '@/components/common/ModalFooter';
 import { InvoiceLineItemRow } from './InvoiceLineItemRow';
 import { InvoiceTotalsSection } from './InvoiceTotalsSection';
 import { useInvoiceForm } from './useInvoiceForm';
@@ -16,16 +18,8 @@ import type { InvoiceFormModalProps } from './invoice.types';
 
 export const InvoiceFormModal = ({ onClose, onSuccess, invoice }: InvoiceFormModalProps) => {
   const {
-    loading,
-    formData,
-    setFormData,
-    items,
-    totals,
-    patients,
-    addItem,
-    removeItem,
-    updateItem,
-    handleSubmit,
+    loading, formData, setFormData, items, totals, patients,
+    addItem, removeItem, updateItem, handleSubmit,
   } = useInvoiceForm(onClose, onSuccess, invoice);
 
   const patientOpts = [
@@ -40,13 +34,15 @@ export const InvoiceFormModal = ({ onClose, onSuccess, invoice }: InvoiceFormMod
       title="Generate Invoice"
       maxWidth="2xl"
       footer={
-        <Flex justify="end" gap={3}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button onClick={(e) => handleSubmit(e)} isLoading={loading}>Generate Invoice</Button>
-        </Flex>
+        <ModalFooter
+          onCancel={onClose}
+          onSubmit={handleSubmit}
+          submitLabel="Generate Invoice"
+          isLoading={loading}
+        />
       }
     >
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Box className="space-y-4">
           <Grid cols={3} gap={3}>
             <Select
@@ -92,7 +88,7 @@ export const InvoiceFormModal = ({ onClose, onSuccess, invoice }: InvoiceFormMod
 
           <InvoiceTotalsSection totals={totals} />
         </Box>
-      </form>
+      </Form>
     </Modal>
   );
 };

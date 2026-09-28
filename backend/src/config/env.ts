@@ -1,5 +1,5 @@
-// backend/src/config/env.ts
 // Responsibility: Centralized environment configuration with type safety
+// backend/src/config/env.ts
 // Rule 17 (Centralized Env): All environment variable access through this module
 
 import { AppConfig } from "../types/config.types";

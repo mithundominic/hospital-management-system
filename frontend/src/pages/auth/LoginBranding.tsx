@@ -1,18 +1,18 @@
 // Responsibility: Render the left-hand branding panel with feature overview on login screen
 
-import { Hospital } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
+import { Hospital } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
 
 const featureList = [
-  'Patient Registration & Medical Records',
-  'Appointment Scheduling & Management',
-  'Clinical Encounters & Prescriptions',
-  'Lab Orders & Results Tracking',
-  'Pharmacy & Inventory Management',
-  'Billing, Invoicing & Insurance Claims',
+  "Patient Registration & Medical Records",
+  "Appointment Scheduling & Management",
+  "Clinical Encounters & Prescriptions",
+  "Lab Orders & Results Tracking",
+  "Pharmacy & Inventory Management",
+  "Billing, Invoicing & Insurance Claims",
 ] as const;
 
 export const LoginBranding = () => {
@@ -22,7 +22,9 @@ export const LoginBranding = () => {
         <Flex align="center" gap={3} className="mb-8">
           <Hospital className="h-12 w-12" />
           <Box>
-            <Heading level={1} className="text-3xl font-bold text-white">HealthCare HMS</Heading>
+            <Heading level={1} className="text-3xl font-bold text-white">
+              HealthCare HMS
+            </Heading>
             <Text className="text-primary-100">Hospital Management System</Text>
           </Box>
         </Flex>

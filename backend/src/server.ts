@@ -1,5 +1,5 @@
-// backend/src/server.ts
 // Responsibility: Application entry point
+// backend/src/server.ts
 
 import "dotenv/config";
 import app from "./app";

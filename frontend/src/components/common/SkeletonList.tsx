@@ -1,7 +1,7 @@
 // Responsibility: Render list and timeline skeleton placeholder loaders
 
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
 
 export interface SkeletonListProps {
   items?: number;

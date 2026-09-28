@@ -1,5 +1,5 @@
-// backend/src/services/billing/InvoiceCalculations.ts
 // Responsibility: Invoice total calculations and line item processing
+// backend/src/services/billing/InvoiceCalculations.ts
 
 interface InvoiceTotals {
   subtotal: number;
@@ -26,10 +26,21 @@ interface PreparedLineItem extends RawLineItem {
  * @param lineItems - Array of invoice line items
  * @returns Calculated totals
  */
-export function calculateInvoiceTotals(lineItems: RawLineItem[] = []): InvoiceTotals {
-  const subtotal = lineItems.reduce((sum, li) => sum + li.quantity * li.unit_price, 0);
-  const cgst_total = lineItems.reduce((sum, li) => sum + (li.cgst_amount || 0), 0);
-  const sgst_total = lineItems.reduce((sum, li) => sum + (li.sgst_amount || 0), 0);
+export function calculateInvoiceTotals(
+  lineItems: RawLineItem[] = [],
+): InvoiceTotals {
+  const subtotal = lineItems.reduce(
+    (sum, li) => sum + li.quantity * li.unit_price,
+    0,
+  );
+  const cgst_total = lineItems.reduce(
+    (sum, li) => sum + (li.cgst_amount || 0),
+    0,
+  );
+  const sgst_total = lineItems.reduce(
+    (sum, li) => sum + (li.sgst_amount || 0),
+    0,
+  );
   const total_amount = subtotal + cgst_total + sgst_total;
 
   return { subtotal, cgst_total, sgst_total, total_amount };
@@ -43,7 +54,7 @@ export function calculateInvoiceTotals(lineItems: RawLineItem[] = []): InvoiceTo
  */
 export function prepareLineItems(
   lineItems: RawLineItem[],
-  invoiceId: string
+  invoiceId: string,
 ): PreparedLineItem[] {
   return lineItems.map((li) => ({
     ...li,

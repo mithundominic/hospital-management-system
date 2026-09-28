@@ -1,9 +1,9 @@
 // Responsibility: Main responsive shell layout combining Sidebar, Header, and content outlet
 
-import { Outlet } from 'react-router-dom';
-import { Box } from '@/components/ui/Box';
-import { Sidebar } from './Sidebar';
-import { Header } from './Header';
+import { Outlet } from "react-router-dom";
+import { Box } from "@/components/ui/Box";
+import { Sidebar } from "./Sidebar";
+import { Header } from "./Header";
 
 export const MainLayout = () => {
   return (

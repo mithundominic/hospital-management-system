@@ -7,9 +7,18 @@
  * @returns {Object} Calculated totals
  */
 function calculateInvoiceTotals(lineItems = []) {
-  const subtotal = lineItems.reduce((sum, li) => sum + li.quantity * li.unit_price, 0);
-  const cgst_total = lineItems.reduce((sum, li) => sum + (li.cgst_amount || 0), 0);
-  const sgst_total = lineItems.reduce((sum, li) => sum + (li.sgst_amount || 0), 0);
+  const subtotal = lineItems.reduce(
+    (sum, li) => sum + li.quantity * li.unit_price,
+    0,
+  );
+  const cgst_total = lineItems.reduce(
+    (sum, li) => sum + (li.cgst_amount || 0),
+    0,
+  );
+  const sgst_total = lineItems.reduce(
+    (sum, li) => sum + (li.sgst_amount || 0),
+    0,
+  );
   const total_amount = subtotal + cgst_total + sgst_total;
 
   return { subtotal, cgst_total, sgst_total, total_amount };

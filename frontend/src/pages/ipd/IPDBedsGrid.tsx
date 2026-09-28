@@ -1,14 +1,15 @@
 // Responsibility: Render IPD ward beds status grid and availability badges
 
-import { Bed } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Grid } from '@/components/ui/Grid';
-import { Flex } from '@/components/ui/Flex';
-import { Text } from '@/components/ui/Text';
-import { Badge, type BadgeVariant } from '@/components/ui/Badge';
-import { EmptyState } from '@/components/common/EmptyState';
-import { SkeletonCard } from '@/components/common/SkeletonCard';
-import type { Bed as BedType } from '@/types';
+import { Bed } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Grid } from "@/components/ui/Grid";
+import { Flex } from "@/components/ui/Flex";
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/common/EmptyState";
+import { SkeletonCard } from "@/components/common/SkeletonCard";
+import type { Bed as BedType } from "@/types";
 
 export interface IPDBedsGridProps {
   beds: BedType[];
@@ -17,12 +18,16 @@ export interface IPDBedsGridProps {
 }
 
 const statusBadgeMap: Record<string, BadgeVariant> = {
-  available: 'success',
-  occupied: 'danger',
-  maintenance: 'warning',
+  available: "success",
+  occupied: "danger",
+  maintenance: "warning",
 };
 
-export const IPDBedsGrid = ({ beds, isLoading, onNewAdmission }: IPDBedsGridProps) => {
+export const IPDBedsGrid = ({
+  beds,
+  isLoading,
+  onNewAdmission,
+}: IPDBedsGridProps) => {
   if (isLoading) {
     return (
       <Grid cols={3} gap={4}>
@@ -54,12 +59,16 @@ export const IPDBedsGrid = ({ beds, isLoading, onNewAdmission }: IPDBedsGridProp
           <Flex align="center" justify="between">
             <Flex align="center" gap={3}>
               <Bed className="h-6 w-6 text-gray-400" />
-              <div>
-                <Text weight="semibold">{b.ward_name} - Bed {b.bed_number}</Text>
-                <Text size="xs" variant="muted">{b.bed_type}</Text>
-              </div>
+              <Box>
+                <Text weight="semibold">
+                  {b.ward_name} - Bed {b.bed_number}
+                </Text>
+                <Text size="xs" variant="muted">
+                  {b.bed_type}
+                </Text>
+              </Box>
             </Flex>
-            <Badge variant={statusBadgeMap[b.status] || 'default'}>
+            <Badge variant={statusBadgeMap[b.status] || "default"}>
               {b.status}
             </Badge>
           </Flex>

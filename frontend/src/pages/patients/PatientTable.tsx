@@ -1,11 +1,17 @@
 // Responsibility: Render the patients data table or empty state
 
-import { UserCircle } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Table, TableHeader, TableBody, TableRow, TableHead } from '@/components/ui/Table';
-import { EmptyState } from '@/components/common/EmptyState';
-import { PatientTableRow } from './PatientTableRow';
-import type { Patient } from '@/types';
+import { UserCircle } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+} from "@/components/ui/Table";
+import { EmptyState } from "@/components/common/EmptyState";
+import { PatientTableRow } from "./PatientTableRow";
+import type { Patient } from "@/types";
 
 export interface PatientTableProps {
   patients: (Patient & { hospital_patient_number?: string })[];
@@ -14,7 +20,12 @@ export interface PatientTableProps {
   onRegister: () => void;
 }
 
-export const PatientTable = ({ patients, onEdit, onSelect, onRegister }: PatientTableProps) => {
+export const PatientTable = ({
+  patients,
+  onEdit,
+  onSelect,
+  onRegister,
+}: PatientTableProps) => {
   if (patients.length === 0) {
     return (
       <Card className="p-6">

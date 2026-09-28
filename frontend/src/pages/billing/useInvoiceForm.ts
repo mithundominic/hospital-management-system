@@ -1,68 +1,65 @@
 // Responsibility: Manage invoice form state, item line additions, and API creation submission
 
-import { useState, useCallback, useMemo, type FormEvent } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import toast from 'react-hot-toast';
-import { useHospital } from '@/contexts/HospitalContext';
-import { api } from '@/lib/api';
-import type { Invoice } from '@/types';
-import type { InvoiceFormData, InvoiceLineItemForm } from './invoice.types';
-import { calculateInvoiceTotals } from './invoice.utils';
-
-const initialItem: InvoiceLineItemForm = {
-  description: '',
-  quantity: '1',
-  unit_price: '',
-  hsn_sac_code: '',
-  gst_rate: '18',
-  reference_type: 'service',
-  reference_id: '',
-};
+import { useState, useCallback, useMemo, type FormEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
+import { useHospital } from "@/contexts/HospitalContext";
+import { api } from "@/lib/api";
+import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import type { Invoice } from "@/types";
+import type { InvoiceFormData, InvoiceLineItemForm } from "./invoice.types";
+import { calculateInvoiceTotals, initialInvoiceLineItem } from "./invoice.utils";
 
 export const useInvoiceForm = (
   onClose: () => void,
   onSuccess: () => void,
-  invoice?: Invoice | null
+  invoice?: Invoice | null,
 ) => {
   const { currentHospital } = useHospital();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<InvoiceFormData>({
-    patient_id: invoice?.patient_id || '',
-    invoice_date: format(new Date(), 'yyyy-MM-dd'),
-    due_date: '',
-    payment_terms: 'immediate',
-    notes: invoice?.notes || '',
+    patient_id: invoice?.patient_id || "",
+    invoice_date: format(new Date(), "yyyy-MM-dd"),
+    due_date: "", payment_terms: "immediate", notes: invoice?.notes || "",
   });
 
-  const [items, setItems] = useState<InvoiceLineItemForm[]>([initialItem]);
+  const [items, setItems] = useState<InvoiceLineItemForm[]>([initialInvoiceLineItem]);
 
   const { data: patients = [] } = useQuery<{ id: string; full_name: string }[]>({
-    queryKey: ['patients', currentHospital?.id],
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<{ id: string; full_name: string }[]>(`/hospitals/${currentHospital.id}/patients`);
-    },
+    queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
+    queryFn: () =>
+      currentHospital
+        ? api.get<{ id: string; full_name: string }[]>(API_ROUTES.hospitals.patients(currentHospital.id))
+        : [],
     enabled: !!currentHospital,
   });
 
   const totals = useMemo(() => calculateInvoiceTotals(items), [items]);
 
-  const addItem = useCallback(() => setItems((prev) => [...prev, { ...initialItem }]), []);
+  const addItem = useCallback(
+    () => setItems((prev) => [...prev, { ...initialInvoiceLineItem }]),
+    [],
+  );
+
   const removeItem = useCallback((idx: number) => {
     setItems((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
   }, []);
-  const updateItem = useCallback((idx: number, field: keyof InvoiceLineItemForm, val: string) => {
-    setItems((prev) => {
-      const next = [...prev];
-      next[idx] = { ...next[idx], [field]: val };
-      return next;
-    });
-  }, []);
+
+  const updateItem = useCallback(
+    (idx: number, field: keyof InvoiceLineItemForm, val: string) => {
+      setItems((prev) => {
+        const next = [...prev];
+        next[idx] = { ...next[idx], [field]: val };
+        return next;
+      });
+    },
+    [],
+  );
 
   const handleSubmit = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault();
+    async (e?: FormEvent) => {
+      e?.preventDefault();
       if (!currentHospital) return;
       setLoading(true);
       try {
@@ -78,19 +75,22 @@ export const useInvoiceForm = (
             gst_rate: Number(it.gst_rate),
           })),
         };
-        await api.post(`/hospitals/${currentHospital.id}/invoices`, payload);
-        toast.success('Invoice generated successfully');
+        await api.post(API_ROUTES.hospitals.invoices(currentHospital.id), payload);
+        toast.success("Invoice generated successfully");
         onSuccess();
         onClose();
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Failed to generate invoice';
+        const msg = err instanceof Error ? err.message : "Failed to generate invoice";
         toast.error(msg);
       } finally {
         setLoading(false);
       }
     },
-    [currentHospital, formData, totals, items, onSuccess, onClose]
+    [currentHospital, formData, totals, items, onSuccess, onClose],
   );
 
-  return { loading, formData, setFormData, items, totals, patients, addItem, removeItem, updateItem, handleSubmit } as const;
+  return {
+    loading, formData, setFormData, items, totals,
+    patients, addItem, removeItem, updateItem, handleSubmit,
+  } as const;
 };

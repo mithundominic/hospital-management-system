@@ -1,11 +1,11 @@
 // Responsibility: Top-level page container assembling login branding and login form
 
-import { Hospital } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Heading } from '@/components/ui/Heading';
-import { LoginBranding } from './LoginBranding';
-import { LoginForm } from './LoginForm';
+import { Hospital } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Heading } from "@/components/ui/Heading";
+import { LoginBranding } from "./LoginBranding";
+import { LoginForm } from "./LoginForm";
 
 export const LoginPage = () => {
   return (

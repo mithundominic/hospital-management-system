@@ -1,8 +1,8 @@
-// backend/src/utils/respond.ts
 // Responsibility: Standardized API response envelope helpers
+// backend/src/utils/respond.ts
 
-import { Response } from 'express';
-import { ApiSuccessResponse, ApiErrorResponse } from '../types';
+import { Response } from "express";
+import { ApiSuccessResponse, ApiErrorResponse } from "../types";
 
 /**
  * Send successful data response
@@ -10,7 +10,11 @@ import { ApiSuccessResponse, ApiErrorResponse } from '../types';
  * @param data - Response data
  * @param status - HTTP status code (default: 200)
  */
-export function sendData<T>(res: Response, data: T, status: number = 200): void {
+export function sendData<T>(
+  res: Response,
+  data: T,
+  status: number = 200,
+): void {
   const response: ApiSuccessResponse<T> = { data, error: null };
   res.status(status).json(response);
 }
@@ -26,7 +30,7 @@ export function sendError(
   res: Response,
   status: number,
   code: string,
-  message: string
+  message: string,
 ): void {
   const response: ApiErrorResponse = {
     data: null,

@@ -1,47 +1,52 @@
 // Responsibility: Manage state, options queries, and submission for appointment booking
 
-import { useState, useCallback, type FormEvent } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { useHospital } from '@/contexts/HospitalContext';
-import { api } from '@/lib/api';
-import type { Appointment } from '@/types';
-import type { AppointmentFormData, PatientOption, DoctorOption } from './appointment.types';
+import { useState, useCallback, type FormEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useHospital } from "@/contexts/HospitalContext";
+import { api } from "@/lib/api";
+import { QUERY_KEYS, API_ROUTES, APPOINTMENT_STATUS } from "@/constants";
+import type { Appointment } from "@/types";
+import type {
+  AppointmentFormData,
+  PatientOption,
+  DoctorOption,
+} from "./appointment.types";
 
 export const useAppointmentForm = (
   onClose: () => void,
   onSuccess: () => void,
-  appointment?: Appointment | null
+  appointment?: Appointment | null,
 ) => {
   const { currentHospital } = useHospital();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<AppointmentFormData>({
-    patient_id: appointment?.patient_id || '',
-    doctor_membership_id: '',
-    department_id: '',
+    patient_id: appointment?.patient_id || "",
+    doctor_membership_id: "",
+    department_id: "",
     scheduled_at: appointment?.scheduled_at
       ? new Date(appointment.scheduled_at).toISOString().slice(0, 16)
-      : '',
+      : "",
     duration_minutes: appointment?.duration_minutes || 30,
-    reason: appointment?.reason || '',
-    status: appointment?.status || 'scheduled',
+    reason: appointment?.reason || "",
+    status: appointment?.status || APPOINTMENT_STATUS.SCHEDULED,
   });
 
   const { data: patients = [] } = useQuery<PatientOption[]>({
-    queryKey: ['patients', currentHospital?.id],
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<PatientOption[]>(`/hospitals/${currentHospital.id}/patients`);
-    },
+    queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
+    queryFn: () =>
+      currentHospital
+        ? api.get<PatientOption[]>(API_ROUTES.hospitals.patients(currentHospital.id))
+        : [],
     enabled: !!currentHospital,
   });
 
   const { data: doctors = [] } = useQuery<DoctorOption[]>({
-    queryKey: ['doctors', currentHospital?.id],
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<DoctorOption[]>(`/hospitals/${currentHospital.id}/doctors`);
-    },
+    queryKey: QUERY_KEYS.hospitals.doctors(currentHospital?.id),
+    queryFn: () =>
+      currentHospital
+        ? api.get<DoctorOption[]>(API_ROUTES.hospitals.doctors(currentHospital.id))
+        : [],
     enabled: !!currentHospital,
   });
 
@@ -49,12 +54,12 @@ export const useAppointmentForm = (
     <K extends keyof AppointmentFormData>(key: K, val: AppointmentFormData[K]) => {
       setFormData((prev) => ({ ...prev, [key]: val }));
     },
-    []
+    [],
   );
 
   const handleSubmit = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault();
+    async (e?: FormEvent) => {
+      e?.preventDefault();
       if (!currentHospital) return;
       setLoading(true);
       try {
@@ -64,22 +69,28 @@ export const useAppointmentForm = (
           duration_minutes: Number(formData.duration_minutes),
         };
         if (appointment?.id) {
-          await api.patch(`/hospitals/${currentHospital.id}/appointments/${appointment.id}`, payload);
-          toast.success('Appointment updated successfully');
+          await api.patch(
+            API_ROUTES.hospitals.appointment(currentHospital.id, appointment.id),
+            payload,
+          );
+          toast.success("Appointment updated successfully");
         } else {
-          await api.post(`/hospitals/${currentHospital.id}/appointments`, payload);
-          toast.success('Appointment booked successfully');
+          await api.post(
+            API_ROUTES.hospitals.appointments(currentHospital.id),
+            payload,
+          );
+          toast.success("Appointment booked successfully");
         }
         onSuccess();
         onClose();
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Failed to save appointment';
+        const msg = err instanceof Error ? err.message : "Failed to save appointment";
         toast.error(msg);
       } finally {
         setLoading(false);
       }
     },
-    [currentHospital, formData, appointment, onSuccess, onClose]
+    [currentHospital, formData, appointment, onSuccess, onClose],
   );
 
   return { loading, formData, updateField, patients, doctors, handleSubmit } as const;

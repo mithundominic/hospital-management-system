@@ -1,14 +1,18 @@
 // Responsibility: Render the invoices data table with financial amounts and status badges
 
-import { format } from 'date-fns';
-import { Receipt } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
-import { Badge, type BadgeVariant } from '@/components/ui/Badge';
-import { Text } from '@/components/ui/Text';
-import { EmptyState } from '@/components/common/EmptyState';
-import { SkeletonTable } from '@/components/common/SkeletonTable';
-import type { Invoice } from '@/types';
+import { Receipt } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+} from "@/components/ui/Table";
+import { EmptyState } from "@/components/common/EmptyState";
+import { SkeletonTable } from "@/components/common/SkeletonTable";
+import { BillingTableRow } from "./BillingTableRow";
+import type { Invoice } from "@/types";
 
 export interface BillingTableProps {
   invoices: Invoice[];
@@ -16,15 +20,11 @@ export interface BillingTableProps {
   onNew: () => void;
 }
 
-const statusBadgeMap: Record<string, BadgeVariant> = {
-  draft: 'default',
-  pending: 'warning',
-  paid: 'success',
-  overdue: 'danger',
-  cancelled: 'default',
-};
-
-export const BillingTable = ({ invoices, isLoading, onNew }: BillingTableProps) => {
+export const BillingTable = ({
+  invoices,
+  isLoading,
+  onNew,
+}: BillingTableProps) => {
   if (isLoading) {
     return (
       <Card className="p-4">
@@ -61,32 +61,12 @@ export const BillingTable = ({ invoices, isLoading, onNew }: BillingTableProps) 
         </TableHeader>
         <TableBody>
           {invoices.map((inv) => (
-            <TableRow key={inv.id}>
-              <TableCell>
-                <Text weight="medium" className="font-mono text-primary-600">
-                  {inv.invoice_number}
-                </Text>
-              </TableCell>
-              <TableCell>
-                <Text size="sm">
-                  {inv.invoice_date ? format(new Date(inv.invoice_date), 'dd MMM yyyy') : 'N/A'}
-                </Text>
-              </TableCell>
-              <TableCell>
-                <Text weight="semibold">₹{inv.total_amount.toLocaleString('en-IN')}</Text>
-              </TableCell>
-              <TableCell>
-                <Text size="sm" variant="muted">₹{inv.tax_amount.toLocaleString('en-IN')}</Text>
-              </TableCell>
-              <TableCell>
-                <Badge variant={statusBadgeMap[inv.status] || 'default'}>
-                  {inv.status}
-                </Badge>
-              </TableCell>
-            </TableRow>
+            <BillingTableRow key={inv.id} invoice={inv} />
           ))}
         </TableBody>
       </Table>
     </Card>
   );
 };
+
+export default BillingTable;

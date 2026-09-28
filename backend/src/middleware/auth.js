@@ -11,15 +11,15 @@
 // public/anonymous endpoint in this surface, so this is mounted globally in
 // app.js rather than per-route.
 
-const { adminClient, userClient } = require('../config/supabase');
-const { sendError } = require('../utils/respond');
+const { adminClient, userClient } = require("../config/supabase");
+const { sendError } = require("../utils/respond");
 
 async function auth(req, res, next) {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
 
   if (!token) {
-    return sendError(res, 401, 'UNAUTHENTICATED', 'Missing bearer token');
+    return sendError(res, 401, "UNAUTHENTICATED", "Missing bearer token");
   }
 
   // Validating the token itself isn't a data operation subject to RLS, so
@@ -28,7 +28,7 @@ async function auth(req, res, next) {
   const { data, error } = await adminClient.auth.getUser(token);
 
   if (error || !data?.user) {
-    return sendError(res, 401, 'UNAUTHENTICATED', 'Invalid or expired token');
+    return sendError(res, 401, "UNAUTHENTICATED", "Invalid or expired token");
   }
 
   req.userId = data.user.id;

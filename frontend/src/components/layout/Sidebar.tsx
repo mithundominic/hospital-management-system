@@ -1,12 +1,12 @@
 // Responsibility: Render primary desktop sidebar navigation with logo and active links
 
-import { NavLink } from 'react-router-dom';
-import { Hospital } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
-import { navigationItems } from './sidebar.config';
+import { NavLink } from "react-router-dom";
+import { Hospital } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
+import { navigationItems } from "./sidebar.config";
 
 export const Sidebar = () => {
   return (
@@ -15,7 +15,9 @@ export const Sidebar = () => {
         <Flex align="center" gap={3} className="h-16 shrink-0">
           <Hospital className="h-8 w-8 text-primary-600" />
           <Box>
-            <Heading level={1} className="text-xl font-bold text-gray-900">HealthCare</Heading>
+            <Heading level={1} className="text-xl font-bold text-gray-900">
+              HealthCare
+            </Heading>
             <Text variant="caption">Hospital Management</Text>
           </Box>
         </Flex>
@@ -28,12 +30,12 @@ export const Sidebar = () => {
                 <NavLink
                   key={item.name}
                   to={item.href}
-                  end={item.href === '/'}
+                  end={item.href === "/"}
                   className={({ isActive }) =>
                     `group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors ${
                       isActive
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-gray-700 hover:text-primary-700 hover:bg-gray-50'
+                        ? "bg-primary-50 text-primary-700"
+                        : "text-gray-700 hover:text-primary-700 hover:bg-gray-50"
                     }`
                   }
                 >
@@ -41,7 +43,9 @@ export const Sidebar = () => {
                     <>
                       <Icon
                         className={`h-5 w-5 shrink-0 ${
-                          isActive ? 'text-primary-700' : 'text-gray-400 group-hover:text-primary-700'
+                          isActive
+                            ? "text-primary-700"
+                            : "text-gray-400 group-hover:text-primary-700"
                         }`}
                       />
                       {item.name}

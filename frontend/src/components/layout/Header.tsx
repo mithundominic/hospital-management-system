@@ -1,20 +1,18 @@
-// Responsibility: Top navigation bar rendering search, hospital switcher, notifications, and profile menu
+// Responsibility: Top navigation bar rendering search, hospital switcher, and notification controls
 
-import { useState } from 'react';
-import { Bell, Search, ChevronDown } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useHospital } from '@/contexts/HospitalContext';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Text } from '@/components/ui/Text';
+import { useState } from "react";
+import { Bell, Search, ChevronDown } from "lucide-react";
+import { useHospital } from "@/contexts/HospitalContext";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
+import { HeaderUserMenu } from "./HeaderUserMenu";
 
 export const Header = () => {
-  const { user, signOut } = useAuth();
   const { hospitals, currentHospital, setCurrentHospital } = useHospital();
   const [showHospitalMenu, setShowHospitalMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
 
   return (
     <Box className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
@@ -36,7 +34,9 @@ export const Header = () => {
                   onClick={() => setShowHospitalMenu(!showHospitalMenu)}
                   className="flex items-center gap-2"
                 >
-                  <Text size="sm">{currentHospital?.name || 'Select Hospital'}</Text>
+                  <Text size="sm">
+                    {currentHospital?.name || "Select Hospital"}
+                  </Text>
                   <ChevronDown className="h-4 w-4" />
                 </Button>
                 {showHospitalMenu && (
@@ -65,35 +65,7 @@ export const Header = () => {
               <Box className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
             </Button>
 
-            <Box className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-1"
-              >
-                <Flex align="center" justify="center" className="h-8 w-8 rounded-full bg-primary-600 text-white text-sm font-medium">
-                  {user?.email?.charAt(0).toUpperCase()}
-                </Flex>
-                <ChevronDown className="h-4 w-4 text-gray-600" />
-              </Button>
-
-              {showUserMenu && (
-                <Box className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
-                  <Box className="px-4 py-2 border-b border-gray-200">
-                    <Text size="sm" weight="medium">{user?.email}</Text>
-                  </Box>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => signOut()}
-                    className="w-full justify-start px-4 py-2 text-red-600 hover:text-red-700"
-                  >
-                    Sign out
-                  </Button>
-                </Box>
-              )}
-            </Box>
+            <HeaderUserMenu />
           </Flex>
         </Flex>
       </Box>

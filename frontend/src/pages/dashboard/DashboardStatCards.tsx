@@ -1,12 +1,12 @@
 // Responsibility: Render the 4 key KPI metric cards at the top of the dashboard
 
-import { Users, Calendar, Bed, DollarSign, TrendingUp } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Grid } from '@/components/ui/Grid';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Text } from '@/components/ui/Text';
-import type { DashboardStats } from './dashboard.data';
+import { Users, Calendar, Bed, DollarSign, TrendingUp } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Grid } from "@/components/ui/Grid";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Text } from "@/components/ui/Text";
+import type { DashboardStats } from "./dashboard.data";
 
 export interface DashboardStatCardsProps {
   stats: DashboardStats;
@@ -15,32 +15,32 @@ export interface DashboardStatCardsProps {
 export const DashboardStatCards = ({ stats }: DashboardStatCardsProps) => {
   const cards = [
     {
-      name: 'Total Patients',
+      name: "Total Patients",
       value: stats.totalPatients,
       icon: Users,
-      color: 'bg-blue-500',
-      change: '+12%',
+      color: "bg-blue-500",
+      change: "+12%",
     },
     {
       name: "Today's Appointments",
       value: stats.todayAppointments,
       icon: Calendar,
-      color: 'bg-green-500',
-      change: '+5%',
+      color: "bg-green-500",
+      change: "+5%",
     },
     {
-      name: 'Bed Occupancy',
+      name: "Bed Occupancy",
       value: `${stats.occupiedBeds}/${stats.totalBeds}`,
       icon: Bed,
-      color: 'bg-purple-500',
-      change: '75%',
+      color: "bg-purple-500",
+      change: "75%",
     },
     {
       name: "Today's Revenue",
-      value: `₹${stats.todayRevenue.toLocaleString('en-IN')}`,
+      value: `₹${stats.todayRevenue.toLocaleString("en-IN")}`,
       icon: DollarSign,
-      color: 'bg-amber-500',
-      change: '+8%',
+      color: "bg-amber-500",
+      change: "+8%",
     },
   ];
 

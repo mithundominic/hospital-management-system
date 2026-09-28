@@ -1,7 +1,7 @@
-// backend/src/services/AuthorizationService.ts
 // Responsibility: RBAC permission resolution via database function
+// backend/src/services/AuthorizationService.ts
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class AuthorizationService {
   private supabase: SupabaseClient;
@@ -17,14 +17,18 @@ export class AuthorizationService {
    * @param permission - Permission key (e.g., 'patients.read')
    * @returns True if user has permission
    */
-  async can(userId: string, hospitalId: string, permission: string): Promise<boolean> {
+  async can(
+    userId: string,
+    hospitalId: string,
+    permission: string,
+  ): Promise<boolean> {
     const { data, error } = await this.supabase.rpc(
-      'rbac_effective_hospital_permission',
+      "rbac_effective_hospital_permission",
       {
         p_user_id: userId,
         p_hospital_id: hospitalId,
         p_permission: permission,
-      }
+      },
     );
 
     if (error) {
@@ -41,14 +45,18 @@ export class AuthorizationService {
    * @param permission - Permission key
    * @throws Error with code 'FORBIDDEN' if permission denied
    */
-  async assert(userId: string, hospitalId: string, permission: string): Promise<void> {
+  async assert(
+    userId: string,
+    hospitalId: string,
+    permission: string,
+  ): Promise<void> {
     const allowed = await this.can(userId, hospitalId, permission);
-    
+
     if (!allowed) {
       const err = new Error(
-        `User ${userId} lacks '${permission}' on hospital ${hospitalId}`
+        `User ${userId} lacks '${permission}' on hospital ${hospitalId}`,
       ) as Error & { code: string };
-      err.code = 'FORBIDDEN';
+      err.code = "FORBIDDEN";
       throw err;
     }
   }

@@ -1,6 +1,6 @@
 // Responsibility: TypeScript interfaces for appointment forms and scheduling workflows
 
-import type { Appointment } from '@/types';
+import type { Appointment } from "@/types";
 
 export interface PatientOption {
   id: string;
@@ -23,7 +23,7 @@ export interface AppointmentFormData {
   scheduled_at: string;
   duration_minutes: number;
   reason: string;
-  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed';
+  status: "scheduled" | "confirmed" | "cancelled" | "completed";
 }
 
 export interface AppointmentFormModalProps {

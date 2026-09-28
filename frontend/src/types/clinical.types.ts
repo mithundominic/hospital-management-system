@@ -49,7 +49,7 @@ export interface Encounter {
   patient_id: string;
   hospital_id: string;
   doctor_id: string;
-  encounter_type: 'opd' | 'emergency' | 'ipd';
+  encounter_type: "opd" | "emergency" | "ipd";
   chief_complaint?: string;
   diagnosis?: string;
   notes?: string;
@@ -65,7 +65,7 @@ export interface Appointment {
   hospital_id: string;
   scheduled_at: string;
   duration_minutes: number;
-  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed';
+  status: "scheduled" | "confirmed" | "cancelled" | "completed";
   reason?: string;
   notes?: string;
   created_at: string;
@@ -77,7 +77,7 @@ export interface Bed {
   ward_name: string;
   bed_number: string;
   bed_type: string;
-  status: 'available' | 'occupied' | 'maintenance';
+  status: "available" | "occupied" | "maintenance";
   created_at: string;
 }
 
@@ -89,7 +89,7 @@ export interface Admission {
   doctor_id: string;
   admission_date: string;
   discharge_date?: string;
-  status: 'active' | 'discharged';
+  status: "active" | "discharged";
   admission_notes?: string;
   discharge_notes?: string;
   created_at: string;

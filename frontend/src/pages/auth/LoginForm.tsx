@@ -1,19 +1,20 @@
 // Responsibility: Render the user login form with email/password and demo hints
 
-import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Mail, Lock } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Box } from '@/components/ui/Box';
-import { Card } from '@/components/ui/Card';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Box } from "@/components/ui/Box";
+import { Card } from "@/components/ui/Card";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Form } from "@/components/ui/Form";
 
 export const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export const LoginForm = () => {
     setLoading(true);
     try {
       await signIn(email, password);
-      navigate('/');
+      navigate("/");
     } catch {
       // Error notification handled in AuthContext
     } finally {
@@ -37,7 +38,7 @@ export const LoginForm = () => {
         Sign in to your account
       </Heading>
 
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Box className="space-y-4">
           <Input
             label="Email address"
@@ -63,12 +64,18 @@ export const LoginForm = () => {
             Sign in
           </Button>
         </Box>
-      </form>
+      </Form>
 
       <Box className="mt-6 text-center">
-        <Text size="sm" variant="muted">Demo Credentials:</Text>
-        <Text size="xs" variant="muted" className="mt-1">Email: admin@hospital.com</Text>
-        <Text size="xs" variant="muted">Password: (Set during setup)</Text>
+        <Text size="sm" variant="muted">
+          Demo Credentials:
+        </Text>
+        <Text size="xs" variant="muted" className="mt-1">
+          Email: admin@hospital.com
+        </Text>
+        <Text size="xs" variant="muted">
+          Password: (Set during setup)
+        </Text>
       </Box>
     </Card>
   );

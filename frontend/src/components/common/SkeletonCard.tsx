@@ -1,8 +1,8 @@
 // Responsibility: Render card and stat-card skeleton placeholder loaders
 
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Card } from '@/components/ui/Card';
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Card } from "@/components/ui/Card";
 
 export interface SkeletonCardProps {
   rows?: number;

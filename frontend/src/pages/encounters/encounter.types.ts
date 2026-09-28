@@ -1,6 +1,6 @@
 // Responsibility: TypeScript interfaces for clinical encounters and vitals data structures
 
-import type { Encounter } from '@/types';
+import type { Encounter } from "@/types";
 
 export interface EncounterVitalsData {
   temperature: string;
@@ -16,7 +16,7 @@ export interface EncounterVitalsData {
 export interface EncounterFormData extends EncounterVitalsData {
   patient_id: string;
   doctor_id: string;
-  encounter_type: 'opd' | 'emergency' | 'ipd';
+  encounter_type: "opd" | "emergency" | "ipd";
   chief_complaint: string;
   diagnosis: string;
   notes: string;
@@ -28,3 +28,9 @@ export interface EncounterFormModalProps {
   onSuccess: () => void;
   encounter?: Encounter | null;
 }
+
+export const encounterTypeOptions = [
+  { value: "opd", label: "OPD (Outpatient)" },
+  { value: "emergency", label: "Emergency" },
+  { value: "ipd", label: "IPD (Inpatient)" },
+] as const;

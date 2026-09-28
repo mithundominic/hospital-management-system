@@ -50,13 +50,16 @@ class AbdmM3Service {
     const headers = this.auth.createHeaders(token);
     headers["X-HIU-ID"] = HIU_ID;
 
-    const res = await fetch(`${GATEWAY_URL}/v0.5/health-information/cm/request`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ 
-        hiRequest: { consent: { id: artifactId } } 
-      }),
-    });
+    const res = await fetch(
+      `${GATEWAY_URL}/v0.5/health-information/cm/request`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          hiRequest: { consent: { id: artifactId } },
+        }),
+      },
+    );
 
     if (!res.ok) {
       throw new Error(`ABDM fetchHealthInformation failed: ${res.status}`);

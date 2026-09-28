@@ -1,30 +1,28 @@
 // Responsibility: Render the insurance claims data table with policy numbers, amounts, and workflow status
 
-import { format } from 'date-fns';
-import { Shield } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
-import { Badge, type BadgeVariant } from '@/components/ui/Badge';
-import { Text } from '@/components/ui/Text';
-import { EmptyState } from '@/components/common/EmptyState';
-import { SkeletonTable } from '@/components/common/SkeletonTable';
-import type { InsuranceClaim } from '@/types';
+import { Shield } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+} from "@/components/ui/Table";
+import { EmptyState } from "@/components/common/EmptyState";
+import { SkeletonTable } from "@/components/common/SkeletonTable";
+import { InsuranceClaimsTableRow } from "./InsuranceClaimsTableRow";
+import type { InsuranceClaim } from "@/types";
 
 export interface InsuranceClaimsTableProps {
   claims: InsuranceClaim[];
   isLoading: boolean;
 }
 
-const statusBadgeMap: Record<string, BadgeVariant> = {
-  draft: 'default',
-  submitted: 'info',
-  under_review: 'warning',
-  approved: 'success',
-  rejected: 'danger',
-  settled: 'success',
-};
-
-export const InsuranceClaimsTable = ({ claims, isLoading }: InsuranceClaimsTableProps) => {
+export const InsuranceClaimsTable = ({
+  claims,
+  isLoading,
+}: InsuranceClaimsTableProps) => {
   if (isLoading) {
     return (
       <Card className="p-4">
@@ -59,34 +57,12 @@ export const InsuranceClaimsTable = ({ claims, isLoading }: InsuranceClaimsTable
         </TableHeader>
         <TableBody>
           {claims.map((claim) => (
-            <TableRow key={claim.id}>
-              <TableCell>
-                <Text weight="medium" className="font-mono text-primary-600">
-                  {claim.claim_number}
-                </Text>
-              </TableCell>
-              <TableCell>
-                <Text size="sm">
-                  {claim.claim_date ? format(new Date(claim.claim_date), 'dd MMM yyyy') : 'N/A'}
-                </Text>
-              </TableCell>
-              <TableCell>
-                <Badge variant={claim.claim_type === 'cashless' ? 'purple' : 'info'}>
-                  {claim.claim_type}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Text weight="semibold">₹{claim.claim_amount.toLocaleString('en-IN')}</Text>
-              </TableCell>
-              <TableCell>
-                <Badge variant={statusBadgeMap[claim.status] || 'default'}>
-                  {claim.status.replace('_', ' ')}
-                </Badge>
-              </TableCell>
-            </TableRow>
+            <InsuranceClaimsTableRow key={claim.id} claim={claim} />
           ))}
         </TableBody>
       </Table>
     </Card>
   );
 };
+
+export default InsuranceClaimsTable;

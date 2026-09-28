@@ -1,12 +1,12 @@
 // Responsibility: Global React Error Boundary to catch render errors gracefully
 
-import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { AlertTriangle } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Card } from '@/components/ui/Card';
-import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
-import { Button } from '@/components/ui/Button';
+import { Component, type ErrorInfo, type ReactNode } from "react";
+import { AlertTriangle } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Card } from "@/components/ui/Card";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
   children: ReactNode;
@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error("Uncaught error:", error, errorInfo);
   }
 
   public render() {
@@ -38,11 +38,15 @@ export class ErrorBoundary extends Component<Props, State> {
           <Box className="max-w-md w-full text-center">
             <Card className="p-8">
               <AlertTriangle className="h-16 w-16 text-red-600 mx-auto mb-4" />
-              <Heading level={1} className="text-2xl font-bold text-gray-900 mb-2">
+              <Heading
+                level={1}
+                className="text-2xl font-bold text-gray-900 mb-2"
+              >
                 Something went wrong
               </Heading>
               <Text className="text-gray-600 mb-6">
-                An unexpected error occurred. Please refresh the page or contact support if the problem persists.
+                An unexpected error occurred. Please refresh the page or contact
+                support if the problem persists.
               </Text>
               <Box className="space-y-3">
                 <Button
@@ -53,7 +57,9 @@ export class ErrorBoundary extends Component<Props, State> {
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => this.setState({ hasError: false, error: null })}
+                  onClick={() =>
+                    this.setState({ hasError: false, error: null })
+                  }
                   className="w-full"
                 >
                   Try Again

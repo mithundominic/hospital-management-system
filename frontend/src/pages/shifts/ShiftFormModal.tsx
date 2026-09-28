@@ -1,6 +1,7 @@
 // Responsibility: Modal container for scheduling shifts with timing presets and staff allocation
 
 import { Modal } from '@/components/ui/Modal';
+import { Form } from '@/components/ui/Form';
 import { Box } from '@/components/ui/Box';
 import { Grid } from '@/components/ui/Grid';
 import { Flex } from '@/components/ui/Flex';
@@ -8,20 +9,9 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
+import { ModalFooter } from '@/components/common/ModalFooter';
 import { useShiftForm } from './useShiftForm';
-import type { Shift } from '@/types';
-
-export interface ShiftFormModalProps {
-  onClose: () => void;
-  onSuccess: () => void;
-  shift?: Shift | null;
-}
-
-const shiftTypeOptions = [
-  { value: 'morning', label: 'Morning (06:00 - 14:00)' },
-  { value: 'afternoon', label: 'Afternoon (14:00 - 22:00)' },
-  { value: 'night', label: 'Night (22:00 - 06:00)' },
-];
+import { type ShiftFormModalProps, shiftTypeOptions, shiftPresets } from './shift.types';
 
 export const ShiftFormModal = ({ onClose, onSuccess, shift }: ShiftFormModalProps) => {
   const { loading, formData, updateField, staffMembers, setPreset, handleSubmit } =
@@ -39,15 +29,15 @@ export const ShiftFormModal = ({ onClose, onSuccess, shift }: ShiftFormModalProp
       title={shift ? 'Edit Shift' : 'Schedule Staff Shift'}
       maxWidth="xl"
       footer={
-        <Flex justify="end" gap={3}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button onClick={(e) => handleSubmit(e)} isLoading={loading}>
-            {shift ? 'Update Shift' : 'Schedule Shift'}
-          </Button>
-        </Flex>
+        <ModalFooter
+          onCancel={onClose}
+          onSubmit={handleSubmit}
+          submitLabel={shift ? 'Update Shift' : 'Schedule Shift'}
+          isLoading={loading}
+        />
       }
     >
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Box className="space-y-4">
           <Select
             label="Staff Member *"
@@ -60,15 +50,11 @@ export const ShiftFormModal = ({ onClose, onSuccess, shift }: ShiftFormModalProp
           <Box>
             <Text size="xs" variant="muted" className="mb-2">Quick Shift Presets:</Text>
             <Flex gap={2}>
-              <Button type="button" variant="outline" size="sm" onClick={() => setPreset('morning')}>
-                Morning (6am-2pm)
-              </Button>
-              <Button type="button" variant="outline" size="sm" onClick={() => setPreset('afternoon')}>
-                Afternoon (2pm-10pm)
-              </Button>
-              <Button type="button" variant="outline" size="sm" onClick={() => setPreset('night')}>
-                Night (10pm-6am)
-              </Button>
+              {shiftPresets.map((p) => (
+                <Button key={p.type} type="button" variant="outline" size="sm" onClick={() => setPreset(p.type)}>
+                  {p.label}
+                </Button>
+              ))}
             </Flex>
           </Box>
 
@@ -103,7 +89,7 @@ export const ShiftFormModal = ({ onClose, onSuccess, shift }: ShiftFormModalProp
             options={shiftTypeOptions}
           />
         </Box>
-      </form>
+      </Form>
     </Modal>
   );
 };

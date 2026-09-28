@@ -1,6 +1,6 @@
 /**
  * Centralized Environment Configuration
- * 
+ *
  * Rule 15 (Centralized Env): All environment variable access must go through this
  * validated configuration module. Direct process.env access is forbidden elsewhere.
  */
@@ -8,17 +8,17 @@
 // Validate required environment variables at startup
 function validateEnv() {
   const required = [
-    'SUPABASE_URL',
-    'SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY'
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
   ];
 
-  const missing = required.filter(key => !process.env[key]);
-  
+  const missing = required.filter((key) => !process.env[key]);
+
   if (missing.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}\n` +
-      'Please check your .env file against .env.example'
+      `Missing required environment variables: ${missing.join(", ")}\n` +
+        "Please check your .env file against .env.example",
     );
   }
 }
@@ -31,8 +31,8 @@ validateEnv();
  */
 const config = {
   // Server
-  port: parseInt(process.env.PORT || '3000', 10),
-  nodeEnv: process.env.NODE_ENV || 'development',
+  port: parseInt(process.env.PORT || "3000", 10),
+  nodeEnv: process.env.NODE_ENV || "development",
 
   // Supabase
   supabase: {
@@ -43,13 +43,14 @@ const config = {
 
   // ABDM Integration (Phase 5 - Optional)
   abdm: {
-    clientId: process.env.ABDM_CLIENT_ID || '',
-    clientSecret: process.env.ABDM_CLIENT_SECRET || '',
-    hipId: process.env.ABDM_HIP_ID || '',
-    hiuId: process.env.ABDM_HIU_ID || '',
-    callbackBaseUrl: process.env.ABDM_CALLBACK_BASE_URL || '',
-    abhaUrl: process.env.ABDM_ABHA_URL || 'https://healthidsbx.abdm.gov.in/api',
-    gatewayUrl: process.env.ABDM_GATEWAY_URL || 'https://dev.abdm.gov.in/gateway',
+    clientId: process.env.ABDM_CLIENT_ID || "",
+    clientSecret: process.env.ABDM_CLIENT_SECRET || "",
+    hipId: process.env.ABDM_HIP_ID || "",
+    hiuId: process.env.ABDM_HIU_ID || "",
+    callbackBaseUrl: process.env.ABDM_CALLBACK_BASE_URL || "",
+    abhaUrl: process.env.ABDM_ABHA_URL || "https://healthidsbx.abdm.gov.in/api",
+    gatewayUrl:
+      process.env.ABDM_GATEWAY_URL || "https://dev.abdm.gov.in/gateway",
   },
 };
 

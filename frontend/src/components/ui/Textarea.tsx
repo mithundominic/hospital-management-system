@@ -1,7 +1,7 @@
 // Responsibility: Primitive textarea component wrapping raw HTML textarea element
 
-import { forwardRef, type TextareaHTMLAttributes } from 'react';
-import { cn } from '@/lib/utils';
+import { forwardRef, type TextareaHTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -26,9 +26,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           rows={rows}
           className={cn(
-            'block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50',
-            error && 'border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500',
-            className
+            "block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50",
+            error &&
+              "border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500",
+            className,
           )}
           {...props}
         />
@@ -38,7 +39,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-Textarea.displayName = 'Textarea';
+Textarea.displayName = "Textarea";

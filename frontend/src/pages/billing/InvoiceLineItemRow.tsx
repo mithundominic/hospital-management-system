@@ -1,28 +1,32 @@
 // Responsibility: Render single item row in invoice creation form with tax and price inputs
 
-import { Trash2 } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Grid } from '@/components/ui/Grid';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import type { InvoiceLineItemForm } from './invoice.types';
+import { Trash2 } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Grid } from "@/components/ui/Grid";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
+import type { InvoiceLineItemForm } from "./invoice.types";
 
 export interface InvoiceLineItemRowProps {
   item: InvoiceLineItemForm;
   index: number;
   canRemove: boolean;
-  onUpdate: (idx: number, field: keyof InvoiceLineItemForm, val: string) => void;
+  onUpdate: (
+    idx: number,
+    field: keyof InvoiceLineItemForm,
+    val: string,
+  ) => void;
   onRemove: (idx: number) => void;
 }
 
 const gstOptions = [
-  { value: '0', label: '0%' },
-  { value: '5', label: '5%' },
-  { value: '12', label: '12%' },
-  { value: '18', label: '18%' },
-  { value: '28', label: '28%' },
+  { value: "0", label: "0%" },
+  { value: "5", label: "5%" },
+  { value: "12", label: "12%" },
+  { value: "18", label: "18%" },
+  { value: "28", label: "28%" },
 ];
 
 export const InvoiceLineItemRow = ({
@@ -38,7 +42,7 @@ export const InvoiceLineItemRow = ({
         <Input
           placeholder="Item Description *"
           value={item.description}
-          onChange={(e) => onUpdate(index, 'description', e.target.value)}
+          onChange={(e) => onUpdate(index, "description", e.target.value)}
           className="flex-1"
           required
         />
@@ -58,24 +62,24 @@ export const InvoiceLineItemRow = ({
           placeholder="Qty"
           type="number"
           value={item.quantity}
-          onChange={(e) => onUpdate(index, 'quantity', e.target.value)}
+          onChange={(e) => onUpdate(index, "quantity", e.target.value)}
           required
         />
         <Input
           placeholder="Unit Price"
           type="number"
           value={item.unit_price}
-          onChange={(e) => onUpdate(index, 'unit_price', e.target.value)}
+          onChange={(e) => onUpdate(index, "unit_price", e.target.value)}
           required
         />
         <Input
           placeholder="HSN/SAC"
           value={item.hsn_sac_code}
-          onChange={(e) => onUpdate(index, 'hsn_sac_code', e.target.value)}
+          onChange={(e) => onUpdate(index, "hsn_sac_code", e.target.value)}
         />
         <Select
           value={item.gst_rate}
-          onChange={(e) => onUpdate(index, 'gst_rate', e.target.value)}
+          onChange={(e) => onUpdate(index, "gst_rate", e.target.value)}
           options={gstOptions}
         />
       </Grid>

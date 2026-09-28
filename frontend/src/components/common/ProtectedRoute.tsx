@@ -1,9 +1,9 @@
 // Responsibility: Route guard redirecting unauthenticated users to login
 
-import type { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import type { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export interface ProtectedRouteProps {
   children: ReactNode;

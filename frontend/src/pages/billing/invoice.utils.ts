@@ -1,8 +1,20 @@
 // Responsibility: Pure calculation utility for invoice subtotals, GST splits, and totals
 
-import type { InvoiceLineItemForm, InvoiceTotals } from './invoice.types';
+import type { InvoiceLineItemForm, InvoiceTotals } from "./invoice.types";
 
-export const calculateInvoiceTotals = (items: InvoiceLineItemForm[]): InvoiceTotals => {
+export const initialInvoiceLineItem: InvoiceLineItemForm = {
+  description: "",
+  quantity: "1",
+  unit_price: "",
+  hsn_sac_code: "",
+  gst_rate: "18",
+  reference_type: "service",
+  reference_id: "",
+};
+
+export const calculateInvoiceTotals = (
+  items: InvoiceLineItemForm[],
+): InvoiceTotals => {
   let subtotal = 0;
   let taxTotal = 0;
 

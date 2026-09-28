@@ -1,10 +1,10 @@
-// backend/src/middleware/auth.ts
 // Responsibility: JWT verification and user authentication
+// backend/src/middleware/auth.ts
 
-import { Request, Response, NextFunction } from 'express';
-import { adminClient, userClient } from '../config/supabase';
-import { sendError } from '../utils/respond';
-import { AuthenticatedRequest } from '../types';
+import { Request, Response, NextFunction } from "express";
+import { adminClient, userClient } from "../config/supabase";
+import { sendError } from "../utils/respond";
+import { AuthenticatedRequest } from "../types";
 
 /**
  * Authentication middleware
@@ -13,20 +13,20 @@ import { AuthenticatedRequest } from '../types';
 export async function auth(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
 
   if (!token) {
-    sendError(res, 401, 'UNAUTHENTICATED', 'Missing bearer token');
+    sendError(res, 401, "UNAUTHENTICATED", "Missing bearer token");
     return;
   }
 
   const { data, error } = await adminClient.auth.getUser(token);
 
   if (error || !data?.user) {
-    sendError(res, 401, 'UNAUTHENTICATED', 'Invalid or expired token');
+    sendError(res, 401, "UNAUTHENTICATED", "Invalid or expired token");
     return;
   }
 

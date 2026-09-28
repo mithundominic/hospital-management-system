@@ -1,11 +1,11 @@
 // Responsibility: Modal confirmation dialog for destructive or critical actions
 
-import { AlertTriangle } from 'lucide-react';
-import { Modal } from '@/components/ui/Modal';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Text } from '@/components/ui/Text';
-import { Button } from '@/components/ui/Button';
+import { AlertTriangle } from "lucide-react";
+import { Modal } from "@/components/ui/Modal";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/Button";
 
 export interface ConfirmDialogProps {
   isOpen: boolean;
@@ -15,14 +15,26 @@ export interface ConfirmDialogProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'danger' | 'warning' | 'info';
+  variant?: "danger" | "warning" | "info";
   isLoading?: boolean;
 }
 
 const variantConfig = {
-  danger: { iconColor: 'text-red-600', bg: 'bg-red-100', btnVariant: 'danger' as const },
-  warning: { iconColor: 'text-yellow-600', bg: 'bg-yellow-100', btnVariant: 'primary' as const },
-  info: { iconColor: 'text-blue-600', bg: 'bg-blue-100', btnVariant: 'primary' as const },
+  danger: {
+    iconColor: "text-red-600",
+    bg: "bg-red-100",
+    btnVariant: "danger" as const,
+  },
+  warning: {
+    iconColor: "text-yellow-600",
+    bg: "bg-yellow-100",
+    btnVariant: "primary" as const,
+  },
+  info: {
+    iconColor: "text-blue-600",
+    bg: "bg-blue-100",
+    btnVariant: "primary" as const,
+  },
 } as const;
 
 export const ConfirmDialog = ({
@@ -31,9 +43,9 @@ export const ConfirmDialog = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  variant = 'danger',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  variant = "danger",
   isLoading = false,
 }: ConfirmDialogProps) => {
   const config = variantConfig[variant];

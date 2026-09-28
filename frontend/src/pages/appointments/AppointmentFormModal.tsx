@@ -3,10 +3,10 @@
 import { Modal } from '@/components/ui/Modal';
 import { Box } from '@/components/ui/Box';
 import { Grid } from '@/components/ui/Grid';
-import { Flex } from '@/components/ui/Flex';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
+import { Form } from '@/components/ui/Form';
+import { ModalFooter } from '@/components/common/ModalFooter';
 import { useAppointmentForm } from './useAppointmentForm';
 import type { AppointmentFormModalProps } from './appointment.types';
 
@@ -38,17 +38,15 @@ export const AppointmentFormModal = ({
       title={appointment ? 'Edit Appointment' : 'Book New Appointment'}
       maxWidth="xl"
       footer={
-        <Flex justify="end" gap={3}>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button onClick={(e) => handleSubmit(e)} isLoading={loading}>
-            {appointment ? 'Update' : 'Book'}
-          </Button>
-        </Flex>
+        <ModalFooter
+          onCancel={onClose}
+          onSubmit={handleSubmit}
+          submitLabel={appointment ? 'Update' : 'Book'}
+          isLoading={loading}
+        />
       }
     >
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Box className="space-y-4">
           <Select
             label="Patient *"
@@ -87,7 +85,7 @@ export const AppointmentFormModal = ({
             placeholder="Chief complaint or reason"
           />
         </Box>
-      </form>
+      </Form>
     </Modal>
   );
 };

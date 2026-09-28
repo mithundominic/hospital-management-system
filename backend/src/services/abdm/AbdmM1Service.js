@@ -23,8 +23,8 @@ class AbdmM1Service {
     const res = await fetch(`${GATEWAY_URL}/v0.5/users/auth/init`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ 
-        query: { id: abhaAddress, purpose: "LINK" } 
+      body: JSON.stringify({
+        query: { id: abhaAddress, purpose: "LINK" },
       }),
     });
 

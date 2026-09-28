@@ -6,8 +6,8 @@ export interface LabOrder {
   hospital_id: string;
   test_name: string;
   test_code?: string;
-  priority: 'routine' | 'urgent' | 'stat';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  priority: "routine" | "urgent" | "stat";
+  status: "pending" | "in_progress" | "completed" | "cancelled";
   ordered_date: string;
   sample_collected_at?: string;
   result_available_at?: string;
@@ -33,7 +33,7 @@ export interface Shift {
   hospital_id: string;
   user_id: string;
   shift_date: string;
-  shift_type: 'morning' | 'afternoon' | 'night';
+  shift_type: "morning" | "afternoon" | "night";
   start_time: string;
   end_time: string;
   notes?: string;

@@ -1,7 +1,7 @@
 // Responsibility: Primitive input component wrapping raw HTML input element
 
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -32,10 +32,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={id}
             className={cn(
-              'block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-gray-500',
-              icon && 'pl-10',
-              error && 'border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500',
-              className
+              "block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-gray-500",
+              icon && "pl-10",
+              error &&
+                "border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500",
+              className,
             )}
             {...props}
           />
@@ -46,7 +47,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";

@@ -1,8 +1,15 @@
 // Responsibility: React context managing available hospitals and current active hospital selection
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { useAuth } from './AuthContext';
-import { api } from '@/lib/api';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext";
+import { api } from "@/lib/api";
+import { API_ROUTES } from "@/constants";
 
 export interface Hospital {
   id: string;
@@ -20,7 +27,9 @@ export interface HospitalContextType {
   loading: boolean;
 }
 
-const HospitalContext = createContext<HospitalContextType | undefined>(undefined);
+const HospitalContext = createContext<HospitalContextType | undefined>(
+  undefined,
+);
 
 export const HospitalProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -40,14 +49,14 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
 
   const loadHospitals = async () => {
     try {
-      const data = await api.get<Hospital[]>('/hospitals');
+      const data = await api.get<Hospital[]>(API_ROUTES.hospitals.list);
       setHospitals(data || []);
 
       if (data && data.length > 0 && !currentHospital) {
         setCurrentHospital(data[0]);
       }
     } catch (error) {
-      console.error('Failed to load hospitals:', error);
+      console.error("Failed to load hospitals:", error);
     } finally {
       setLoading(false);
     }
@@ -70,7 +79,7 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
 export const useHospital = () => {
   const context = useContext(HospitalContext);
   if (context === undefined) {
-    throw new Error('useHospital must be used within a HospitalProvider');
+    throw new Error("useHospital must be used within a HospitalProvider");
   }
   return context;
 };

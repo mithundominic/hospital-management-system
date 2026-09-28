@@ -3,5 +3,5 @@
 export const cn = (
   ...classes: (string | number | boolean | undefined | null)[]
 ): string => {
-  return classes.filter(Boolean).map(String).join(' ');
+  return classes.filter(Boolean).map(String).join(" ");
 };

@@ -1,5 +1,5 @@
-// backend/src/services/abdm/AbdmM3Service.ts
 // Responsibility: M3 - Consent request and health information fetch (HIU role)
+// backend/src/services/abdm/AbdmM3Service.ts
 
 import config from "../../config/env";
 import { AbdmAuth } from "./AbdmAuth";

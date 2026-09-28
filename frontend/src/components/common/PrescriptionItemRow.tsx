@@ -1,28 +1,32 @@
 // Responsibility: Render individual prescription medicine row with inputs and remove action
 
-import { Trash2 } from 'lucide-react';
-import { Box } from '@/components/ui/Box';
-import { Flex } from '@/components/ui/Flex';
-import { Grid } from '@/components/ui/Grid';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import type { PrescriptionItem } from './prescription.types';
+import { Trash2 } from "lucide-react";
+import { Box } from "@/components/ui/Box";
+import { Flex } from "@/components/ui/Flex";
+import { Grid } from "@/components/ui/Grid";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
+import type { PrescriptionItem } from "./prescription.types";
 
 export interface PrescriptionItemRowProps {
   item: PrescriptionItem;
   index: number;
   canRemove: boolean;
-  onUpdate: (index: number, field: keyof PrescriptionItem, value: string) => void;
+  onUpdate: (
+    index: number,
+    field: keyof PrescriptionItem,
+    value: string,
+  ) => void;
   onRemove: (index: number) => void;
 }
 
 const routeOptions = [
-  { value: 'oral', label: 'Oral' },
-  { value: 'iv', label: 'IV' },
-  { value: 'im', label: 'IM' },
-  { value: 'topical', label: 'Topical' },
-  { value: 'sublingual', label: 'Sublingual' },
+  { value: "oral", label: "Oral" },
+  { value: "iv", label: "IV" },
+  { value: "im", label: "IM" },
+  { value: "topical", label: "Topical" },
+  { value: "sublingual", label: "Sublingual" },
 ];
 
 export const PrescriptionItemRow = ({
@@ -38,7 +42,7 @@ export const PrescriptionItemRow = ({
         <Input
           placeholder="Medicine Name *"
           value={item.medicine_name}
-          onChange={(e) => onUpdate(index, 'medicine_name', e.target.value)}
+          onChange={(e) => onUpdate(index, "medicine_name", e.target.value)}
           className="flex-1"
         />
         {canRemove && (
@@ -56,29 +60,29 @@ export const PrescriptionItemRow = ({
         <Input
           placeholder="Dosage (e.g., 500mg)"
           value={item.dosage}
-          onChange={(e) => onUpdate(index, 'dosage', e.target.value)}
+          onChange={(e) => onUpdate(index, "dosage", e.target.value)}
         />
         <Input
           placeholder="Frequency (e.g., TID)"
           value={item.frequency}
-          onChange={(e) => onUpdate(index, 'frequency', e.target.value)}
+          onChange={(e) => onUpdate(index, "frequency", e.target.value)}
         />
         <Input
           placeholder="Duration (days)"
           value={item.duration_days}
-          onChange={(e) => onUpdate(index, 'duration_days', e.target.value)}
+          onChange={(e) => onUpdate(index, "duration_days", e.target.value)}
         />
       </Grid>
       <Grid cols={2} gap={3}>
         <Select
           value={item.route}
-          onChange={(e) => onUpdate(index, 'route', e.target.value)}
+          onChange={(e) => onUpdate(index, "route", e.target.value)}
           options={routeOptions}
         />
         <Input
           placeholder="Special Instructions"
           value={item.instructions}
-          onChange={(e) => onUpdate(index, 'instructions', e.target.value)}
+          onChange={(e) => onUpdate(index, "instructions", e.target.value)}
         />
       </Grid>
     </Box>

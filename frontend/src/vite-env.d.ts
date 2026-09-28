@@ -1,3 +1,4 @@
+// Responsibility: Vite client environment and types
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {

@@ -12,21 +12,32 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from 'recharts';
-import { Card } from '@/components/ui/Card';
-import { Grid } from '@/components/ui/Grid';
-import { Heading } from '@/components/ui/Heading';
-import type { BedOccupancy, RevenueData } from '@/types';
+} from "recharts";
+import { Card } from "@/components/ui/Card";
+import { Grid } from "@/components/ui/Grid";
+import { Heading } from "@/components/ui/Heading";
+import type { BedOccupancy, RevenueData } from "@/types";
 
 export interface ReportsChartsProps {
   bedOccupancy: BedOccupancy | null;
   revenue: RevenueData[];
 }
 
-export const ReportsCharts = ({ bedOccupancy, revenue }: ReportsChartsProps) => {
+export const ReportsCharts = ({
+  bedOccupancy,
+  revenue,
+}: ReportsChartsProps) => {
   const occupancyData = [
-    { name: 'Occupied', value: bedOccupancy?.occupied_beds || 0, color: '#ef4444' },
-    { name: 'Available', value: bedOccupancy?.available_beds || 0, color: '#10b981' },
+    {
+      name: "Occupied",
+      value: bedOccupancy?.occupied_beds || 0,
+      color: "#ef4444",
+    },
+    {
+      name: "Available",
+      value: bedOccupancy?.available_beds || 0,
+      color: "#10b981",
+    },
   ];
 
   return (
@@ -37,7 +48,15 @@ export const ReportsCharts = ({ bedOccupancy, revenue }: ReportsChartsProps) => 
         </Heading>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
-            <Pie data={occupancyData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+            <Pie
+              data={occupancyData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              label
+            >
               {occupancyData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
