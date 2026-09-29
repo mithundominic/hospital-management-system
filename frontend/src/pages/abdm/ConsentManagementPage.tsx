@@ -1,49 +1,38 @@
-// Responsibility: Consent management dashboard for requesting and viewing patient consent artifacts
+// Responsibility: Consent management dashboard with tabs for active consent artifacts and request forms
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { useHospital } from "@/contexts/HospitalContext";
+import type { ReactNode } from "react";
 import { Box } from "@/components/ui/Box";
 import { Card } from "@/components/ui/Card";
 import { Select } from "@/components/ui/Select";
+import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConsentRequestForm } from "./components/ConsentRequestForm";
 import { ConsentArtifactsList } from "./components/ConsentArtifactsList";
-import type { Patient } from "@/types";
-import type { ConsentArtifact } from "./abdm.types";
+import { buildConsentTabs, type ConsentTabId } from "./abdm.config";
+import { useConsentManagementPage } from "./hooks/useConsentManagementPage";
 
 export default function ConsentManagementPage() {
-  const { currentHospital } = useHospital();
-  const [selectedPatient, setSelectedPatient] = useState<string>("");
+  const {
+    selectedPatient,
+    setSelectedPatient,
+    patientOptions,
+    consentArtifacts,
+    consentsLoading,
+    activeTab,
+    setActiveTab,
+  } = useConsentManagementPage();
 
-  const { data: patients = [] } = useQuery<Patient[]>({
-    queryKey: ["patients", currentHospital?.id],
-    enabled: !!currentHospital,
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return api.get<Patient[]>(`/hospitals/${currentHospital.id}/patients`);
-    },
-  });
+  const tabs = buildConsentTabs(consentArtifacts.length);
 
-  const { data: consentArtifacts = [], isLoading: consentsLoading } = useQuery<
-    ConsentArtifact[]
-  >({
-    queryKey: ["consent-artifacts", currentHospital?.id, selectedPatient],
-    enabled: !!currentHospital && !!selectedPatient,
-    queryFn: async () => {
-      if (!currentHospital || !selectedPatient) return [];
-      return api.get<ConsentArtifact[]>(
-        `/hospitals/${currentHospital.id}/patients/${selectedPatient}/abdm/consents`,
-      );
-    },
-  });
-
-  const patientOptions = [
-    { value: "", label: "Select Patient" },
-    ...patients.map((p) => ({ value: p.id, label: p.full_name })),
-  ];
+  const tabContent: Record<ConsentTabId, ReactNode> = {
+    artifacts: consentsLoading ? (
+      <LoadingSpinner size="md" />
+    ) : (
+      <ConsentArtifactsList artifacts={consentArtifacts} />
+    ),
+    request: <ConsentRequestForm patientId={selectedPatient} />,
+  };
 
   return (
     <Box className="space-y-6">
@@ -60,13 +49,9 @@ export default function ConsentManagementPage() {
         />
       </Card>
       {selectedPatient && (
-        <Box className="space-y-6">
-          <ConsentRequestForm patientId={selectedPatient} />
-          {consentsLoading ? (
-            <LoadingSpinner size="md" />
-          ) : (
-            <ConsentArtifactsList artifacts={consentArtifacts} />
-          )}
+        <Box className="space-y-4">
+          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          {tabContent[activeTab]}
         </Box>
       )}
     </Box>

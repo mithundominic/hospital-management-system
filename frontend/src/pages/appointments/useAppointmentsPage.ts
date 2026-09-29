@@ -5,7 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
+import {
+  getHospitalAppointments,
+  updateHospitalAppointment,
+} from "@/services/appointment.service";
+import { QUERY_KEYS, APPOINTMENT_STATUS } from "@/constants";
 import type { Appointment } from "@/types";
 
 export const useAppointmentsPage = () => {
@@ -22,12 +26,13 @@ export const useAppointmentsPage = () => {
     isLoading,
     refetch,
   } = useQuery<Appointment[]>({
-    queryKey: ["appointments", currentHospital?.id, selectedDate],
+    queryKey: QUERY_KEYS.hospitals.appointments(
+      currentHospital?.id,
+      selectedDate,
+    ),
     queryFn: async () => {
       if (!currentHospital) return [];
-      return await api.get<Appointment[]>(
-        `/hospitals/${currentHospital.id}/appointments?date=${selectedDate}`,
-      );
+      return await getHospitalAppointments(currentHospital.id, selectedDate);
     },
     enabled: !!currentHospital,
   });
@@ -35,10 +40,9 @@ export const useAppointmentsPage = () => {
   const handleConfirmCancel = useCallback(async () => {
     if (!cancellingApt || !currentHospital) return;
     try {
-      await api.patch(
-        `/hospitals/${currentHospital.id}/appointments/${cancellingApt.id}`,
-        { status: "cancelled" },
-      );
+      await updateHospitalAppointment(currentHospital.id, cancellingApt.id, {
+        status: APPOINTMENT_STATUS.CANCELLED,
+      });
       toast.success("Appointment cancelled successfully");
       refetch();
     } catch {

@@ -7,11 +7,12 @@ import { AuthenticatedRequest } from "../../types/express.types";
 export const getBeds: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    let query = authReq.supabase!
-      .from("beds")
+    let query = authReq
+      .supabase!.from("beds")
       .select("*")
       .eq("hospital_id", req.params.hospitalId);
-    if (req.query.status) query = query.eq("status", req.query.status as string);
+    if (req.query.status)
+      query = query.eq("status", req.query.status as string);
     const { data, error } = await query;
     if (error) throw error;
     sendData(res, data);
@@ -24,8 +25,8 @@ export const createBed: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const { department_id, bed_number, ward } = req.body;
-    const { data, error } = await authReq.supabase!
-      .from("beds")
+    const { data, error } = await authReq
+      .supabase!.from("beds")
       .insert({
         hospital_id: req.params.hospitalId,
         department_id,
@@ -44,8 +45,8 @@ export const createBed: RouteHandler = async (req, res, next) => {
 export const updateBed: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase!
-      .from("beds")
+    const { data, error } = await authReq
+      .supabase!.from("beds")
       .update(req.body)
       .eq("id", req.params.bedId)
       .eq("hospital_id", req.params.hospitalId)

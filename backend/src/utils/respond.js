@@ -1,4 +1,4 @@
-// src/utils/respond.js
+// Responsibility: Standard { data, error } HTTP response envelope formatter
 // The { data, error } envelope documented in docs/API_SPEC.md, in one place
 // so every route returns it the same shape.
 

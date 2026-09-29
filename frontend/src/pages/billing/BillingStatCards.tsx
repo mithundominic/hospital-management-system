@@ -1,8 +1,11 @@
 // Responsibility: Render invoice status metric cards for billing overview
 
 import { Receipt, CheckCircle, Clock, DollarSign } from "lucide-react";
-import { Grid } from "@/components/ui/Grid";
-import { StatCard } from "@/components/common/StatCard";
+import {
+  StatCardGrid,
+  type StatItemConfig,
+} from "@/components/common/StatCardGrid";
+import { computeBillingMetrics } from "./billing.utils";
 import type { Invoice } from "@/types";
 
 export interface BillingStatCardsProps {
@@ -10,45 +13,38 @@ export interface BillingStatCardsProps {
 }
 
 export const BillingStatCards = ({ invoices }: BillingStatCardsProps) => {
-  const stats = [
+  const metrics = computeBillingMetrics(invoices);
+
+  const stats: StatItemConfig[] = [
     {
       label: "Total Invoices",
-      count: invoices.length,
+      value: metrics.total,
       icon: Receipt,
-      color: "text-blue-600",
+      iconColor: "text-blue-600",
+      cardPadding: "p-4",
     },
     {
       label: "Paid",
-      count: invoices.filter((i) => i.status === "paid").length,
+      value: metrics.paid,
       icon: CheckCircle,
-      color: "text-green-600",
+      iconColor: "text-green-600",
+      cardPadding: "p-4",
     },
     {
       label: "Pending",
-      count: invoices.filter((i) => i.status === "pending").length,
+      value: metrics.pending,
       icon: Clock,
-      color: "text-yellow-600",
+      iconColor: "text-yellow-600",
+      cardPadding: "p-4",
     },
     {
       label: "Overdue",
-      count: invoices.filter((i) => i.status === "overdue").length,
+      value: metrics.overdue,
       icon: DollarSign,
-      color: "text-red-600",
+      iconColor: "text-red-600",
+      cardPadding: "p-4",
     },
   ];
 
-  return (
-    <Grid cols={4} gap={6}>
-      {stats.map((s) => (
-        <StatCard
-          key={s.label}
-          label={s.label}
-          value={s.count}
-          icon={s.icon}
-          iconColor={s.color}
-          cardPadding="p-4"
-        />
-      ))}
-    </Grid>
-  );
+  return <StatCardGrid stats={stats} cols={4} gap={6} />;
 };

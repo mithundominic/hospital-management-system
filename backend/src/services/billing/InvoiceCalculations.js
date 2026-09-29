@@ -1,4 +1,3 @@
-// backend/src/services/billing/InvoiceCalculations.js
 // Responsibility: Invoice total calculations and line item processing
 
 /**

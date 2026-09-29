@@ -4,7 +4,7 @@
 
 import express from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
-import { PERMISSIONS } from "../constants";
+import { PERMISSIONS, API_ROUTES } from "../constants";
 import {
   getPolicies,
   createPolicy,
@@ -18,22 +18,22 @@ import {
 const router = express.Router();
 
 // Patient-owned insurance policies - RLS enforces access
-router.get("/patients/:patientId/insurance-policies", getPolicies);
-router.post("/patients/:patientId/insurance-policies", createPolicy);
+router.get(API_ROUTES.insurance.policies, getPolicies);
+router.post(API_ROUTES.insurance.policies, createPolicy);
 
 // Hospital-scoped insurance claims
 router.get(
-  "/hospitals/:hospitalId/insurance-claims",
+  API_ROUTES.insurance.claims,
   requireHospitalPermission(PERMISSIONS.INSURANCE_CLAIMS_READ),
   getClaims,
 );
 router.post(
-  "/hospitals/:hospitalId/insurance-claims",
+  API_ROUTES.insurance.claims,
   requireHospitalPermission(PERMISSIONS.INSURANCE_CLAIMS_WRITE),
   createClaim,
 );
 router.patch(
-  "/hospitals/:hospitalId/insurance-claims/:claimId",
+  API_ROUTES.insurance.claimDetail,
   requireHospitalPermission(PERMISSIONS.INSURANCE_CLAIMS_WRITE),
   updateClaim,
 );

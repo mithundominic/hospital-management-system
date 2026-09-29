@@ -3,6 +3,7 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import MainLayout from "@/components/layout/MainLayout";
 import { APP_ROUTES } from "@/constants";
 
@@ -25,11 +26,7 @@ const StaffPage = lazy(() => import("@/pages/staff/StaffPage"));
 const ShiftsPage = lazy(() => import("@/pages/shifts/ShiftsPage"));
 const ReportsPage = lazy(() => import("@/pages/reports/ReportsPage"));
 
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-  </div>
-);
+const LoadingFallback = () => <LoadingSpinner size="lg" fullScreen />;
 
 export const AppRoutes = () => (
   <Suspense fallback={<LoadingFallback />}>

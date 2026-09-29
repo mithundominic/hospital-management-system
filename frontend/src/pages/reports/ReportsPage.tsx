@@ -1,47 +1,27 @@
 // Responsibility: Container page for operational analytics, charts, and inventory stock reports
 
-import { useQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { Download } from "lucide-react";
-import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
 import { Box } from "@/components/ui/Box";
 import { Button } from "@/components/ui/Button";
+import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ReportsStatCards } from "./ReportsStatCards";
 import { ReportsCharts } from "./ReportsCharts";
 import { ReportsLowStockTable } from "./ReportsLowStockTable";
-import type { BedOccupancy, RevenueData, LowStockItem } from "@/types";
+import { buildReportsTabs, type ReportsTabId } from "./reports.config";
+import { useReportsPage } from "./useReportsPage";
 
 export default function ReportsPage() {
-  const { currentHospital } = useHospital();
+  const { bedOccupancy, revenue, lowStock, activeTab, setActiveTab } =
+    useReportsPage();
 
-  const { data: bedOccupancy } = useQuery<BedOccupancy | null>({
-    queryKey: QUERY_KEYS.hospitals.reports.bedOccupancy(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return null;
-      return api.get(API_ROUTES.hospitals.reports.bedOccupancy(currentHospital.id));
-    },
-    enabled: !!currentHospital,
-  });
+  const tabs = buildReportsTabs(lowStock.length);
 
-  const { data: revenue = [] } = useQuery<RevenueData[]>({
-    queryKey: QUERY_KEYS.hospitals.reports.revenue(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return api.get(API_ROUTES.hospitals.reports.dailyRevenue(currentHospital.id));
-    },
-    enabled: !!currentHospital,
-  });
-
-  const { data: lowStock = [] } = useQuery<LowStockItem[]>({
-    queryKey: QUERY_KEYS.hospitals.reports.lowStock(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return api.get(API_ROUTES.hospitals.reports.lowStock(currentHospital.id));
-    },
-    enabled: !!currentHospital,
-  });
+  const tabContent: Record<ReportsTabId, ReactNode> = {
+    charts: <ReportsCharts bedOccupancy={bedOccupancy} revenue={revenue} />,
+    low_stock: <ReportsLowStockTable lowStock={lowStock} />,
+  };
 
   return (
     <Box className="space-y-6">
@@ -57,14 +37,15 @@ export default function ReportsPage() {
       />
 
       <ReportsStatCards
-        bedOccupancy={bedOccupancy ?? null}
+        bedOccupancy={bedOccupancy}
         revenue={revenue}
         lowStock={lowStock}
       />
 
-      <ReportsCharts bedOccupancy={bedOccupancy ?? null} revenue={revenue} />
-
-      <ReportsLowStockTable lowStock={lowStock} />
+      <Box className="space-y-4">
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        {tabContent[activeTab]}
+      </Box>
     </Box>
   );
 }

@@ -2,8 +2,13 @@
 
 import express from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
-import { PERMISSIONS } from "../constants";
+import { PERMISSIONS, API_ROUTES } from "../constants";
 import { sendData } from "../utils/respond";
+import {
+  queryAppointments,
+  createNewAppointment,
+  updateExistingAppointment,
+} from "../services/appointments/AppointmentService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
 const router = express.Router();
@@ -11,24 +16,16 @@ const router = express.Router();
 const getAppointments: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    let query = authReq.supabase
-      .from("appointments")
-      .select("*")
-      .eq("hospital_id", authReq.params.hospitalId);
-
-    if (authReq.query.doctor_membership_id) {
-      query = query.eq("doctor_membership_id", authReq.query.doctor_membership_id as string);
-    }
-    if (authReq.query.patient_id) {
-      query = query.eq("patient_id", authReq.query.patient_id as string);
-    }
-    if (authReq.query.date) {
-      const date = authReq.query.date as string;
-      query = query.gte("scheduled_at", `${date}T00:00:00`).lte("scheduled_at", `${date}T23:59:59`);
-    }
-
-    const { data, error } = await query.order("scheduled_at", { ascending: true });
-    if (error) throw error;
+    const data = await queryAppointments(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      {
+        doctor_membership_id: authReq.query.doctor_membership_id as
+          string | undefined,
+        patient_id: authReq.query.patient_id as string | undefined,
+        date: authReq.query.date as string | undefined,
+      },
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -38,16 +35,11 @@ const getAppointments: RouteHandler = async (req, res, next) => {
 const createAppointment: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { patient_id, doctor_membership_id, department_id, scheduled_at, notes } = authReq.body;
-    const { data, error } = await authReq.supabase
-      .from("appointments")
-      .insert({
-        hospital_id: authReq.params.hospitalId,
-        patient_id, doctor_membership_id, department_id, scheduled_at, notes,
-      })
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await createNewAppointment(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.body,
+    );
     sendData(res, data, 201);
   } catch (err) {
     next(err);
@@ -57,14 +49,12 @@ const createAppointment: RouteHandler = async (req, res, next) => {
 const updateAppointment: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("appointments")
-      .update(authReq.body)
-      .eq("id", authReq.params.apptId)
-      .eq("hospital_id", authReq.params.hospitalId)
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await updateExistingAppointment(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.params.apptId!,
+      authReq.body,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -72,17 +62,17 @@ const updateAppointment: RouteHandler = async (req, res, next) => {
 };
 
 router.get(
-  "/hospitals/:hospitalId/appointments",
+  API_ROUTES.appointments.list,
   requireHospitalPermission(PERMISSIONS.APPOINTMENTS_READ),
   getAppointments,
 );
 router.post(
-  "/hospitals/:hospitalId/appointments",
+  API_ROUTES.appointments.list,
   requireHospitalPermission(PERMISSIONS.APPOINTMENTS_WRITE),
   createAppointment,
 );
 router.patch(
-  "/hospitals/:hospitalId/appointments/:apptId",
+  API_ROUTES.appointments.detail,
   requireHospitalPermission(PERMISSIONS.APPOINTMENTS_WRITE),
   updateAppointment,
 );

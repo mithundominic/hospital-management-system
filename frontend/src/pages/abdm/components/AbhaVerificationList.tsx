@@ -8,6 +8,7 @@ import { Text } from "@/components/ui/Text";
 import { Heading } from "@/components/ui/Heading";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/common/EmptyState";
+import { abdmLinkStatusConfig } from "@/configs/status.config";
 import type { LinkRequest } from "../abdm.types";
 
 interface AbhaVerificationListProps {
@@ -33,7 +34,9 @@ export function AbhaVerificationList({
 
   return (
     <Card className="p-6">
-      <Heading level={3} className="mb-4">Verification History</Heading>
+      <Heading level={3} className="mb-4">
+        Verification History
+      </Heading>
       <Box className="space-y-3">
         {requests.map((request) => (
           <Box
@@ -47,13 +50,18 @@ export function AbhaVerificationList({
           >
             <Flex justify="between" align="center" className="mb-1">
               <Text weight="medium">Type: {request.link_type}</Text>
-              <Badge variant={request.status === "active" ? "success" : "default"}>
-                {request.status}
+              <Badge
+                variant={
+                  abdmLinkStatusConfig[request.status]?.variant || "default"
+                }
+              >
+                {abdmLinkStatusConfig[request.status]?.label || request.status}
               </Badge>
             </Flex>
             <Text size="sm" variant="muted">
               Initiated: {new Date(request.initiated_at).toLocaleString()}
-              {request.resolved_at && ` | Resolved: ${new Date(request.resolved_at).toLocaleString()}`}
+              {request.resolved_at &&
+                ` | Resolved: ${new Date(request.resolved_at).toLocaleString()}`}
             </Text>
           </Box>
         ))}

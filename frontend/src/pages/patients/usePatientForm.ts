@@ -3,8 +3,10 @@
 import { useState, useCallback, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { API_ROUTES } from "@/constants";
+import {
+  createHospitalPatient,
+  updateHospitalPatient,
+} from "@/services/patient.service";
 import type { Patient } from "@/types";
 
 export interface PatientFormData {
@@ -51,16 +53,14 @@ export const usePatientForm = (
       try {
         if (isEditMode && patient?.id) {
           const { hospital_patient_number, ...updateData } = formData;
-          await api.patch(
-            API_ROUTES.hospitals.patient(currentHospital.id, patient.id),
+          await updateHospitalPatient(
+            currentHospital.id,
+            patient.id,
             updateData,
           );
           toast.success("Patient updated successfully");
         } else {
-          await api.post(
-            API_ROUTES.hospitals.patients(currentHospital.id),
-            formData,
-          );
+          await createHospitalPatient(currentHospital.id, formData);
           toast.success("Patient registered successfully");
         }
         onSuccess();

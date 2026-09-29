@@ -1,8 +1,10 @@
 // Responsibility: Render inpatient bed occupancy metrics and capacity summary
 
 import { Bed, User, CheckCircle, AlertTriangle } from "lucide-react";
-import { Grid } from "@/components/ui/Grid";
-import { StatCard } from "@/components/common/StatCard";
+import {
+  StatCardGrid,
+  type StatItemConfig,
+} from "@/components/common/StatCardGrid";
 import type { Bed as BedType } from "@/types";
 
 export interface IPDStatCardsProps {
@@ -16,40 +18,42 @@ export const IPDStatCards = ({ beds }: IPDStatCardsProps) => {
   const maintenance = beds.filter((b) => b.status === "maintenance").length;
   const occupancyRate = total > 0 ? Math.round((occupied / total) * 100) : 0;
 
-  return (
-    <Grid cols={4} gap={6}>
-      <StatCard
-        label="Total Beds"
-        value={total}
-        icon={Bed}
-        iconColor="text-blue-600"
-        cardPadding="p-4"
-      />
-      <StatCard
-        label="Occupied"
-        value={occupied}
-        valueColor="text-red-600"
-        subtext={`${occupancyRate}% occupancy`}
-        icon={User}
-        iconColor="text-red-600"
-        cardPadding="p-4"
-      />
-      <StatCard
-        label="Available"
-        value={available}
-        valueColor="text-green-600"
-        icon={CheckCircle}
-        iconColor="text-green-600"
-        cardPadding="p-4"
-      />
-      <StatCard
-        label="Maintenance"
-        value={maintenance}
-        valueColor="text-yellow-600"
-        icon={AlertTriangle}
-        iconColor="text-yellow-600"
-        cardPadding="p-4"
-      />
-    </Grid>
-  );
+  const stats: StatItemConfig[] = [
+    {
+      label: "Total Beds",
+      value: total,
+      icon: Bed,
+      iconColor: "text-blue-600",
+      cardPadding: "p-4",
+    },
+    {
+      label: "Occupied",
+      value: occupied,
+      valueColor: "text-red-600",
+      subtext: `${occupancyRate}% occupancy`,
+      icon: User,
+      iconColor: "text-red-600",
+      cardPadding: "p-4",
+    },
+    {
+      label: "Available",
+      value: available,
+      valueColor: "text-green-600",
+      icon: CheckCircle,
+      iconColor: "text-green-600",
+      cardPadding: "p-4",
+    },
+    {
+      label: "Maintenance",
+      value: maintenance,
+      valueColor: "text-yellow-600",
+      icon: AlertTriangle,
+      iconColor: "text-yellow-600",
+      cardPadding: "p-4",
+    },
+  ];
+
+  return <StatCardGrid stats={stats} cols={4} gap={6} />;
 };
+
+export default IPDStatCards;

@@ -1,5 +1,5 @@
 // scripts/verify-compliance.js
-// Responsibility: Programmatically and deterministically verify all 10 architectural acceptance criteria
+// Responsibility: Programmatically and deterministically verify all 12 architectural acceptance criteria
 
 const fs = require("fs");
 const path = require("path");
@@ -39,9 +39,9 @@ Usage:
   node scripts/verify-compliance.js [options]
 
 Options:
-  --quick, -q       Run only static analysis gates (Gates 1-7, < 2s)
-  --full            Run all 10 gates including builds and typechecks (default)
-  --gate <number>   Execute only the specified gate number (1-10)
+  --quick, -q       Run only static analysis gates (Gates 1-7, 11-14, < 3s)
+  --full            Run all 14 gates including builds and typechecks (default)
+  --gate <number>   Execute only the specified gate number (1-14)
   --help, -h        Display this help message
 `);
   process.exit(0);
@@ -93,7 +93,8 @@ function runGate(id, name, testFn) {
 
   process.stdout.write(`Gate ${id}: ${name}... `);
 
-  if (isQuick && id >= 8) {
+  const isBuildGate = id === 8 || id === 9 || id === 10;
+  if (isQuick && isBuildGate) {
     console.log(`${COLORS.yellow}SKIPPED (--quick)${COLORS.reset}`);
     results.push({ id, name, passed: true, skipped: true, violations: [] });
     return;
@@ -147,11 +148,11 @@ console.log(
 // -------------------------------------------------------------
 // GATE 1: Rule 20 - 0 .ts/.tsx files > 100 lines
 // -------------------------------------------------------------
-runGate(1, "Rule 20 (<= 100 lines per .ts/.tsx file)", () => {
+runGate(1, "Rule 20 (<= 100 lines per source file)", () => {
   const violations = [];
   const files = [
     ...collectFiles(FRONTEND_SRC, [".ts", ".tsx"]),
-    ...collectFiles(BACKEND_SRC, [".ts"]),
+    ...collectFiles(BACKEND_SRC, [".ts", ".js"]),
   ];
   for (const file of files) {
     const content = fs.readFileSync(file, "utf8");
@@ -297,7 +298,7 @@ runGate(5, "Rule 19 (Single-responsibility header in all files)", () => {
   const violations = [];
   const files = [
     ...collectFiles(FRONTEND_SRC, [".ts", ".tsx"]),
-    ...collectFiles(BACKEND_SRC, [".ts"]),
+    ...collectFiles(BACKEND_SRC, [".ts", ".js"]),
   ];
 
   for (const file of files) {
@@ -462,6 +463,12 @@ runGate(9, "Frontend typecheck (npx tsc --noEmit)", () => {
 // -------------------------------------------------------------
 runGate(10, "Frontend build (npm run build)", () => {
   try {
+    const distPath = path.join(FRONTEND_DIR, "dist");
+    if (fs.existsSync(distPath)) {
+      try {
+        fs.rmSync(distPath, { recursive: true, force: true });
+      } catch (_) {}
+    }
     execSync("npm run build", {
       cwd: FRONTEND_DIR,
       stdio: "pipe",
@@ -477,6 +484,138 @@ runGate(10, "Frontend build (npm run build)", () => {
     return [output.trim() || "Frontend build failed with non-zero exit code"];
   }
 });
+
+// -------------------------------------------------------------
+// GATE 11: Rule 18 (Status badge configurations)
+// -------------------------------------------------------------
+runGate(11, "Rule 18 (Configuration-driven status badges)", () => {
+  const violations = [];
+  const tsxFiles = collectFiles(FRONTEND_SRC, [".tsx"]);
+
+  for (const file of tsxFiles) {
+    const relPath = path.relative(ROOT_DIR, file);
+    const content = fs.readFileSync(file, "utf8");
+    const cleaned = stripBlockComments(content);
+
+    // Check for inline ternary in Badge variant prop
+    if (/<Badge\s+[^>]*variant=\{[^}]*\?[^}]*:[^}]*\}/.test(cleaned)) {
+      violations.push(
+        `${relPath} contains inline ternary conditional in <Badge variant={...}>`,
+      );
+    }
+
+    // Check for local status variant map declarations
+    if (
+      /\b(const|let|var)\s+(statusVariants|typeVariantMap|statusBadgeMap|roleBadgeVariants|memberStatusBadgeMap)\b/.test(
+        cleaned,
+      )
+    ) {
+      violations.push(
+        `${relPath} defines local ad-hoc status badge mapping instead of importing centralized config`,
+      );
+    }
+  }
+
+  return violations;
+});
+
+// -------------------------------------------------------------
+// GATE 12: Rule 18 / Rule 14 (Configuration-driven table headers)
+// -------------------------------------------------------------
+runGate(12, "Rule 18 & 14 (Configuration-driven table headers)", () => {
+  const violations = [];
+  const tsxFiles = collectFiles(FRONTEND_SRC, [".tsx"]);
+
+  const allowedFiles = [
+    path.normalize("frontend/src/components/common/DataTableHeader.tsx"),
+    path.normalize("frontend/src/components/common/SkeletonTable.tsx"),
+  ];
+
+  for (const file of tsxFiles) {
+    const rel = path.normalize(path.relative(ROOT_DIR, file));
+    if (allowedFiles.includes(rel)) continue;
+
+    const content = fs.readFileSync(file, "utf8");
+    if (content.includes("<TableHead")) {
+      violations.push(
+        `${rel} contains hardcoded <TableHead> elements instead of using DataTableHeader`,
+      );
+    }
+  }
+
+  return violations;
+});
+
+// -------------------------------------------------------------
+// GATE 13: Rule 7 (Service Layer Isolation: 0 direct DB queries in routes)
+// -------------------------------------------------------------
+runGate(
+  13,
+  "Rule 7 (Service Layer Isolation: 0 direct DB queries in routes)",
+  () => {
+    const violations = [];
+    const routeFiles = collectFiles(path.join(BACKEND_SRC, "routes"), [
+      ".ts",
+      ".js",
+    ]);
+
+    for (const file of routeFiles) {
+      const content = fs.readFileSync(file, "utf8");
+      const cleaned = stripBlockComments(content);
+      const lines = cleaned.split(/\r?\n/);
+      lines.forEach((line, idx) => {
+        const codeOnly = line.replace(/\/\/.*$/, "");
+        if (/\.supabase\s*\.\s*from\(/.test(codeOnly)) {
+          violations.push(
+            `${path.relative(ROOT_DIR, file)}:${idx + 1} contains direct supabase.from() call`,
+          );
+        }
+      });
+    }
+
+    return violations;
+  },
+);
+
+// -------------------------------------------------------------
+// GATE 14: Rule 7 & 24 (Frontend Service Isolation: 0 direct api calls in hooks/components)
+// -------------------------------------------------------------
+runGate(
+  14,
+  "Rule 7 & 24 (Frontend Service Isolation: 0 direct api calls in hooks/components)",
+  () => {
+    const violations = [];
+    const servicesDir = path.resolve(FRONTEND_SRC, "services");
+    const apiFile = path.resolve(FRONTEND_SRC, "lib", "api.ts");
+    const files = collectFiles(FRONTEND_SRC, [".ts", ".tsx"]).filter((f) => {
+      const resolved = path.resolve(f);
+      return (
+        !resolved.startsWith(servicesDir + path.sep) &&
+        resolved !== servicesDir &&
+        resolved !== apiFile
+      );
+    });
+
+    for (const file of files) {
+      const content = fs.readFileSync(file, "utf8");
+      const cleaned = stripBlockComments(content);
+      const lines = cleaned.split(/\r?\n/);
+      lines.forEach((line, idx) => {
+        const codeOnly = line.replace(/\/\/.*$/, "");
+        const match = codeOnly.match(
+          /\bapi\s*\.\s*(get|post|put|patch|delete)\b/,
+        );
+        if (match) {
+          violations.push(
+            `${path.relative(ROOT_DIR, file)}:${idx + 1} contains direct api.${match[1]}() call`,
+          );
+        }
+      });
+    }
+
+    return violations;
+  },
+);
 
 // -------------------------------------------------------------
 // Results Summary

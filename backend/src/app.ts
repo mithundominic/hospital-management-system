@@ -1,4 +1,3 @@
-// backend/src/app.ts
 // Responsibility: Express application setup and route mounting
 
 import express from "express";

@@ -1,4 +1,3 @@
-// backend/src/services/abdm/AbdmAuth.js
 // Responsibility: Handle ABDM gateway authentication and token management
 
 const config = require("../../config/env");

@@ -4,10 +4,15 @@ import { useState, useCallback, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import {
+  createHospitalShift,
+  updateHospitalShift,
+} from "@/services/shift.service";
+import { getHospitalMemberships } from "@/services/staff.service";
+import { QUERY_KEYS } from "@/constants";
 import type { Shift } from "@/types";
 import type { ShiftFormData } from "./shift.types";
+import { getShiftPresetTimes, toShiftPayload } from "./shift.utils";
 
 export const useShiftForm = (
   onClose: () => void,
@@ -19,21 +24,17 @@ export const useShiftForm = (
   const [formData, setFormData] = useState<ShiftFormData>({
     staff_id: shift?.user_id || "",
     shift_date: shift?.shift_date || new Date().toISOString().slice(0, 10),
-    shift_start: shift?.start_time ? `${shift.shift_date}T${shift.start_time}` : "",
+    shift_start: shift?.start_time
+      ? `${shift.shift_date}T${shift.start_time}`
+      : "",
     shift_end: shift?.end_time ? `${shift.shift_date}T${shift.end_time}` : "",
     shift_type: shift?.shift_type || "morning",
   });
 
-  const { data: staffMembers = [] } = useQuery<
-    { id: string; user_email?: string; role_name?: string }[]
-  >({
+  const { data: staffMembers = [] } = useQuery({
     queryKey: QUERY_KEYS.hospitals.memberships(currentHospital?.id),
     queryFn: () =>
-      currentHospital
-        ? api.get<{ id: string; user_email?: string; role_name?: string }[]>(
-            API_ROUTES.hospitals.memberships(currentHospital.id),
-          )
-        : [],
+      currentHospital ? getHospitalMemberships(currentHospital.id) : [],
     enabled: !!currentHospital,
   });
 
@@ -46,12 +47,7 @@ export const useShiftForm = (
 
   const setPreset = useCallback((type: "morning" | "afternoon" | "night") => {
     setFormData((prev) => {
-      const date = prev.shift_date || new Date().toISOString().slice(0, 10);
-      const times = {
-        morning: { start: `${date}T06:00`, end: `${date}T14:00` },
-        afternoon: { start: `${date}T14:00`, end: `${date}T22:00` },
-        night: { start: `${date}T22:00`, end: `${date}T06:00` },
-      }[type];
+      const times = getShiftPresetTimes(prev.shift_date, type);
       return {
         ...prev,
         shift_type: type,
@@ -67,18 +63,12 @@ export const useShiftForm = (
       if (!currentHospital) return;
       setLoading(true);
       try {
-        const payload = {
-          user_id: formData.staff_id,
-          shift_date: formData.shift_date,
-          shift_type: formData.shift_type,
-          start_time: formData.shift_start.slice(11, 16),
-          end_time: formData.shift_end.slice(11, 16),
-        };
+        const payload = toShiftPayload(formData);
         if (shift?.id) {
-          await api.patch(API_ROUTES.hospitals.shift(currentHospital.id, shift.id), payload);
+          await updateHospitalShift(currentHospital.id, shift.id, payload);
           toast.success("Shift updated successfully");
         } else {
-          await api.post(API_ROUTES.hospitals.shifts(currentHospital.id), payload);
+          await createHospitalShift(currentHospital.id, payload);
           toast.success("Shift scheduled successfully");
         }
         onSuccess();
@@ -93,5 +83,12 @@ export const useShiftForm = (
     [currentHospital, formData, shift, onSuccess, onClose],
   );
 
-  return { loading, formData, updateField, staffMembers, setPreset, handleSubmit } as const;
+  return {
+    loading,
+    formData,
+    updateField,
+    staffMembers,
+    setPreset,
+    handleSubmit,
+  } as const;
 };

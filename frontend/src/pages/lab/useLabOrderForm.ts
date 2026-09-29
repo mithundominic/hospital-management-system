@@ -1,20 +1,17 @@
-// Responsibility: Manage lab order form state, encounter selection, and submission logic
+// Responsibility: Manage lab order form state, validation, and submission logic
 
 import { useState, useCallback, type FormEvent } from "react";
-import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import {
+  createHospitalLabOrder,
+  updateHospitalLabOrder,
+} from "@/services/lab.service";
 import type { LabOrder } from "@/types";
+import type { LabOrderFormData } from "./lab.types";
+import { useLabEncounters } from "./useLabEncounters";
 
-export interface LabOrderFormData {
-  encounter_id: string;
-  test_name: string;
-  sample_type: string;
-  priority: "routine" | "urgent" | "stat";
-  instructions: string;
-}
+export { type LabOrderFormData } from "./lab.types";
 
 export const useLabOrderForm = (
   onClose: () => void,
@@ -31,18 +28,7 @@ export const useLabOrderForm = (
     instructions: "",
   });
 
-  const { data: encounters = [] } = useQuery<
-    { id: string; chief_complaint?: string }[]
-  >({
-    queryKey: QUERY_KEYS.hospitals.encounters(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<{ id: string; chief_complaint?: string }[]>(
-        API_ROUTES.hospitals.encounters(currentHospital.id),
-      );
-    },
-    enabled: !!currentHospital,
-  });
+  const encounterOptions = useLabEncounters(currentHospital?.id);
 
   const updateField = useCallback(
     <K extends keyof LabOrderFormData>(key: K, val: LabOrderFormData[K]) => {
@@ -58,10 +44,14 @@ export const useLabOrderForm = (
       setLoading(true);
       try {
         if (labOrder?.id) {
-          await api.patch(API_ROUTES.hospitals.labOrder(currentHospital.id, labOrder.id), formData);
+          await updateHospitalLabOrder(
+            currentHospital.id,
+            labOrder.id,
+            formData,
+          );
           toast.success("Lab order updated successfully");
         } else {
-          await api.post(API_ROUTES.hospitals.labOrders(currentHospital.id), formData);
+          await createHospitalLabOrder(currentHospital.id, formData);
           toast.success("Lab order created successfully");
         }
         onSuccess();
@@ -77,13 +67,11 @@ export const useLabOrderForm = (
     [currentHospital, formData, labOrder, onSuccess, onClose],
   );
 
-  const encounterOptions = [
-    { value: "", label: "Select Encounter" },
-    ...encounters.map((e) => ({
-      value: e.id,
-      label: e.chief_complaint || `Encounter #${e.id.slice(0, 8)}`,
-    })),
-  ];
-
-  return { loading, formData, updateField, encounterOptions, handleSubmit } as const;
+  return {
+    loading,
+    formData,
+    updateField,
+    encounterOptions,
+    handleSubmit,
+  } as const;
 };

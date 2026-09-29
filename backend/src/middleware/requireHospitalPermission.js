@@ -1,4 +1,4 @@
-// src/middleware/requireHospitalPermission.js
+// Responsibility: Middleware enforcing hospital-scoped RBAC permissions
 //
 // requireHospitalPermission('patients.read') reads hospitalId from
 // req.params (defaults to :hospitalId, override via { hospitalIdParam }),

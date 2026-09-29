@@ -2,15 +2,11 @@
 
 import { TestTube } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-} from "@/components/ui/Table";
+import { Table, TableBody } from "@/components/ui/Table";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SkeletonTable } from "@/components/common/SkeletonTable";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { LAB_ORDERS_COLUMNS } from "./lab.config";
 import { LabOrdersTableRow } from "./LabOrdersTableRow";
 import type { LabOrder } from "@/types";
 
@@ -50,14 +46,7 @@ export const LabOrdersTable = ({
   return (
     <Card className="overflow-hidden">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Test Name</TableHead>
-            <TableHead>Ordered Date</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DataTableHeader columns={LAB_ORDERS_COLUMNS} />
         <TableBody>
           {orders.map((o) => (
             <LabOrdersTableRow key={o.id} order={o} />

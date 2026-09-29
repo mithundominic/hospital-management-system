@@ -1,26 +1,21 @@
 // Responsibility: Render single pharmacy inventory item row with stock calculations
 
 import { TableRow, TableCell } from "@/components/ui/Table";
-import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
 import { Text } from "@/components/ui/Text";
+import { inventoryStockStatusConfig } from "@/configs/status.config";
 import type { InventoryItem } from "@/types";
 
 export interface PharmacyTableRowProps {
   item: InventoryItem;
 }
 
-const stockLevelBadgeMap: Record<
-  "low" | "normal",
-  { variant: BadgeVariant; label: string; textClass: string }
-> = {
-  low: { variant: "danger", label: "Low Stock", textClass: "text-red-600" },
-  normal: { variant: "success", label: "In Stock", textClass: "text-gray-900" },
-};
-
 export const PharmacyTableRow = ({ item }: PharmacyTableRowProps) => {
   const stock = item.quantity_in_stock ?? 0;
   const isLow = stock <= item.reorder_level;
-  const stockConfig = stockLevelBadgeMap[isLow ? "low" : "normal"];
+  const stockConfig =
+    inventoryStockStatusConfig[isLow ? "low_stock" : "in_stock"];
+  const textClass = isLow ? "text-red-600" : "text-gray-900";
 
   return (
     <TableRow>
@@ -36,7 +31,7 @@ export const PharmacyTableRow = ({ item }: PharmacyTableRowProps) => {
         <Text size="sm">{item.category}</Text>
       </TableCell>
       <TableCell>
-        <Text weight="semibold" className={stockConfig.textClass}>
+        <Text weight="semibold" className={textClass}>
           {stock} {item.unit_of_measure}
         </Text>
       </TableCell>

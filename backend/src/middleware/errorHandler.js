@@ -1,4 +1,4 @@
-// src/middleware/errorHandler.js
+// Responsibility: Global Express error handler formatting unexpected failures
 // Last-resort handler for anything a route didn't catch itself, including
 // Supabase/Postgres errors bubbling up via next(err).
 

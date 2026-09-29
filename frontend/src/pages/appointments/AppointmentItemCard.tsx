@@ -5,22 +5,17 @@ import { Clock, User, Edit, XCircle } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Text } from "@/components/ui/Text";
-import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { appointmentStatusConfig } from "@/configs/status.config";
 import type { Appointment } from "@/types";
+import type { AppointmentStatus } from "@/constants/statuses";
 
 export interface AppointmentItemCardProps {
   apt: Appointment & { patient?: { full_name: string; phone?: string } };
   onEdit: (apt: Appointment) => void;
   onCancel: (apt: Appointment) => void;
 }
-
-const statusVariants: Record<string, BadgeVariant> = {
-  scheduled: "info",
-  confirmed: "success",
-  cancelled: "danger",
-  completed: "default",
-};
 
 export const AppointmentItemCard = ({
   apt,
@@ -45,8 +40,14 @@ export const AppointmentItemCard = ({
           <Text weight="semibold" size="base">
             {apt.patient?.full_name || "Patient"}
           </Text>
-          <Badge variant={statusVariants[apt.status] || "default"}>
-            {apt.status}
+          <Badge
+            variant={
+              appointmentStatusConfig[apt.status as AppointmentStatus]
+                ?.variant || "default"
+            }
+          >
+            {appointmentStatusConfig[apt.status as AppointmentStatus]?.label ||
+              apt.status}
           </Badge>
         </Flex>
 

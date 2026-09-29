@@ -1,36 +1,42 @@
-// Responsibility: Patient ABHA verification page and transaction history view
+// Responsibility: Patient ABHA verification page with tabs for verification form and transaction history
 
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { useHospital } from "@/contexts/HospitalContext";
+import type { ReactNode } from "react";
 import { Box } from "@/components/ui/Box";
+import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { AbhaVerificationForm } from "./components/AbhaVerificationForm";
 import { AbhaVerificationList } from "./components/AbhaVerificationList";
-import type { LinkRequest } from "./abdm.types";
+import { buildAbhaTabs, type AbhaTabId } from "./abdm.config";
+import { useAbhaVerificationPage } from "./hooks/useAbhaVerificationPage";
 
 export default function AbhaVerificationPage() {
-  const { patientId } = useParams<{ patientId: string }>();
-  const { currentHospital } = useHospital();
-  const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
-
-  const { data: linkRequests = [], isLoading } = useQuery<LinkRequest[]>({
-    queryKey: ["abdm-link-requests", currentHospital?.id, patientId],
-    enabled: !!currentHospital && !!patientId,
-    queryFn: async () => {
-      if (!currentHospital || !patientId) return [];
-      return api.get<LinkRequest[]>(
-        `/hospitals/${currentHospital.id}/patients/${patientId}/abdm/link-requests`,
-      );
-    },
-  });
+  const {
+    patientId,
+    linkRequests,
+    isLoading,
+    selectedRequest,
+    setSelectedRequest,
+    activeTab,
+    setActiveTab,
+  } = useAbhaVerificationPage();
 
   if (isLoading) {
     return <LoadingSpinner size="lg" fullScreen />;
   }
+
+  const tabs = buildAbhaTabs(linkRequests.length);
+
+  const tabContent: Record<AbhaTabId, ReactNode> = {
+    verify: patientId ? <AbhaVerificationForm patientId={patientId} /> : null,
+    history: (
+      <AbhaVerificationList
+        requests={linkRequests}
+        onSelect={setSelectedRequest}
+        selectedId={selectedRequest}
+      />
+    ),
+  };
 
   return (
     <Box className="space-y-6">
@@ -38,12 +44,18 @@ export default function AbhaVerificationPage() {
         title="ABHA Verification"
         description="Verify patient identity and track Ayushman Bharat Health Account transactions."
       />
-      {patientId && <AbhaVerificationForm patientId={patientId} />}
-      <AbhaVerificationList
-        requests={linkRequests}
-        onSelect={setSelectedRequest}
-        selectedId={selectedRequest}
-      />
+      {patientId ? (
+        <Box className="space-y-4">
+          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          {tabContent[activeTab]}
+        </Box>
+      ) : (
+        <AbhaVerificationList
+          requests={linkRequests}
+          onSelect={setSelectedRequest}
+          selectedId={selectedRequest}
+        />
+      )}
     </Box>
   );
 }

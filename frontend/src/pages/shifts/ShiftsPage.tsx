@@ -1,12 +1,7 @@
 // Responsibility: Main staff shifts scheduling page with weekly roster timetable view
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Plus, Calendar as CalendarIcon } from "lucide-react";
-import { format, startOfWeek, addDays } from "date-fns";
-import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import { format } from "date-fns";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Heading } from "@/components/ui/Heading";
@@ -15,27 +10,19 @@ import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ShiftsScheduleTable } from "./ShiftsScheduleTable";
 import { ShiftFormModal } from "./ShiftFormModal";
-import type { Shift } from "@/types";
+import { useShiftsPage } from "./useShiftsPage";
 
 export const ShiftsPage = () => {
-  const { currentHospital } = useHospital();
-  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const [showModal, setShowModal] = useState(false);
-
   const {
-    data: shifts = [],
+    shifts,
     isLoading,
+    weekStart,
+    weekDays,
+    showModal,
+    openModal,
+    closeModal,
     refetch,
-  } = useQuery<Shift[]>({
-    queryKey: QUERY_KEYS.hospitals.shifts(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<Shift[]>(API_ROUTES.hospitals.shifts(currentHospital.id));
-    },
-    enabled: !!currentHospital,
-  });
-
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  } = useShiftsPage();
 
   return (
     <Box className="space-y-6">
@@ -43,10 +30,7 @@ export const ShiftsPage = () => {
         title="Staff Shifts"
         description="Manage staff scheduling and duty roster"
         action={
-          <Button
-            onClick={() => setShowModal(true)}
-            icon={<Plus className="h-5 w-5" />}
-          >
+          <Button onClick={openModal} icon={<Plus className="h-5 w-5" />}>
             Create Shift
           </Button>
         }
@@ -73,10 +57,7 @@ export const ShiftsPage = () => {
       />
 
       {showModal && (
-        <ShiftFormModal
-          onClose={() => setShowModal(false)}
-          onSuccess={() => refetch()}
-        />
+        <ShiftFormModal onClose={closeModal} onSuccess={() => refetch()} />
       )}
     </Box>
   );

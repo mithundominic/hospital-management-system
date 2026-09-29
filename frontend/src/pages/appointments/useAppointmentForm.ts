@@ -1,17 +1,16 @@
-// Responsibility: Manage state, options queries, and submission for appointment booking
+// Responsibility: Manage state and submission for appointment booking
 
 import { useState, useCallback, type FormEvent } from "react";
-import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES, APPOINTMENT_STATUS } from "@/constants";
+import {
+  createHospitalAppointment,
+  updateHospitalAppointment,
+} from "@/services/appointment.service";
+import { APPOINTMENT_STATUS } from "@/constants";
 import type { Appointment } from "@/types";
-import type {
-  AppointmentFormData,
-  PatientOption,
-  DoctorOption,
-} from "./appointment.types";
+import type { AppointmentFormData } from "./appointment.types";
+import { useAppointmentOptions } from "./useAppointmentOptions";
 
 export const useAppointmentForm = (
   onClose: () => void,
@@ -32,26 +31,13 @@ export const useAppointmentForm = (
     status: appointment?.status || APPOINTMENT_STATUS.SCHEDULED,
   });
 
-  const { data: patients = [] } = useQuery<PatientOption[]>({
-    queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
-    queryFn: () =>
-      currentHospital
-        ? api.get<PatientOption[]>(API_ROUTES.hospitals.patients(currentHospital.id))
-        : [],
-    enabled: !!currentHospital,
-  });
-
-  const { data: doctors = [] } = useQuery<DoctorOption[]>({
-    queryKey: QUERY_KEYS.hospitals.doctors(currentHospital?.id),
-    queryFn: () =>
-      currentHospital
-        ? api.get<DoctorOption[]>(API_ROUTES.hospitals.doctors(currentHospital.id))
-        : [],
-    enabled: !!currentHospital,
-  });
+  const { patients, doctors } = useAppointmentOptions(currentHospital?.id);
 
   const updateField = useCallback(
-    <K extends keyof AppointmentFormData>(key: K, val: AppointmentFormData[K]) => {
+    <K extends keyof AppointmentFormData>(
+      key: K,
+      val: AppointmentFormData[K],
+    ) => {
       setFormData((prev) => ({ ...prev, [key]: val }));
     },
     [],
@@ -69,22 +55,21 @@ export const useAppointmentForm = (
           duration_minutes: Number(formData.duration_minutes),
         };
         if (appointment?.id) {
-          await api.patch(
-            API_ROUTES.hospitals.appointment(currentHospital.id, appointment.id),
+          await updateHospitalAppointment(
+            currentHospital.id,
+            appointment.id,
             payload,
           );
           toast.success("Appointment updated successfully");
         } else {
-          await api.post(
-            API_ROUTES.hospitals.appointments(currentHospital.id),
-            payload,
-          );
+          await createHospitalAppointment(currentHospital.id, payload);
           toast.success("Appointment booked successfully");
         }
         onSuccess();
         onClose();
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to save appointment";
+        const msg =
+          err instanceof Error ? err.message : "Failed to save appointment";
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -93,5 +78,12 @@ export const useAppointmentForm = (
     [currentHospital, formData, appointment, onSuccess, onClose],
   );
 
-  return { loading, formData, updateField, patients, doctors, handleSubmit } as const;
+  return {
+    loading,
+    formData,
+    updateField,
+    patients,
+    doctors,
+    handleSubmit,
+  } as const;
 };

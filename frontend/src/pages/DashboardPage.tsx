@@ -1,25 +1,19 @@
-// Responsibility: Main dashboard page container rendering overview metrics, charts, and activity feeds
+// Responsibility: Main dashboard page container rendering overview metrics, tabs, and selected panel
 
-import { useQuery } from "@tanstack/react-query";
-import { useHospital } from "@/contexts/HospitalContext";
 import { Box } from "@/components/ui/Box";
 import { Grid } from "@/components/ui/Grid";
+import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SkeletonStatCard } from "@/components/common/SkeletonCard";
 import { DashboardStatCards } from "./dashboard/DashboardStatCards";
-import { DashboardCharts } from "./dashboard/DashboardCharts";
-import { DashboardPanels } from "./dashboard/DashboardPanels";
-import { defaultStats, type DashboardStats } from "./dashboard/dashboard.data";
-import { QUERY_KEYS } from "@/constants";
+import {
+  DASHBOARD_TABS,
+  DASHBOARD_TAB_COMPONENTS,
+} from "./dashboard/dashboard.config";
+import { useDashboardPage } from "./dashboard/useDashboardPage";
 
 export const DashboardPage = () => {
-  const { currentHospital } = useHospital();
-
-  const { data: stats = defaultStats, isLoading } = useQuery<DashboardStats>({
-    queryKey: QUERY_KEYS.hospitals.dashboardStats(currentHospital?.id),
-    queryFn: async () => defaultStats,
-    enabled: !!currentHospital,
-  });
+  const { stats, isLoading, activeTab, setActiveTab } = useDashboardPage();
 
   if (isLoading) {
     return (
@@ -37,6 +31,8 @@ export const DashboardPage = () => {
     );
   }
 
+  const ActiveContent = DASHBOARD_TAB_COMPONENTS[activeTab];
+
   return (
     <Box className="space-y-6">
       <PageHeader
@@ -44,8 +40,14 @@ export const DashboardPage = () => {
         description="Welcome back! Here's what's happening today."
       />
       <DashboardStatCards stats={stats} />
-      <DashboardCharts />
-      <DashboardPanels />
+      <Box className="space-y-4">
+        <Tabs
+          tabs={DASHBOARD_TABS}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
+        <ActiveContent />
+      </Box>
     </Box>
   );
 };

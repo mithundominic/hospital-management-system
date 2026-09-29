@@ -7,8 +7,8 @@ import { AuthenticatedRequest } from "../../types/express.types";
 export const getClaims: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase!
-      .from("insurance_claims")
+    const { data, error } = await authReq
+      .supabase!.from("insurance_claims")
       .select("*")
       .eq("hospital_id", req.params.hospitalId);
     if (error) throw error;
@@ -21,9 +21,15 @@ export const getClaims: RouteHandler = async (req, res, next) => {
 export const createClaim: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { invoice_id, insurance_policy_id, claim_type, claimed_amount, handled_by } = req.body;
-    const { data, error } = await authReq.supabase!
-      .from("insurance_claims")
+    const {
+      invoice_id,
+      insurance_policy_id,
+      claim_type,
+      claimed_amount,
+      handled_by,
+    } = req.body;
+    const { data, error } = await authReq
+      .supabase!.from("insurance_claims")
       .insert({
         hospital_id: req.params.hospitalId,
         invoice_id,
@@ -44,8 +50,8 @@ export const createClaim: RouteHandler = async (req, res, next) => {
 export const updateClaim: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase!
-      .from("insurance_claims")
+    const { data, error } = await authReq
+      .supabase!.from("insurance_claims")
       .update(req.body)
       .eq("id", req.params.claimId)
       .eq("hospital_id", req.params.hospitalId)

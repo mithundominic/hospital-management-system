@@ -8,8 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { api } from "@/lib/api";
-import { API_ROUTES } from "@/constants";
+import { getHospitals } from "@/services/hospital.service";
 
 export interface Hospital {
   id: string;
@@ -49,7 +48,7 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
 
   const loadHospitals = async () => {
     try {
-      const data = await api.get<Hospital[]>(API_ROUTES.hospitals.list);
+      const data = await getHospitals();
       setHospitals(data || []);
 
       if (data && data.length > 0 && !currentHospital) {

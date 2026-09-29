@@ -2,15 +2,11 @@
 
 import { Receipt } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-} from "@/components/ui/Table";
+import { Table, TableBody } from "@/components/ui/Table";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SkeletonTable } from "@/components/common/SkeletonTable";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { BILLING_TABLE_COLUMNS } from "./billing.config";
 import { BillingTableRow } from "./BillingTableRow";
 import type { Invoice } from "@/types";
 
@@ -50,15 +46,7 @@ export const BillingTable = ({
   return (
     <Card className="overflow-hidden">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Invoice #</TableHead>
-            <TableHead>Invoice Date</TableHead>
-            <TableHead>Total Amount</TableHead>
-            <TableHead>Tax (GST)</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DataTableHeader columns={BILLING_TABLE_COLUMNS} />
         <TableBody>
           {invoices.map((inv) => (
             <BillingTableRow key={inv.id} invoice={inv} />

@@ -2,14 +2,10 @@
 
 import { UserCircle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-} from "@/components/ui/Table";
+import { Table, TableBody } from "@/components/ui/Table";
 import { EmptyState } from "@/components/common/EmptyState";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { PATIENT_TABLE_COLUMNS } from "./patient.config";
 import { PatientTableRow } from "./PatientTableRow";
 import type { Patient } from "@/types";
 
@@ -43,16 +39,7 @@ export const PatientTable = ({
   return (
     <Card className="overflow-hidden">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>MRN</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Age</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Blood Group</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DataTableHeader columns={PATIENT_TABLE_COLUMNS} />
         <TableBody>
           {patients.map((patient) => (
             <PatientTableRow
@@ -67,3 +54,5 @@ export const PatientTable = ({
     </Card>
   );
 };
+
+export default PatientTable;

@@ -1,8 +1,10 @@
 // Responsibility: Render status summary metric cards for lab orders
 
 import { Clock, TestTube, CheckCircle, AlertCircle } from "lucide-react";
-import { Grid } from "@/components/ui/Grid";
-import { StatCard } from "@/components/common/StatCard";
+import {
+  StatCardGrid,
+  type StatItemConfig,
+} from "@/components/common/StatCardGrid";
 import type { LabOrder } from "@/types";
 
 export interface LabOrdersStatCardsProps {
@@ -31,20 +33,17 @@ const statusConfig = [
   },
 ] as const;
 
-export const LabOrdersStatCards = ({ orders }: LabOrdersStatCardsProps) => (
-  <Grid cols={4} gap={4}>
-    {statusConfig.map((item) => {
-      const count = orders.filter((o) => o.status === item.key).length;
-      return (
-        <StatCard
-          key={item.key}
-          label={item.label}
-          value={count}
-          icon={item.icon}
-          iconColor={item.color}
-          cardPadding="p-4"
-        />
-      );
-    })}
-  </Grid>
-);
+export const LabOrdersStatCards = ({ orders }: LabOrdersStatCardsProps) => {
+  const stats: StatItemConfig[] = statusConfig.map((item) => ({
+    key: item.key,
+    label: item.label,
+    value: orders.filter((o) => o.status === item.key).length,
+    icon: item.icon,
+    iconColor: item.color,
+    cardPadding: "p-4",
+  }));
+
+  return <StatCardGrid stats={stats} cols={4} gap={4} />;
+};
+
+export default LabOrdersStatCards;

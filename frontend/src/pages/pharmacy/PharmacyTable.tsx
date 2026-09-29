@@ -2,15 +2,11 @@
 
 import { Pill } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-} from "@/components/ui/Table";
+import { Table, TableBody } from "@/components/ui/Table";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SkeletonTable } from "@/components/common/SkeletonTable";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { PHARMACY_TABLE_COLUMNS } from "./pharmacy.config";
 import { PharmacyTableRow } from "./PharmacyTableRow";
 import type { InventoryItem } from "@/types";
 
@@ -43,16 +39,7 @@ export const PharmacyTable = ({ items, isLoading }: PharmacyTableProps) => {
   return (
     <Card className="overflow-hidden">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Item Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Current Stock</TableHead>
-            <TableHead>Reorder Level</TableHead>
-            <TableHead>Unit Price</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DataTableHeader columns={PHARMACY_TABLE_COLUMNS} />
         <TableBody>
           {items.map((item) => (
             <PharmacyTableRow key={item.id} item={item} />

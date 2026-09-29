@@ -1,4 +1,3 @@
-// backend/src/services/prescriptions/PrescriptionService.js
 // Responsibility: Create prescriptions with items (insert-only ledger)
 
 /**

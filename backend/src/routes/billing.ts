@@ -3,10 +3,13 @@
 
 import { Router } from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
-import { PERMISSIONS } from "../constants";
+import { PERMISSIONS, API_ROUTES } from "../constants";
 import { sendData } from "../utils/respond";
 import {
-  queryInvoices, createNewInvoice, updateExistingInvoice, recordPayment,
+  queryInvoices,
+  createNewInvoice,
+  updateExistingInvoice,
+  recordPayment,
 } from "../services/billing/BillingService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
@@ -72,22 +75,22 @@ const createPayment: RouteHandler = async (req, res, next) => {
 };
 
 router.get(
-  "/hospitals/:hospitalId/invoices",
+  API_ROUTES.billing.invoices,
   requireHospitalPermission(PERMISSIONS.BILLING_READ),
   getInvoices,
 );
 router.post(
-  "/hospitals/:hospitalId/invoices",
+  API_ROUTES.billing.invoices,
   requireHospitalPermission(PERMISSIONS.BILLING_WRITE),
   createInvoice,
 );
 router.patch(
-  "/hospitals/:hospitalId/invoices/:invId",
+  API_ROUTES.billing.invoiceDetail,
   requireHospitalPermission(PERMISSIONS.BILLING_WRITE),
   updateInvoice,
 );
 router.post(
-  "/hospitals/:hospitalId/invoices/:invId/payments",
+  API_ROUTES.billing.payments,
   requireHospitalPermission(PERMISSIONS.BILLING_WRITE),
   createPayment,
 );

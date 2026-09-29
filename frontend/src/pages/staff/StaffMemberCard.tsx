@@ -5,7 +5,11 @@ import { Card } from "@/components/ui/Card";
 import { Flex } from "@/components/ui/Flex";
 import { Box } from "@/components/ui/Box";
 import { Text } from "@/components/ui/Text";
-import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
+import {
+  staffRoleBadgeConfig,
+  staffStatusConfig,
+} from "@/configs/status.config";
 
 export interface Membership {
   id: string;
@@ -19,21 +23,6 @@ export interface Membership {
 export interface StaffMemberCardProps {
   member: Membership;
 }
-
-const roleBadgeVariants: Record<string, BadgeVariant> = {
-  HospitalAdmin: "purple",
-  Doctor: "info",
-  Nurse: "success",
-  Receptionist: "warning",
-  BillingClerk: "warning",
-  LabTech: "info",
-  Pharmacist: "purple",
-};
-
-const memberStatusBadgeMap: Record<string, BadgeVariant> = {
-  active: "success",
-  inactive: "default",
-};
 
 export const StaffMemberCard = ({ member }: StaffMemberCardProps) => {
   return (
@@ -51,11 +40,13 @@ export const StaffMemberCard = ({ member }: StaffMemberCardProps) => {
             {member.user_name || member.user_email || "Staff"}
           </Text>
           <Badge
-            variant={roleBadgeVariants[member.role_name] || "default"}
+            variant={
+              staffRoleBadgeConfig[member.role_name]?.variant || "default"
+            }
             size="sm"
             className="mt-1"
           >
-            {member.role_name}
+            {staffRoleBadgeConfig[member.role_name]?.label || member.role_name}
           </Badge>
         </Box>
       </Flex>
@@ -81,10 +72,10 @@ export const StaffMemberCard = ({ member }: StaffMemberCardProps) => {
         className="mt-3 pt-3 border-t border-gray-200"
       >
         <Badge
-          variant={memberStatusBadgeMap[member.status] || "default"}
+          variant={staffStatusConfig[member.status]?.variant || "default"}
           size="sm"
         >
-          {member.status}
+          {staffStatusConfig[member.status]?.label || member.status}
         </Badge>
       </Flex>
     </Card>

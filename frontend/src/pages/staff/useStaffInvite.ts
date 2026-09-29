@@ -3,8 +3,8 @@
 import { useState, useCallback, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { API_ROUTES, ROLES } from "@/constants";
+import { inviteStaffMember } from "@/services/staff.service";
+import { ROLES } from "@/constants";
 
 export const useStaffInvite = (onClose: () => void, onSuccess: () => void) => {
   const { currentHospital } = useHospital();
@@ -23,7 +23,7 @@ export const useStaffInvite = (onClose: () => void, onSuccess: () => void) => {
 
       setLoading(true);
       try {
-        await api.post(API_ROUTES.hospitals.memberships(currentHospital.id), {
+        await inviteStaffMember(currentHospital.id, {
           email,
           role_name: roleName,
           status: "invited",

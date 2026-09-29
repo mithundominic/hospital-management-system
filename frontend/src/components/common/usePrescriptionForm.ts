@@ -4,13 +4,13 @@ import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
 import {
-  type PrescriptionItem,
-  type PrescriptionEncounterOption,
-  createDefaultPrescriptionItem,
-} from "./prescription.types";
+  getHospitalEncounters,
+  createHospitalPrescription,
+} from "@/services/encounter.service";
+import { QUERY_KEYS } from "@/constants";
+import type { PrescriptionEncounterOption } from "./prescription.types";
+import { usePrescriptionItems } from "./usePrescriptionItems";
 
 export const usePrescriptionForm = (
   onClose: () => void,
@@ -21,39 +21,21 @@ export const usePrescriptionForm = (
   const { currentHospital } = useHospital();
   const [loading, setLoading] = useState(false);
   const [selectedEncounter, setSelectedEncounter] = useState(encounterId || "");
-  const [items, setItems] = useState<PrescriptionItem[]>([
-    createDefaultPrescriptionItem(),
-  ]);
+  const { items, addItem, removeItem, updateItem } = usePrescriptionItems();
 
   const { data: encounters = [] } = useQuery<PrescriptionEncounterOption[]>({
     queryKey: QUERY_KEYS.hospitals.encounters(currentHospital?.id, patientId),
     queryFn: async () => {
       if (!currentHospital || !patientId) return [];
-      return await api.get<PrescriptionEncounterOption[]>(
-        `${API_ROUTES.hospitals.encounters(currentHospital.id)}?patient_id=${patientId}`,
-      );
+      const data = await getHospitalEncounters(currentHospital.id, patientId);
+      return data.map((e) => ({
+        id: e.id,
+        encounter_type: e.encounter_type,
+        started_at: e.created_at,
+      }));
     },
     enabled: !!currentHospital && !!patientId && !encounterId,
   });
-
-  const addItem = useCallback(() => {
-    setItems((prev) => [...prev, createDefaultPrescriptionItem()]);
-  }, []);
-
-  const removeItem = useCallback((index: number) => {
-    setItems((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== index) : prev));
-  }, []);
-
-  const updateItem = useCallback(
-    (index: number, field: keyof PrescriptionItem, value: string) => {
-      setItems((prev) => {
-        const next = [...prev];
-        next[index] = { ...next[index], [field]: value };
-        return next;
-      });
-    },
-    [],
-  );
 
   const submit = useCallback(async () => {
     if (!currentHospital) return;
@@ -69,7 +51,7 @@ export const usePrescriptionForm = (
     }
     setLoading(true);
     try {
-      await api.post(API_ROUTES.hospitals.prescriptions(currentHospital.id), {
+      await createHospitalPrescription(currentHospital.id, {
         encounter_id: targetEncounter,
         items: validItems,
       });
@@ -77,15 +59,30 @@ export const usePrescriptionForm = (
       onSuccess();
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to create prescription";
+      const msg =
+        err instanceof Error ? err.message : "Failed to create prescription";
       toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [currentHospital, selectedEncounter, encounterId, items, onSuccess, onClose]);
+  }, [
+    currentHospital,
+    selectedEncounter,
+    encounterId,
+    items,
+    onSuccess,
+    onClose,
+  ]);
 
   return {
-    loading, selectedEncounter, setSelectedEncounter,
-    items, encounters, addItem, removeItem, updateItem, submit,
+    loading,
+    selectedEncounter,
+    setSelectedEncounter,
+    items,
+    encounters,
+    addItem,
+    removeItem,
+    updateItem,
+    submit,
   } as const;
 };

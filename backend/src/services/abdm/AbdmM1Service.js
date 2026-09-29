@@ -1,4 +1,3 @@
-// backend/src/services/abdm/AbdmM1Service.js
 // Responsibility: M1 - ABHA verification and linking workflows
 
 const config = require("../../config/env");

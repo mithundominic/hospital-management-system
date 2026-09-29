@@ -1,4 +1,4 @@
-// src/middleware/auth.js
+// Responsibility: JWT authentication middleware attaching user session and scoped client
 //
 // Verifies the bearer token against Supabase Auth and attaches:
 //  - req.userId       the authenticated user's id

@@ -1,4 +1,3 @@
-// backend/src/services/abdm/AbdmM3Service.js
 // Responsibility: M3 - Consent request and health information fetch (HIU role)
 
 const config = require("../../config/env");

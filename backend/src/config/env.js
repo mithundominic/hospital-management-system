@@ -1,9 +1,4 @@
-/**
- * Centralized Environment Configuration
- *
- * Rule 15 (Centralized Env): All environment variable access must go through this
- * validated configuration module. Direct process.env access is forbidden elsewhere.
- */
+// Responsibility: Centralized environment variable validation and export
 
 // Validate required environment variables at startup
 function validateEnv() {

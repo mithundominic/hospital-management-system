@@ -1,4 +1,4 @@
-// backend/src/services/AuthorizationService.js
+// Responsibility: App-layer RBAC permission resolution via Postgres function
 //
 // Mirrors the Duzii pattern: Postgres holds the canonical RBAC model,
 // this service is a thin consumer that calls the resolver function

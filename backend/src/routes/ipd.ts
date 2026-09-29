@@ -2,7 +2,7 @@
 
 import express from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
-import { PERMISSIONS } from "../constants";
+import { PERMISSIONS, API_ROUTES } from "../constants";
 import { getBeds, createBed, updateBed } from "../services/ipd/BedsService";
 import {
   getAdmissions,
@@ -13,33 +13,33 @@ import {
 const router = express.Router();
 
 router.get(
-  "/hospitals/:hospitalId/beds",
+  API_ROUTES.ipd.beds,
   requireHospitalPermission(PERMISSIONS.BEDS_READ),
   getBeds,
 );
 router.post(
-  "/hospitals/:hospitalId/beds",
+  API_ROUTES.ipd.beds,
   requireHospitalPermission(PERMISSIONS.BEDS_WRITE),
   createBed,
 );
 router.patch(
-  "/hospitals/:hospitalId/beds/:bedId",
+  API_ROUTES.ipd.bedDetail,
   requireHospitalPermission(PERMISSIONS.BEDS_WRITE),
   updateBed,
 );
 
 router.get(
-  "/hospitals/:hospitalId/admissions",
+  API_ROUTES.ipd.admissions,
   requireHospitalPermission(PERMISSIONS.ADMISSIONS_READ),
   getAdmissions,
 );
 router.post(
-  "/hospitals/:hospitalId/admissions",
+  API_ROUTES.ipd.admissions,
   requireHospitalPermission(PERMISSIONS.ADMISSIONS_WRITE),
   createAdmission,
 );
 router.patch(
-  "/hospitals/:hospitalId/admissions/:admId",
+  API_ROUTES.ipd.admissionDetail,
   requireHospitalPermission(PERMISSIONS.ADMISSIONS_WRITE),
   updateAdmission,
 );

@@ -2,15 +2,11 @@
 
 import { Shield } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-} from "@/components/ui/Table";
+import { Table, TableBody } from "@/components/ui/Table";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SkeletonTable } from "@/components/common/SkeletonTable";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { INSURANCE_CLAIMS_COLUMNS } from "./insurance.config";
 import { InsuranceClaimsTableRow } from "./InsuranceClaimsTableRow";
 import type { InsuranceClaim } from "@/types";
 
@@ -46,15 +42,7 @@ export const InsuranceClaimsTable = ({
   return (
     <Card className="overflow-hidden">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Claim #</TableHead>
-            <TableHead>Claim Date</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Claim Amount</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DataTableHeader columns={INSURANCE_CLAIMS_COLUMNS} />
         <TableBody>
           {claims.map((claim) => (
             <InsuranceClaimsTableRow key={claim.id} claim={claim} />

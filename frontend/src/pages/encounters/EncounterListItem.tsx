@@ -5,20 +5,19 @@ import { FileText, Calendar } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Text } from "@/components/ui/Text";
-import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
+import { encounterTypeConfig } from "@/configs/status.config";
 import type { Encounter } from "@/types";
 
 export interface EncounterListItemProps {
   encounter: Encounter & { patient?: { full_name: string } };
 }
 
-const typeVariantMap: Record<string, BadgeVariant> = {
-  opd: "info",
-  emergency: "danger",
-  ipd: "purple",
-};
-
 export const EncounterListItem = ({ encounter }: EncounterListItemProps) => {
+  const typeConfig = encounterTypeConfig[encounter.encounter_type] ?? {
+    label: encounter.encounter_type.toUpperCase(),
+    variant: "default",
+  };
   return (
     <Box className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
       <Flex align="start" justify="between">
@@ -29,11 +28,7 @@ export const EncounterListItem = ({ encounter }: EncounterListItemProps) => {
               {encounter.patient?.full_name ||
                 `Patient #${encounter.patient_id.slice(0, 8)}`}
             </Text>
-            <Badge
-              variant={typeVariantMap[encounter.encounter_type] || "default"}
-            >
-              {encounter.encounter_type.toUpperCase()}
-            </Badge>
+            <Badge variant={typeConfig.variant}>{typeConfig.label}</Badge>
           </Flex>
 
           <Box className="text-sm text-gray-600 space-y-1">

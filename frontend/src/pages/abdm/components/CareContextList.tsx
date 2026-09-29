@@ -8,6 +8,7 @@ import { Text } from "@/components/ui/Text";
 import { Heading } from "@/components/ui/Heading";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/common/EmptyState";
+import { careContextStatusConfig } from "@/configs/status.config";
 import type { AbdmEncounter } from "../abdm.types";
 
 interface CareContextListProps {
@@ -33,7 +34,9 @@ export function CareContextList({
 
   return (
     <Card className="p-6 mb-6">
-      <Heading level={3} className="mb-4">Available Care Contexts</Heading>
+      <Heading level={3} className="mb-4">
+        Available Care Contexts
+      </Heading>
       <Box className="space-y-3">
         {encounters.map((encounter) => (
           <Box
@@ -46,16 +49,28 @@ export function CareContextList({
             }`}
           >
             <Flex justify="between" align="center" className="mb-1">
-              <Text weight="medium">Type: {encounter.encounter_type.toUpperCase()}</Text>
-              <Badge variant={encounter.status === "completed" ? "success" : "default"}>
-                {encounter.status}
+              <Text weight="medium">
+                Type: {encounter.encounter_type.toUpperCase()}
+              </Text>
+              <Badge
+                variant={
+                  careContextStatusConfig[encounter.status]?.variant ||
+                  "default"
+                }
+              >
+                {careContextStatusConfig[encounter.status]?.label ||
+                  encounter.status}
               </Badge>
             </Flex>
             {encounter.chief_complaint && (
-              <Text size="sm" className="text-gray-700">Complaint: {encounter.chief_complaint}</Text>
+              <Text size="sm" className="text-gray-700">
+                Complaint: {encounter.chief_complaint}
+              </Text>
             )}
             {encounter.diagnosis && (
-              <Text size="sm" className="text-gray-700">Diagnosis: {encounter.diagnosis}</Text>
+              <Text size="sm" className="text-gray-700">
+                Diagnosis: {encounter.diagnosis}
+              </Text>
             )}
             <Text size="xs" variant="muted" className="mt-1">
               {new Date(encounter.started_at).toLocaleString()}

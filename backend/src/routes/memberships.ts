@@ -2,8 +2,13 @@
 
 import express from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
-import { PERMISSIONS } from "../constants";
+import { PERMISSIONS, API_ROUTES } from "../constants";
 import { sendData } from "../utils/respond";
+import {
+  queryHospitalMemberships,
+  createNewMembership,
+  updateExistingMembership,
+} from "../services/staff/MembershipsService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
 const router = express.Router();
@@ -11,11 +16,10 @@ const router = express.Router();
 const getMemberships: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("memberships")
-      .select("*, roles(name)")
-      .eq("hospital_id", authReq.params.hospitalId);
-    if (error) throw error;
+    const data = await queryHospitalMemberships(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -25,18 +29,11 @@ const getMemberships: RouteHandler = async (req, res, next) => {
 const createMembership: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { user_id, role_id } = authReq.body;
-    const { data, error } = await authReq.supabase
-      .from("memberships")
-      .insert({
-        user_id,
-        role_id,
-        hospital_id: authReq.params.hospitalId,
-        status: "invited",
-      })
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await createNewMembership(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.body,
+    );
     sendData(res, data, 201);
   } catch (err) {
     next(err);
@@ -46,15 +43,12 @@ const createMembership: RouteHandler = async (req, res, next) => {
 const updateMembership: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { role_id, status } = authReq.body;
-    const { data, error } = await authReq.supabase
-      .from("memberships")
-      .update({ ...(role_id && { role_id }), ...(status && { status }) })
-      .eq("id", authReq.params.membershipId)
-      .eq("hospital_id", authReq.params.hospitalId)
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await updateExistingMembership(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.params.membershipId!,
+      authReq.body,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -62,17 +56,17 @@ const updateMembership: RouteHandler = async (req, res, next) => {
 };
 
 router.get(
-  "/hospitals/:hospitalId/memberships",
+  API_ROUTES.memberships.list,
   requireHospitalPermission(PERMISSIONS.MEMBERSHIPS_MANAGE),
   getMemberships,
 );
 router.post(
-  "/hospitals/:hospitalId/memberships",
+  API_ROUTES.memberships.list,
   requireHospitalPermission(PERMISSIONS.MEMBERSHIPS_MANAGE),
   createMembership,
 );
 router.patch(
-  "/hospitals/:hospitalId/memberships/:membershipId",
+  API_ROUTES.memberships.detail,
   requireHospitalPermission(PERMISSIONS.MEMBERSHIPS_MANAGE),
   updateMembership,
 );

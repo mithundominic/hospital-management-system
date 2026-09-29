@@ -2,20 +2,15 @@
 
 import { format } from "date-fns";
 import { TableRow, TableCell } from "@/components/ui/Table";
-import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
 import { Text } from "@/components/ui/Text";
-import { claimStatusConfig, appConfig } from "@/configs";
+import { claimStatusConfig, claimTypeConfig, appConfig } from "@/configs";
 import type { ClaimStatus } from "@/constants";
 import type { InsuranceClaim } from "@/types";
 
 export interface InsuranceClaimsTableRowProps {
   claim: InsuranceClaim;
 }
-
-const claimTypeBadgeMap: Record<string, BadgeVariant> = {
-  cashless: "purple",
-  reimbursement: "info",
-};
 
 export const InsuranceClaimsTableRow = ({
   claim,
@@ -26,25 +21,30 @@ export const InsuranceClaimsTableRow = ({
   };
 
   return (
-  <TableRow>
-    <TableCell>
-      <Text weight="medium" className="font-mono text-primary-600">
-        {claim.claim_number}
-      </Text>
-    </TableCell>
-    <TableCell>
-      <Text size="sm">
-        {claim.claim_date ? format(new Date(claim.claim_date), "dd MMM yyyy") : "N/A"}
-      </Text>
-    </TableCell>
-    <TableCell>
-      <Badge variant={claimTypeBadgeMap[claim.claim_type] || "default"}>
-        {claim.claim_type}
-      </Badge>
-    </TableCell>
+    <TableRow>
+      <TableCell>
+        <Text weight="medium" className="font-mono text-primary-600">
+          {claim.claim_number}
+        </Text>
+      </TableCell>
+      <TableCell>
+        <Text size="sm">
+          {claim.claim_date
+            ? format(new Date(claim.claim_date), "dd MMM yyyy")
+            : "N/A"}
+        </Text>
+      </TableCell>
+      <TableCell>
+        <Badge
+          variant={claimTypeConfig[claim.claim_type]?.variant || "default"}
+        >
+          {claimTypeConfig[claim.claim_type]?.label || claim.claim_type}
+        </Badge>
+      </TableCell>
       <TableCell>
         <Text weight="semibold">
-          {appConfig.currency.symbol}{claim.claim_amount.toLocaleString("en-IN")}
+          {appConfig.currency.symbol}
+          {claim.claim_amount.toLocaleString("en-IN")}
         </Text>
       </TableCell>
       <TableCell>

@@ -1,4 +1,4 @@
-// src/server.js
+// Responsibility: Starts the Express HTTP server and binds to configured port
 // Rule 15 Compliance: Uses centralized env config
 require("dotenv").config();
 

@@ -1,15 +1,16 @@
-// Responsibility: Manage invoice form state, item line additions, and API creation submission
+// Responsibility: Manage invoice form state, patient query, and API creation submission
 
-import { useState, useCallback, useMemo, type FormEvent } from "react";
+import { useState, useCallback, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import { createHospitalInvoice } from "@/services/billing.service";
+import { getHospitalPatients } from "@/services/patient.service";
+import { QUERY_KEYS } from "@/constants";
 import type { Invoice } from "@/types";
-import type { InvoiceFormData, InvoiceLineItemForm } from "./invoice.types";
-import { calculateInvoiceTotals, initialInvoiceLineItem } from "./invoice.utils";
+import type { InvoiceFormData } from "./invoice.types";
+import { useInvoiceItems } from "./useInvoiceItems";
 
 export const useInvoiceForm = (
   onClose: () => void,
@@ -21,40 +22,26 @@ export const useInvoiceForm = (
   const [formData, setFormData] = useState<InvoiceFormData>({
     patient_id: invoice?.patient_id || "",
     invoice_date: format(new Date(), "yyyy-MM-dd"),
-    due_date: "", payment_terms: "immediate", notes: invoice?.notes || "",
+    due_date: "",
+    payment_terms: "immediate",
+    notes: invoice?.notes || "",
   });
 
-  const [items, setItems] = useState<InvoiceLineItemForm[]>([initialInvoiceLineItem]);
+  const { items, totals, addItem, removeItem, updateItem } = useInvoiceItems();
 
-  const { data: patients = [] } = useQuery<{ id: string; full_name: string }[]>({
-    queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
-    queryFn: () =>
-      currentHospital
-        ? api.get<{ id: string; full_name: string }[]>(API_ROUTES.hospitals.patients(currentHospital.id))
-        : [],
-    enabled: !!currentHospital,
-  });
-
-  const totals = useMemo(() => calculateInvoiceTotals(items), [items]);
-
-  const addItem = useCallback(
-    () => setItems((prev) => [...prev, { ...initialInvoiceLineItem }]),
-    [],
-  );
-
-  const removeItem = useCallback((idx: number) => {
-    setItems((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
-  }, []);
-
-  const updateItem = useCallback(
-    (idx: number, field: keyof InvoiceLineItemForm, val: string) => {
-      setItems((prev) => {
-        const next = [...prev];
-        next[idx] = { ...next[idx], [field]: val };
-        return next;
-      });
+  const { data: patients = [] } = useQuery<{ id: string; full_name: string }[]>(
+    {
+      queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
+      queryFn: async () => {
+        if (!currentHospital) return [];
+        const records = await getHospitalPatients(currentHospital.id);
+        return records.map((r) => ({
+          id: r.patients.id,
+          full_name: r.patients.full_name,
+        }));
+      },
+      enabled: !!currentHospital,
     },
-    [],
   );
 
   const handleSubmit = useCallback(
@@ -75,12 +62,13 @@ export const useInvoiceForm = (
             gst_rate: Number(it.gst_rate),
           })),
         };
-        await api.post(API_ROUTES.hospitals.invoices(currentHospital.id), payload);
+        await createHospitalInvoice(currentHospital.id, payload);
         toast.success("Invoice generated successfully");
         onSuccess();
         onClose();
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to generate invoice";
+        const msg =
+          err instanceof Error ? err.message : "Failed to generate invoice";
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -90,7 +78,15 @@ export const useInvoiceForm = (
   );
 
   return {
-    loading, formData, setFormData, items, totals,
-    patients, addItem, removeItem, updateItem, handleSubmit,
+    loading,
+    formData,
+    setFormData,
+    items,
+    totals,
+    patients,
+    addItem,
+    removeItem,
+    updateItem,
+    handleSubmit,
   } as const;
 };

@@ -1,4 +1,3 @@
-// backend/src/services/AbdmClient.js
 // Responsibility: Unified facade for ABDM integration services
 //
 // SCAFFOLD -- read docs/PHASE5_ABDM_INTEGRATION.md before touching this.

@@ -7,8 +7,8 @@ import { AuthenticatedRequest } from "../../types/express.types";
 export const getDoctors: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase!
-      .from("doctor_profiles")
+    const { data, error } = await authReq
+      .supabase!.from("doctor_profiles")
       .select("*, memberships!inner(hospital_id, user_id)")
       .eq("memberships.hospital_id", req.params.hospitalId);
     if (error) throw error;
@@ -21,10 +21,16 @@ export const getDoctors: RouteHandler = async (req, res, next) => {
 export const createDoctor: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { membership_id, department_id, specialization, registration_number, qualifications, consultation_fee } =
-      req.body;
-    const { data, error } = await authReq.supabase!
-      .from("doctor_profiles")
+    const {
+      membership_id,
+      department_id,
+      specialization,
+      registration_number,
+      qualifications,
+      consultation_fee,
+    } = req.body;
+    const { data, error } = await authReq
+      .supabase!.from("doctor_profiles")
       .insert({
         membership_id,
         department_id,
@@ -45,8 +51,8 @@ export const createDoctor: RouteHandler = async (req, res, next) => {
 export const updateDoctor: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase!
-      .from("doctor_profiles")
+    const { data, error } = await authReq
+      .supabase!.from("doctor_profiles")
       .update(req.body)
       .eq("id", req.params.doctorId)
       .select()

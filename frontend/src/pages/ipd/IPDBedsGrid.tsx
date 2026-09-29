@@ -6,9 +6,11 @@ import { Grid } from "@/components/ui/Grid";
 import { Flex } from "@/components/ui/Flex";
 import { Box } from "@/components/ui/Box";
 import { Text } from "@/components/ui/Text";
-import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SkeletonCard } from "@/components/common/SkeletonCard";
+import { bedStatusConfig } from "@/configs/status.config";
+import type { BedStatus } from "@/constants/statuses";
 import type { Bed as BedType } from "@/types";
 
 export interface IPDBedsGridProps {
@@ -16,12 +18,6 @@ export interface IPDBedsGridProps {
   isLoading: boolean;
   onNewAdmission: () => void;
 }
-
-const statusBadgeMap: Record<string, BadgeVariant> = {
-  available: "success",
-  occupied: "danger",
-  maintenance: "warning",
-};
 
 export const IPDBedsGrid = ({
   beds,
@@ -68,8 +64,12 @@ export const IPDBedsGrid = ({
                 </Text>
               </Box>
             </Flex>
-            <Badge variant={statusBadgeMap[b.status] || "default"}>
-              {b.status}
+            <Badge
+              variant={
+                bedStatusConfig[b.status as BedStatus]?.variant || "default"
+              }
+            >
+              {bedStatusConfig[b.status as BedStatus]?.label || b.status}
             </Badge>
           </Flex>
         </Card>

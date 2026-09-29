@@ -9,8 +9,10 @@ export const QUERY_KEYS = {
     patientDetail: (hospitalId?: string, patientId?: string) =>
       ["patient", hospitalId, patientId] as const,
     doctors: (hospitalId?: string) => ["doctors", hospitalId] as const,
-    appointments: (hospitalId?: string) =>
-      ["appointments", hospitalId] as const,
+    appointments: (hospitalId?: string, date?: string) =>
+      date
+        ? (["appointments", hospitalId, date] as const)
+        : (["appointments", hospitalId] as const),
     encounters: (hospitalId?: string, patientId?: string) =>
       patientId
         ? (["encounters", hospitalId, patientId] as const)
@@ -24,11 +26,21 @@ export const QUERY_KEYS = {
     inventory: (hospitalId?: string) => ["inventory", hospitalId] as const,
     shifts: (hospitalId?: string) => ["shifts", hospitalId] as const,
     memberships: (hospitalId?: string) => ["memberships", hospitalId] as const,
+    abdm: {
+      linkRequests: (hospitalId?: string, patientId?: string) =>
+        ["abdm-link-requests", hospitalId, patientId] as const,
+      consentArtifacts: (hospitalId?: string, patientId?: string) =>
+        ["consent-artifacts", hospitalId, patientId] as const,
+      linkedContexts: (patientId?: string) =>
+        ["linked-contexts", patientId] as const,
+    },
     reports: {
       bedOccupancy: (hospitalId?: string) =>
         ["reports-bed-occupancy", hospitalId] as const,
-      revenue: (hospitalId?: string) => ["reports-revenue", hospitalId] as const,
-      lowStock: (hospitalId?: string) => ["reports-low-stock", hospitalId] as const,
+      revenue: (hospitalId?: string) =>
+        ["reports-revenue", hospitalId] as const,
+      lowStock: (hospitalId?: string) =>
+        ["reports-low-stock", hospitalId] as const,
     },
   },
 } as const;

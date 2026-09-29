@@ -1,5 +1,4 @@
 // Responsibility: Business logic and data queries for hospital invoices and payments
-// backend/src/services/billing/BillingService.ts
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import {

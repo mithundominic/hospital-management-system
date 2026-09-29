@@ -1,17 +1,19 @@
 // Responsibility: Manage clinical encounter form state, vitals calculation, and API submission
 
 import { useState, useCallback, type FormEvent } from "react";
-import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import {
+  createHospitalEncounter,
+  updateHospitalEncounter,
+} from "@/services/encounter.service";
 import type { Encounter } from "@/types";
 import type { EncounterFormData } from "./encounter.types";
 import {
   getInitialEncounterFormData,
   formatEncounterVitals,
 } from "./encounter.utils";
+import { useEncounterOptions } from "./useEncounterOptions";
 
 export const useEncounterForm = (
   onClose: () => void,
@@ -24,23 +26,7 @@ export const useEncounterForm = (
     getInitialEncounterFormData(encounter),
   );
 
-  const { data: patients = [] } = useQuery<{ id: string; full_name: string }[]>({
-    queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
-    queryFn: () =>
-      currentHospital
-        ? api.get<{ id: string; full_name: string }[]>(API_ROUTES.hospitals.patients(currentHospital.id))
-        : [],
-    enabled: !!currentHospital,
-  });
-
-  const { data: doctors = [] } = useQuery<{ id: string; specialization?: string }[]>({
-    queryKey: QUERY_KEYS.hospitals.doctors(currentHospital?.id),
-    queryFn: () =>
-      currentHospital
-        ? api.get<{ id: string; specialization?: string }[]>(API_ROUTES.hospitals.doctors(currentHospital.id))
-        : [],
-    enabled: !!currentHospital,
-  });
+  const { patients, doctors } = useEncounterOptions(currentHospital?.id);
 
   const updateField = useCallback(
     <K extends keyof EncounterFormData>(key: K, val: EncounterFormData[K]) => {
@@ -66,22 +52,21 @@ export const useEncounterForm = (
         };
 
         if (encounter?.id) {
-          await api.patch(
-            API_ROUTES.hospitals.encounter(currentHospital.id, encounter.id),
+          await updateHospitalEncounter(
+            currentHospital.id,
+            encounter.id,
             payload,
           );
           toast.success("Encounter updated successfully");
         } else {
-          await api.post(
-            API_ROUTES.hospitals.encounters(currentHospital.id),
-            payload,
-          );
+          await createHospitalEncounter(currentHospital.id, payload);
           toast.success("Encounter created successfully");
         }
         onSuccess();
         onClose();
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to save encounter";
+        const msg =
+          err instanceof Error ? err.message : "Failed to save encounter";
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -90,5 +75,12 @@ export const useEncounterForm = (
     [currentHospital, formData, encounter, onSuccess, onClose],
   );
 
-  return { loading, formData, updateField, patients, doctors, handleSubmit } as const;
+  return {
+    loading,
+    formData,
+    updateField,
+    patients,
+    doctors,
+    handleSubmit,
+  } as const;
 };

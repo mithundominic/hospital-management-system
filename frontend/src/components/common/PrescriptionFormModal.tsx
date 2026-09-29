@@ -1,13 +1,12 @@
 // Responsibility: Modal container for creating prescriptions with itemized medications
 
 import { Plus } from "lucide-react";
-import { Modal } from "@/components/ui/Modal";
+import { FormModal } from "@/components/common/FormModal";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
-import { ModalFooter } from "@/components/common/ModalFooter";
 import { PrescriptionItemRow } from "./PrescriptionItemRow";
 import { usePrescriptionForm } from "./usePrescriptionForm";
 import type { PrescriptionFormModalProps } from "./prescription.types";
@@ -39,19 +38,14 @@ export const PrescriptionFormModal = ({
   ];
 
   return (
-    <Modal
+    <FormModal
       isOpen={true}
       onClose={onClose}
       title="Create Prescription"
       maxWidth="2xl"
-      footer={
-        <ModalFooter
-          onCancel={onClose}
-          onSubmit={submit}
-          isLoading={loading}
-          submitLabel="Create Prescription"
-        />
-      }
+      onSubmit={submit}
+      isLoading={loading}
+      submitLabel="Create Prescription"
     >
       <Box className="space-y-4">
         {!encounterId && (
@@ -90,7 +84,7 @@ export const PrescriptionFormModal = ({
           ))}
         </Box>
       </Box>
-    </Modal>
+    </FormModal>
   );
 };
 

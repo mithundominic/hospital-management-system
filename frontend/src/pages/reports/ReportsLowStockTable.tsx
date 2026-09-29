@@ -4,14 +4,9 @@ import { AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
 import { Flex } from "@/components/ui/Flex";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/Table";
+import { Table, TableBody, TableRow, TableCell } from "@/components/ui/Table";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { REPORTS_LOW_STOCK_COLUMNS } from "./reports.config";
 import type { LowStockItem } from "@/types";
 
 export interface ReportsLowStockTableProps {
@@ -32,14 +27,7 @@ export const ReportsLowStockTable = ({
         </Heading>
       </Flex>
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Item Name</TableHead>
-            <TableHead>Current Stock</TableHead>
-            <TableHead>Reorder Level</TableHead>
-            <TableHead>Category</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DataTableHeader columns={REPORTS_LOW_STOCK_COLUMNS} />
         <TableBody>
           {lowStock.map((item) => (
             <TableRow key={item.id}>
@@ -58,3 +46,5 @@ export const ReportsLowStockTable = ({
     </Card>
   );
 };
+
+export default ReportsLowStockTable;

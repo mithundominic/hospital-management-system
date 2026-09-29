@@ -2,8 +2,13 @@
 
 import express from "express";
 import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
-import { PERMISSIONS } from "../constants";
+import { PERMISSIONS, API_ROUTES } from "../constants";
 import { sendData } from "../utils/respond";
+import {
+  queryBedOccupancySummary,
+  queryDailyRevenueSummary,
+  queryLowStockAlerts,
+} from "../services/reports/ReportsService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
 const router = express.Router();
@@ -11,11 +16,10 @@ const router = express.Router();
 const getBedOccupancy: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("bed_occupancy_summary")
-      .select("*")
-      .eq("hospital_id", authReq.params.hospitalId);
-    if (error) throw error;
+    const data = await queryBedOccupancySummary(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -25,18 +29,14 @@ const getBedOccupancy: RouteHandler = async (req, res, next) => {
 const getDailyRevenue: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    let query = authReq.supabase
-      .from("daily_revenue_summary")
-      .select("*")
-      .eq("hospital_id", authReq.params.hospitalId);
-    if (authReq.query.from)
-      query = query.gte("revenue_date", authReq.query.from as string);
-    if (authReq.query.to)
-      query = query.lte("revenue_date", authReq.query.to as string);
-    const { data, error } = await query.order("revenue_date", {
-      ascending: false,
-    });
-    if (error) throw error;
+    const data = await queryDailyRevenueSummary(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      {
+        from: authReq.query.from as string | undefined,
+        to: authReq.query.to as string | undefined,
+      },
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -46,11 +46,10 @@ const getDailyRevenue: RouteHandler = async (req, res, next) => {
 const getLowStock: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("low_stock_alert")
-      .select("*")
-      .eq("hospital_id", authReq.params.hospitalId);
-    if (error) throw error;
+    const data = await queryLowStockAlerts(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+    );
     sendData(res, data);
   } catch (err) {
     next(err);
@@ -58,17 +57,17 @@ const getLowStock: RouteHandler = async (req, res, next) => {
 };
 
 router.get(
-  "/hospitals/:hospitalId/reports/bed-occupancy",
+  API_ROUTES.reports.bedOccupancy,
   requireHospitalPermission(PERMISSIONS.REPORTS_READ),
   getBedOccupancy,
 );
 router.get(
-  "/hospitals/:hospitalId/reports/daily-revenue",
+  API_ROUTES.reports.dailyRevenue,
   requireHospitalPermission(PERMISSIONS.REPORTS_READ),
   getDailyRevenue,
 );
 router.get(
-  "/hospitals/:hospitalId/reports/low-stock",
+  API_ROUTES.reports.lowStock,
   requireHospitalPermission(PERMISSIONS.REPORTS_READ),
   getLowStock,
 );

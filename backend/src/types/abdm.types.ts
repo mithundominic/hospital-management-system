@@ -1,14 +1,6 @@
-// backend/src/types/abdm.types.ts
 // Responsibility: ABDM/ABHA data structure type definitions
 
-/**
- * ABDM Link Request statuses
- */
 export type AbdmLinkStatus = "initiated" | "otp_sent" | "confirmed" | "failed";
-
-/**
- * ABDM Consent Artifact statuses
- */
 export type AbdmConsentStatus = "requested" | "granted" | "denied" | "expired";
 
 /**
@@ -97,109 +89,6 @@ export interface AbdmSessionResponse {
 export interface AbdmErrorResponse {
   code: string;
   message: string;
-  details?: unknown;
 }
 
-/**
- * M1: Auth Init Callback Payload
- */
-export interface AbdmAuthInitCallback extends Record<string, unknown> {
-  requestId?: string;
-  transactionId?: string;
-  timestamp: string;
-  auth?: {
-    transactionId: string;
-    mode: string;
-    meta?: {
-      hint?: string;
-      expiry?: string;
-    };
-  };
-  error?: AbdmErrorResponse;
-  resp?: {
-    requestId: string;
-  };
-}
-
-/**
- * M1: Auth Confirm Callback Payload
- */
-export interface AbdmAuthConfirmCallback extends Record<string, unknown> {
-  requestId?: string;
-  transactionId?: string;
-  timestamp: string;
-  auth?: {
-    accessToken: string;
-    patient: {
-      id: string;
-      name?: string;
-      gender?: string;
-      yearOfBirth?: number;
-    };
-  };
-  error?: AbdmErrorResponse;
-  resp?: {
-    requestId: string;
-  };
-}
-
-/**
- * M2: Link Init Callback Payload
- */
-export interface AbdmLinkInitCallback extends Record<string, unknown> {
-  requestId: string;
-  timestamp: string;
-  acknowledgement?: {
-    status: string;
-  };
-  error?: AbdmErrorResponse;
-  resp?: {
-    requestId: string;
-  };
-}
-
-/**
- * M3: Consent Request Init Callback Payload
- */
-export interface AbdmConsentRequestInitCallback extends Record<
-  string,
-  unknown
-> {
-  requestId: string;
-  timestamp: string;
-  consentRequest?: {
-    id: string;
-  };
-  error?: AbdmErrorResponse;
-  resp?: {
-    requestId: string;
-  };
-}
-
-/**
- * M3: Consent HIU Notify Callback Payload
- */
-export interface AbdmConsentHiuNotifyCallback extends Record<string, unknown> {
-  requestId: string;
-  timestamp: string;
-  notification: {
-    consentRequestId: string;
-    status: "GRANTED" | "DENIED" | "REVOKED" | "EXPIRED";
-    consentArtefacts?: Array<{
-      id: string;
-    }>;
-  };
-  resp?: {
-    requestId: string;
-  };
-}
-
-/**
- * Generic ABDM Callback Payload
- */
-export type AbdmCallbackPayload =
-  | AbdmAuthInitCallback
-  | AbdmAuthConfirmCallback
-  | AbdmLinkInitCallback
-  | AbdmConsentRequestInitCallback
-  | AbdmConsentHiuNotifyCallback;
+export * from "./abdmCallback.types";

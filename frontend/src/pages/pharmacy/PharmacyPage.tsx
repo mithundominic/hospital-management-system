@@ -1,41 +1,19 @@
 // Responsibility: Main pharmacy inventory management page displaying stock alerts and medicine catalog
 
-import { useQuery } from "@tanstack/react-query";
-import { Plus, Package, AlertTriangle } from "lucide-react";
-import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import { Plus, Package } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { NoticeCard } from "@/components/common/NoticeCard";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PharmacyStatCards } from "./PharmacyStatCards";
 import { PharmacyTable } from "./PharmacyTable";
-import type { InventoryItem } from "@/types";
+import { usePharmacyPage } from "./usePharmacyPage";
 
 export const PharmacyPage = () => {
-  const { currentHospital } = useHospital();
-
-  const { data: inventory = [], isLoading } = useQuery<InventoryItem[]>({
-    queryKey: QUERY_KEYS.hospitals.inventory(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<InventoryItem[]>(
-        API_ROUTES.hospitals.inventory(currentHospital.id),
-      );
-    },
-    enabled: !!currentHospital,
-  });
-
-  const lowStock = inventory.filter(
-    (item) => (item.quantity_in_stock ?? 0) <= item.reorder_level,
-  );
-  const totalValue = inventory.reduce(
-    (acc, curr) => acc + (curr.quantity_in_stock ?? 0) * curr.unit_price,
-    0,
-  );
+  const { inventory, isLoading, lowStock, totalValue } = usePharmacyPage();
 
   return (
     <Box className="space-y-6">
@@ -53,23 +31,11 @@ export const PharmacyPage = () => {
       />
 
       {lowStock.length > 0 && (
-        <Box className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <Flex align="start" gap={3}>
-            <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
-            <Box>
-              <Heading
-                level={4}
-                className="font-semibold text-amber-900 text-sm"
-              >
-                Low Stock Alert
-              </Heading>
-              <Text size="sm" className="text-amber-800 mt-1">
-                {lowStock.length} items are currently below their configured
-                reorder level.
-              </Text>
-            </Box>
-          </Flex>
-        </Box>
+        <NoticeCard
+          variant="warning"
+          title="Low Stock Alert"
+          description={`${lowStock.length} items are currently below their configured reorder level.`}
+        />
       )}
 
       <PharmacyStatCards

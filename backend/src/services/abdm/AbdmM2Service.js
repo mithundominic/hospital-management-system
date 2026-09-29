@@ -1,4 +1,3 @@
-// backend/src/services/abdm/AbdmM2Service.js
 // Responsibility: M2 - Care context linking workflows
 
 const config = require("../../config/env");

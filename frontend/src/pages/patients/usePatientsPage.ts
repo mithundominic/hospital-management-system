@@ -3,14 +3,12 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
+import {
+  getHospitalPatients,
+  type PatientRecordItem,
+} from "@/services/patient.service";
+import { QUERY_KEYS } from "@/constants";
 import type { Patient } from "@/types";
-
-interface PatientRecordItem {
-  patients: Patient;
-  hospital_patient_number: string;
-}
 
 export const usePatientsPage = () => {
   const { currentHospital } = useHospital();
@@ -26,9 +24,7 @@ export const usePatientsPage = () => {
     queryKey: QUERY_KEYS.hospitals.patients(currentHospital?.id),
     queryFn: async () => {
       if (!currentHospital) return [];
-      return await api.get<PatientRecordItem[]>(
-        API_ROUTES.hospitals.patients(currentHospital.id),
-      );
+      return await getHospitalPatients(currentHospital.id);
     },
     enabled: !!currentHospital,
   });

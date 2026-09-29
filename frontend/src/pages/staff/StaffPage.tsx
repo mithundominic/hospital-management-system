@@ -1,11 +1,6 @@
 // Responsibility: Main staff management page listing active hospital members and modal invitation
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Plus, Users } from "lucide-react";
-import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
 import { Box } from "@/components/ui/Box";
 import { Grid } from "@/components/ui/Grid";
 import { Card } from "@/components/ui/Card";
@@ -13,27 +8,13 @@ import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/common/PageHeader";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SkeletonCard } from "@/components/common/SkeletonCard";
-import { StaffMemberCard, type Membership } from "./StaffMemberCard";
+import { StaffMemberCard } from "./StaffMemberCard";
 import { StaffInviteFormModal } from "./StaffInviteFormModal";
+import { useStaffPage } from "./useStaffPage";
 
 export const StaffPage = () => {
-  const { currentHospital } = useHospital();
-  const [showModal, setShowModal] = useState(false);
-
-  const {
-    data: memberships = [],
-    isLoading,
-    refetch,
-  } = useQuery<Membership[]>({
-    queryKey: QUERY_KEYS.hospitals.memberships(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<Membership[]>(
-        API_ROUTES.hospitals.memberships(currentHospital.id),
-      );
-    },
-    enabled: !!currentHospital,
-  });
+  const { memberships, isLoading, showModal, openModal, closeModal, refetch } =
+    useStaffPage();
 
   return (
     <Box className="space-y-6">
@@ -41,10 +22,7 @@ export const StaffPage = () => {
         title="Staff Management"
         description="Manage hospital staff memberships and role allocations"
         action={
-          <Button
-            onClick={() => setShowModal(true)}
-            icon={<Plus className="h-5 w-5" />}
-          >
+          <Button onClick={openModal} icon={<Plus className="h-5 w-5" />}>
             Invite Staff
           </Button>
         }
@@ -63,7 +41,7 @@ export const StaffPage = () => {
             title="No staff members found"
             description="Invite colleagues, doctors, nurses, and staff to join this hospital."
             actionLabel="Invite Staff"
-            onAction={() => setShowModal(true)}
+            onAction={openModal}
           />
         </Card>
       ) : (
@@ -76,7 +54,7 @@ export const StaffPage = () => {
 
       {showModal && (
         <StaffInviteFormModal
-          onClose={() => setShowModal(false)}
+          onClose={closeModal}
           onSuccess={() => refetch()}
         />
       )}

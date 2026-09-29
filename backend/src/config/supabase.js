@@ -1,4 +1,4 @@
-// src/config/supabase.js
+// Responsibility: Supabase admin and per-request authenticated client factories
 //
 // Two different clients for two different jobs -- don't collapse these into
 // one "just use the service role everywhere" client:

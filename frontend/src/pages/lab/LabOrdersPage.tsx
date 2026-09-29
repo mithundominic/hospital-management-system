@@ -1,37 +1,17 @@
 // Responsibility: Main lab orders management page displaying summary metrics and test orders table
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useHospital } from "@/contexts/HospitalContext";
-import { api } from "@/lib/api";
-import { QUERY_KEYS, API_ROUTES } from "@/constants";
 import { Box } from "@/components/ui/Box";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/common/PageHeader";
 import { LabOrdersStatCards } from "./LabOrdersStatCards";
 import { LabOrdersTable } from "./LabOrdersTable";
 import { LabOrderFormModal } from "./LabOrderFormModal";
-import type { LabOrder } from "@/types";
+import { useLabOrdersPage } from "./useLabOrdersPage";
 
 export const LabOrdersPage = () => {
-  const { currentHospital } = useHospital();
-  const [showModal, setShowModal] = useState(false);
-
-  const {
-    data: labOrders = [],
-    isLoading,
-    refetch,
-  } = useQuery<LabOrder[]>({
-    queryKey: QUERY_KEYS.hospitals.labOrders(currentHospital?.id),
-    queryFn: async () => {
-      if (!currentHospital) return [];
-      return await api.get<LabOrder[]>(
-        API_ROUTES.hospitals.labOrders(currentHospital.id),
-      );
-    },
-    enabled: !!currentHospital,
-  });
+  const { labOrders, isLoading, showModal, openModal, closeModal, refetch } =
+    useLabOrdersPage();
 
   return (
     <Box className="space-y-6">
@@ -39,10 +19,7 @@ export const LabOrdersPage = () => {
         title="Lab Orders"
         description="Manage laboratory test orders and results"
         action={
-          <Button
-            onClick={() => setShowModal(true)}
-            icon={<Plus className="h-5 w-5" />}
-          >
+          <Button onClick={openModal} icon={<Plus className="h-5 w-5" />}>
             New Lab Order
           </Button>
         }
@@ -53,14 +30,11 @@ export const LabOrdersPage = () => {
       <LabOrdersTable
         orders={labOrders}
         isLoading={isLoading}
-        onNew={() => setShowModal(true)}
+        onNew={openModal}
       />
 
       {showModal && (
-        <LabOrderFormModal
-          onClose={() => setShowModal(false)}
-          onSuccess={() => refetch()}
-        />
+        <LabOrderFormModal onClose={closeModal} onSuccess={() => refetch()} />
       )}
     </Box>
   );
