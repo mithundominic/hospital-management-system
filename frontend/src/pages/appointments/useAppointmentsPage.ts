@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import {
   getHospitalAppointments,
   updateHospitalAppointment,

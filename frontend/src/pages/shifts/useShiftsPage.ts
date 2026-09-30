@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { startOfWeek, addDays } from "date-fns";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import { getHospitalShifts } from "@/services/shift.service";
 import { QUERY_KEYS } from "@/constants";
 import type { Shift } from "@/types";

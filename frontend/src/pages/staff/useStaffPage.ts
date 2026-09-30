@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import {
   getHospitalMemberships,
   type MembershipDto,

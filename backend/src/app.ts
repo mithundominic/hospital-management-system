@@ -1,59 +1,66 @@
-// Responsibility: Express application setup and route mounting
+// Responsibility: Express application composition and middleware orchestration
 
 import express from "express";
 import cors from "cors";
+import config from "./config/env";
+import { corsOptions } from "./config/cors";
 import { auth } from "./middleware/auth";
 import { errorHandler } from "./middleware/errorHandler";
-
-// Import routes
-import hospitalsRouter from "./routes/hospitals";
-import patientsRouter from "./routes/patients";
-import billingRouter from "./routes/billing";
-import encountersRouter from "./routes/encounters";
-import abdmRouter from "./routes/abdm";
-import abdmCallbacksRouter from "./routes/abdmCallbacks";
-import appointmentsRouter from "./routes/appointments";
-import insuranceRouter from "./routes/insurance";
-import ipdRouter from "./routes/ipd";
-import labRouter from "./routes/lab";
-import membershipsRouter from "./routes/memberships";
-import pharmacyRouter from "./routes/pharmacy";
-import reportsRouter from "./routes/reports";
-import shiftsRouter from "./routes/shifts";
-import staffRouter from "./routes/staff";
+import { registerPublicRoutes } from "./routes/public";
+import { registerRoutes } from "./routes";
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+/* Global middleware */
+app.use(cors(corsOptions));
+app.use(express.json({ limit: config.server.bodyLimit }));
 
-app.get("/health", (_req, res) => res.json({ status: "ok" }));
+/* Health check endpoint */
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
-// CRITICAL: ABDM callbacks mounted BEFORE auth middleware
-// These endpoints receive calls from ABDM gateway (no user JWT)
-app.use(abdmCallbacksRouter);
+/*
+ * API v1 Application Router
+ * Centralized mount point for versioned API routes (/api/v1)
+ */
+const apiV1 = express();
 
-// Global authentication middleware
-// All routes below require authenticated user
-app.use(auth);
+/* Health check endpoint under /api/v1 */
+apiV1.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
-// Mount routers
-app.use(hospitalsRouter);
-app.use(patientsRouter);
-app.use(appointmentsRouter);
-app.use(encountersRouter);
-app.use(labRouter);
-app.use(ipdRouter);
-app.use(pharmacyRouter);
-app.use(billingRouter);
-app.use(insuranceRouter);
-app.use(shiftsRouter);
-app.use(reportsRouter);
-app.use(staffRouter);
-app.use(membershipsRouter);
-app.use(abdmRouter);
+/*
+ * Public routes
+ * These are called by external systems (ABDM Gateway, onboarding)
+ * and must not require user JWT authentication.
+ *
+ * SECURITY: Public routes must implement their own verification
+ * (signature verification, timestamp validation, etc.)
+ */
+registerPublicRoutes(apiV1);
 
-// Global error handler (must be last)
+/*
+ * Protected routes
+ * Everything registered below this middleware requires authentication.
+ * User JWT must be valid and req.userId/req.supabase will be available.
+ */
+apiV1.use(auth);
+
+registerRoutes(apiV1);
+
+/* Error handler for API v1 routes */
+apiV1.use(errorHandler);
+
+/* Mount API router at root and /api/v1 for backwards compatibility */
+app.use(apiV1);
+app.use("/api/v1", apiV1);
+
+/*
+ * Global error handler
+ * Must always be registered last to catch all errors.
+ */
 app.use(errorHandler);
 
 export default app;

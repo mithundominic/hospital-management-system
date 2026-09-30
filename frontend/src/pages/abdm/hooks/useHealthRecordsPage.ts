@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getHospitalEncounters } from "@/services/encounter.service";
 import { QUERY_KEYS } from "@/constants";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import type { AbdmEncounter } from "../abdm.types";
 
 export const useHealthRecordsPage = () => {

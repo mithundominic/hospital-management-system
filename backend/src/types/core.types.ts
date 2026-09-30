@@ -4,11 +4,33 @@
 export interface Hospital {
   id: string;
   name: string;
-  address: string;
-  phone: string;
-  email: string;
+  registration_number?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  logo_url?: string;
+  tagline?: string;
+  brand_color?: string;
+  gst_number?: string;
+  nabh_number?: string;
+  prescription_footer?: string;
+  invoice_notes?: string;
+  is_active?: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface CreateHospitalDTO {
+  name: string;
+  registration_number?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
 }
 
 export interface Patient {

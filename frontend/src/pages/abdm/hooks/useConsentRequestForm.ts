@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createConsentRequest } from "@/services/abdm.service";
 import { QUERY_KEYS } from "@/constants";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 
 export const useConsentRequestForm = (patientId: string) => {
   const { currentHospital } = useHospital();

@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getAbhaLinkRequests } from "@/services/abdm.service";
 import { QUERY_KEYS } from "@/constants";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import type { LinkRequest } from "../abdm.types";
 import type { AbhaTabId } from "../abdm.config";
 

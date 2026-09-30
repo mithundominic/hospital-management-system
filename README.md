@@ -87,21 +87,27 @@ values (ABDM values can stay blank unless testing Phase 5), `npm install`, `npm 
     (M1/M2), `abdm_consent_artifacts` (M3), `abdm_callback_log` (no RLS — service-role only)
 15. `0015_seed_abdm_permissions.sql` — `abdm.read`, `abdm.write`
 
+**Attendance & Leave Management**
+
+16. `0017_attendance_and_leave_management.sql` — `attendance_records`, `leave_requests`, `leave_balances`
+17. `0018_platform_admin_access.sql` — Platform-level roles (`platform_memberships`), `is_platform_admin()`,
+    `has_platform_permission()`, RLS policies for SuperAdmin/Support to access all hospitals
+
 ## Role design notes
 
 Full reasoning lives in each migration's header comment. Current counts:
 
-| Role | Scope | Permissions |
-|---|---|---|
-| SuperAdmin | platform | 2 |
-| Support | platform | 1 |
-| HospitalAdmin | hospital | 28 |
-| Doctor | hospital | 17 |
-| Nurse | hospital | 14 |
-| Receptionist | hospital | 12 |
-| BillingClerk | hospital | 8 |
-| LabTech | hospital | 7 |
-| Pharmacist | hospital | 5 |
+| Role          | Scope    | Permissions |
+| ------------- | -------- | ----------- |
+| SuperAdmin    | platform | 2           |
+| Support       | platform | 1           |
+| HospitalAdmin | hospital | 28          |
+| Doctor        | hospital | 17          |
+| Nurse         | hospital | 14          |
+| Receptionist  | hospital | 12          |
+| BillingClerk  | hospital | 8           |
+| LabTech       | hospital | 7           |
+| Pharmacist    | hospital | 5           |
 
 - **No `role_inheritance` rows.** Hospital roles are specialty-based, not a linear hierarchy
   like Duzii's Owner > Manager > Staff — see `0008`'s header comment for the full reasoning.
@@ -134,8 +140,8 @@ its header comment before pointing a real sandbox at it).
   SELECT RLS policies — the corresponding POST/PATCH routes exist in the API layer but will
   fail against RLS until that's fixed.
 - No DB-level (or application-level) overlap prevention on `staff_shifts`.
-- SuperAdmin/Support have no cross-hospital enforcement — neither role has an actual hospital
-  membership in the seed, so granting them hospital-scoped permissions is currently a no-op.
+- ~~SuperAdmin/Support have no cross-hospital enforcement~~ **FIXED in migration 0018**: Platform admins
+  now use `platform_memberships` table and can access all hospitals via `/platform/hospitals` endpoints.
 - GST invoice numbering is an application-layer decision the schema doesn't make.
 - API layer: no `/api/v1` prefix, no pagination on list endpoints, no automated tests, no CI.
 - The two-insert flows (patient + registration, prescription + items, invoice + line items)
@@ -144,4 +150,4 @@ its header comment before pointing a real sandbox at it).
   no FHIR bundle construction, no callback signature verification (a real security gap if
   this were pointed at a live sandbox as-is). Full detail: `docs/PHASE5_ABDM_INTEGRATION.md`.
 - A parity/verification layer and an admin role-management UI are both still open.
-- **No frontend exists yet.**
+- **Frontend is complete** — see `FRONTEND_COMPLETE.md` for full UI implementation status.

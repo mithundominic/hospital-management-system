@@ -31,7 +31,9 @@ function validateConfig(): Config {
       anonKey: supabaseAnonKey || "",
     },
     api: {
-      baseUrl: apiUrl || "http://localhost:3000",
+      baseUrl:
+        (apiUrl || "http://localhost:3002").replace(/\/api\/v1\/?$/, "") +
+        "/api/v1",
     },
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,

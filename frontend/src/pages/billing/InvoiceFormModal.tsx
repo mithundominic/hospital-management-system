@@ -9,6 +9,7 @@ import { Text } from "@/components/ui/Text";
 import { InvoiceHeaderFields } from "./InvoiceHeaderFields";
 import { InvoiceLineItemRow } from "./InvoiceLineItemRow";
 import { InvoiceTotalsSection } from "./InvoiceTotalsSection";
+import { HospitalLetterhead } from "@/components/common/HospitalLetterhead";
 import { useInvoiceForm } from "./useInvoiceForm";
 import type { InvoiceFormModalProps } from "./invoice.types";
 
@@ -46,6 +47,11 @@ export const InvoiceFormModal = ({
       isLoading={loading}
     >
       <Box className="space-y-4">
+        <HospitalLetterhead
+          documentTitle="TAX INVOICE"
+          documentDate={formData.invoice_date}
+          badgeVariant="success"
+        />
         <InvoiceHeaderFields
           formData={formData}
           setFormData={setFormData}

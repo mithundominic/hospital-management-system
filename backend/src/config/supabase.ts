@@ -20,6 +20,10 @@ export const adminClient: SupabaseClient = createClient(url, serviceRoleKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
+export const publicClient: SupabaseClient = createClient(url, anonKey, {
+  auth: { autoRefreshToken: false, persistSession: false },
+});
+
 /**
  * Create user-scoped Supabase client
  * @param accessToken - User's JWT access token

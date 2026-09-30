@@ -6,6 +6,7 @@ import { Grid } from "@/components/ui/Grid";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { HospitalLetterhead } from "@/components/common/HospitalLetterhead";
 import { sampleTypeOptions, urgencyOptions, testNameOptions } from "./lab.data";
 import { useLabOrderForm } from "./useLabOrderForm";
 import type { LabOrder } from "@/types";
@@ -35,6 +36,10 @@ export const LabOrderFormModal = ({
       submitLabel={labOrder ? "Update Order" : "Create Order"}
     >
       <Box className="space-y-4">
+        <HospitalLetterhead
+          documentTitle="LAB REQUISITION"
+          documentDate={new Date().toLocaleDateString()}
+        />
         <Select
           label="Encounter *"
           value={formData.encounter_id}

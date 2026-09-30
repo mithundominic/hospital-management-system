@@ -2,7 +2,7 @@
 // backend/src/middleware/auth.ts
 
 import { Request, Response, NextFunction } from "express";
-import { adminClient, userClient } from "../config/supabase";
+import { publicClient, userClient } from "../config/supabase";
 import { sendError } from "../utils/respond";
 import { AuthenticatedRequest } from "../types";
 
@@ -23,7 +23,7 @@ export async function auth(
     return;
   }
 
-  const { data, error } = await adminClient.auth.getUser(token);
+  const { data, error } = await publicClient.auth.getUser(token);
 
   if (error || !data?.user) {
     sendError(res, 401, "UNAUTHENTICATED", "Invalid or expired token");

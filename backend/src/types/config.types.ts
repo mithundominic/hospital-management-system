@@ -17,9 +17,21 @@ export interface AbdmConfig {
   gatewayUrl: string;
 }
 
+export interface FrontendConfig {
+  url: string;
+  adminUrl: string;
+}
+
+export interface ServerConfig {
+  port: number;
+  bodyLimit: string;
+}
+
 export interface AppConfig {
   port: number;
   nodeEnv: "development" | "production" | "test";
+  server: ServerConfig;
+  frontend: FrontendConfig;
   supabase: SupabaseConfig;
   abdm: AbdmConfig;
 }

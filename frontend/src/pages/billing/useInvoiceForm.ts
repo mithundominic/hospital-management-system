@@ -4,7 +4,7 @@ import { useState, useCallback, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import { createHospitalInvoice } from "@/services/billing.service";
 import { getHospitalPatients } from "@/services/patient.service";
 import { QUERY_KEYS } from "@/constants";

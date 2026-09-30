@@ -11,6 +11,7 @@ import { Text } from "@/components/ui/Text";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Form } from "@/components/ui/Form";
+import { APP_ROUTES } from "@/constants";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ export const LoginForm = () => {
     setLoading(true);
     try {
       await signIn(email, password);
-      navigate("/");
+      navigate(APP_ROUTES.DASHBOARD);
     } catch {
       // Error notification handled in AuthContext
     } finally {
@@ -66,7 +67,19 @@ export const LoginForm = () => {
         </Box>
       </Form>
 
-      <Box className="mt-6 text-center">
+      <Box className="mt-4 text-center">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="text-primary-600 hover:text-primary-700"
+          onClick={() => navigate(APP_ROUTES.ONBOARDING)}
+        >
+          New hospital? Onboard here
+        </Button>
+      </Box>
+
+      <Box className="mt-4 text-center">
         <Text size="sm" variant="muted">
           Demo Credentials:
         </Text>

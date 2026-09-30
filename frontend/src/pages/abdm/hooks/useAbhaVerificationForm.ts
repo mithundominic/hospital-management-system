@@ -6,7 +6,7 @@ import {
   initiateAbhaVerification,
   confirmAbhaVerification,
 } from "@/services/abdm.service";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import type { AbhaVerificationResponse } from "../abdm.types";
 
 export const useAbhaVerificationForm = (patientId: string) => {

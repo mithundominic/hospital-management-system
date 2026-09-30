@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import { getHospitalPatientById } from "@/services/patient.service";
 import { QUERY_KEYS } from "@/constants";
 import type { Patient } from "@/types";

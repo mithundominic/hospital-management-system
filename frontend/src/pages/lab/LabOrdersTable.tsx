@@ -14,12 +14,14 @@ export interface LabOrdersTableProps {
   orders: LabOrder[];
   isLoading: boolean;
   onNew: () => void;
+  onPrint?: (order: LabOrder) => void;
 }
 
 export const LabOrdersTable = ({
   orders,
   isLoading,
   onNew,
+  onPrint,
 }: LabOrdersTableProps) => {
   if (isLoading) {
     return (
@@ -49,7 +51,7 @@ export const LabOrdersTable = ({
         <DataTableHeader columns={LAB_ORDERS_COLUMNS} />
         <TableBody>
           {orders.map((o) => (
-            <LabOrdersTableRow key={o.id} order={o} />
+            <LabOrdersTableRow key={o.id} order={o} onPrint={onPrint} />
           ))}
         </TableBody>
       </Table>

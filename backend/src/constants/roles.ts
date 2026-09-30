@@ -10,6 +10,7 @@ export const ROLES = {
   PHARMACIST: "Pharmacist",
   LAB_TECH: "LabTech",
   BILLING_CLERK: "BillingClerk",
+  PATIENT: "Patient",
 } as const;
 
 export type SystemRole = (typeof ROLES)[keyof typeof ROLES];

@@ -1,7 +1,7 @@
 // Responsibility: Business logic and data queries for hospital management
 
 import { SupabaseClient } from "@supabase/supabase-js";
-import type { Hospital } from "../../types";
+import type { Hospital, CreateHospitalDTO } from "../../types";
 
 export const queryUserHospitals = async (
   supabase: SupabaseClient,
@@ -40,6 +40,22 @@ export const updateHospitalDetails = async (
     .eq("id", hospitalId)
     .select()
     .single();
+  if (error) throw error;
+  return data;
+};
+
+export const createHospitalTenant = async (
+  supabase: SupabaseClient,
+  dto: CreateHospitalDTO,
+) => {
+  const { data, error } = await supabase.rpc("create_hospital_with_admin", {
+    p_name: dto.name,
+    p_registration_number: dto.registration_number || null,
+    p_address: dto.address || null,
+    p_city: dto.city || null,
+    p_state: dto.state || null,
+    p_pincode: dto.pincode || null,
+  });
   if (error) throw error;
   return data;
 };

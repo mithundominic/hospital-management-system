@@ -8,6 +8,7 @@ import {
   queryUserHospitals,
   queryHospitalById,
   updateHospitalDetails,
+  createHospitalTenant,
 } from "../services/hospitals/HospitalService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
@@ -59,7 +60,22 @@ const updateHospital: RouteHandler = async (req, res, next) => {
   }
 };
 
+const createHospital: RouteHandler = async (req, res, next) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    if (!authReq.body?.name) {
+      sendError(res, 400, "BAD_REQUEST", "Hospital name is required");
+      return;
+    }
+    const data = await createHospitalTenant(authReq.supabase, authReq.body);
+    sendData(res, data, 201);
+  } catch (err) {
+    next(err);
+  }
+};
+
 router.get(API_ROUTES.hospitals.list, getHospitals);
+router.post(API_ROUTES.hospitals.list, createHospital);
 router.get(API_ROUTES.hospitals.detail, getHospital);
 router.patch(
   API_ROUTES.hospitals.detail,

@@ -14,12 +14,14 @@ export interface BillingTableProps {
   invoices: Invoice[];
   isLoading: boolean;
   onNew: () => void;
+  onPrint?: (invoice: Invoice) => void;
 }
 
 export const BillingTable = ({
   invoices,
   isLoading,
   onNew,
+  onPrint,
 }: BillingTableProps) => {
   if (isLoading) {
     return (
@@ -49,7 +51,7 @@ export const BillingTable = ({
         <DataTableHeader columns={BILLING_TABLE_COLUMNS} />
         <TableBody>
           {invoices.map((inv) => (
-            <BillingTableRow key={inv.id} invoice={inv} />
+            <BillingTableRow key={inv.id} invoice={inv} onPrint={onPrint} />
           ))}
         </TableBody>
       </Table>

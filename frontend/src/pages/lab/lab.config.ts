@@ -8,4 +8,5 @@ export const LAB_ORDERS_COLUMNS: TableColumn<LabOrder>[] = [
   { key: "ordered_date", header: "Ordered Date" },
   { key: "priority", header: "Priority" },
   { key: "status", header: "Status" },
+  { key: "id", header: "Actions" },
 ];

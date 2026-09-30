@@ -1,11 +1,25 @@
 // Responsibility: Main responsive shell layout combining Sidebar, Header, and content outlet
 
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 import { Box } from "@/components/ui/Box";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { useHospital } from "@/contexts/useHospital";
+import { useHospitalBranding } from "@/lib/hooks/useHospitalBranding";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export const MainLayout = () => {
+  const { hospitals, loading } = useHospital();
+  useHospitalBranding();
+
+  if (loading) {
+    return <LoadingSpinner fullScreen />;
+  }
+
+  if (hospitals.length === 0) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
   return (
     <Box className="min-h-screen bg-gray-50">
       <Sidebar />

@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Database migration and RBAC setup for patient portal: Add user_id column to patients table, create Patient role with self-service permissions (appointments.read_own, appointments.request, lab.read_own, prescriptions.read_own), update RLS policies to allow patient self-access",
+  "status": "pending",
+  "steps": [
+    "Create migration 0024_patient_portal_foundation.sql adding patients.user_id UUID column (nullable, references auth.users, with index), creating Patient role (hospital scope), creating 4 new permissions (appointments.read_own, appointments.request, lab.read_own, prescriptions.read_own), and granting all 4 to Patient role",
+    "Add RLS policies: patients SELECT where auth.uid() = user_id; patient_registrations SELECT where patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+    "Add RLS policies: appointments SELECT where patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid()); appointments INSERT where status = 'pending' (patient-requested appointments start pending)",
+    "Add RLS policies: lab_results SELECT via lab_orders.encounter_id -> encounters.patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+    "Add RLS policies: prescriptions SELECT via encounter_id -> encounters.patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+    "Update backend/src/constants/permissions.ts: add APPOINTMENTS_READ_OWN, APPOINTMENTS_REQUEST, LAB_READ_OWN, PRESCRIPTIONS_READ_OWN constants",
+    "Update backend/src/constants/roles.ts: add PATIENT: 'Patient' constant"
+  ],
+  "acceptance_criteria": [
+    "Migration file exists at backend/migrations/0024_patient_portal_foundation.sql",
+    "patients table has user_id column with proper foreign key and index",
+    "Patient role exists in roles table with scope = 'hospital'",
+    "Four new permissions exist in permissions table with keys matching 'domain.action' pattern",
+    "role_permissions table links Patient role to all 4 permissions",
+    "RLS policies allow patients to read their own records via auth.uid() = patients.user_id",
+    "Constants files updated with new permission and role keys"
+  ],
+  "verification": [
+    "Run TypeScript build: cd backend && npm run build - must compile without errors",
+    "Apply migration to Supabase database via Supabase Dashboard SQL Editor and verify no errors",
+    "Query Supabase: SELECT * FROM roles WHERE name = 'Patient' - should return 1 row",
+    "Query Supabase: SELECT key FROM permissions WHERE key LIKE '%.read_own' OR key = 'appointments.request' - should return 4 rows",
+    "Query Supabase to verify RLS policies exist on patients, appointments, lab_results, prescriptions tables"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

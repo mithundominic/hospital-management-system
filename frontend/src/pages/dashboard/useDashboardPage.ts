@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import { QUERY_KEYS } from "@/constants";
 import { defaultStats, type DashboardStats } from "./dashboard.data";
 import type { DashboardTabId } from "./dashboard.config";

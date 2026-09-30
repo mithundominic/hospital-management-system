@@ -3,7 +3,7 @@
 import { useState, useCallback, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import {
   createHospitalShift,
   updateHospitalShift,

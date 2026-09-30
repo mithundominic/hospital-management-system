@@ -9,4 +9,5 @@ export const BILLING_TABLE_COLUMNS: TableColumn<Invoice>[] = [
   { key: "total_amount", header: "Total Amount" },
   { key: "tax_amount", header: "Tax (GST)" },
   { key: "status", header: "Status" },
+  { key: "id", header: "Actions" },
 ];

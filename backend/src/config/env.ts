@@ -31,6 +31,18 @@ const config: Readonly<AppConfig> = Object.freeze({
   port: parseInt(process.env.PORT || "3000", 10),
   nodeEnv: (process.env.NODE_ENV || "development") as AppConfig["nodeEnv"],
 
+  // Server Configuration
+  server: Object.freeze({
+    port: parseInt(process.env.PORT || "3000", 10),
+    bodyLimit: process.env.BODY_LIMIT || "1mb",
+  }),
+
+  // Frontend URLs for CORS
+  frontend: Object.freeze({
+    url: process.env.FRONTEND_URL || "http://localhost:5173",
+    adminUrl: process.env.ADMIN_FRONTEND_URL || "",
+  }),
+
   // Supabase
   supabase: Object.freeze({
     url: process.env.SUPABASE_URL!,

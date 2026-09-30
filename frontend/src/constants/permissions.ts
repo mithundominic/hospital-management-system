@@ -50,6 +50,13 @@ export const PERMISSIONS = {
   // ABDM
   ABDM_READ: "abdm.read",
   ABDM_WRITE: "abdm.write",
+  // Attendance & Leave
+  ATTENDANCE_READ: "attendance.read",
+  ATTENDANCE_WRITE: "attendance.write",
+  LEAVE_READ: "leave.read",
+  LEAVE_WRITE: "leave.write",
+  // Biometric Devices
+  DEVICES_MANAGE: "devices.manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

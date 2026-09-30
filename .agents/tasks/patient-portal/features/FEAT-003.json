@@ -1,0 +1,50 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Frontend patient portal pages: Create patient portal UI with pages for viewing appointments, lab results, prescriptions, and requesting appointments. Add patient role guard and navigation. Follow existing page patterns from frontend/src/pages/patients/, frontend/src/pages/appointments/.",
+  "status": "pending",
+  "steps": [
+    "Create frontend/src/pages/patientPortal/ directory",
+    "Create PatientPortalDashboardPage.tsx (under 100 lines): overview showing upcoming appointments count, recent lab results count, active prescriptions count, with cards linking to detail pages",
+    "Create PatientAppointmentsPage.tsx (under 100 lines): table of patient's appointments (past and upcoming) with columns: date, time, doctor, department, status; includes 'Request Appointment' button opening modal",
+    "Create PatientLabResultsPage.tsx (under 100 lines): table of lab results with columns: test name, date, result value, reference range, status; sortable by date descending",
+    "Create PatientPrescriptionsPage.tsx (under 100 lines): list/cards of prescriptions grouped by encounter, showing: date, prescribing doctor, medications with dosage/frequency/duration/instructions",
+    "Create AppointmentRequestModal.tsx component (under 100 lines): form with fields: hospital selection (dropdown of hospitals where patient is registered), department, preferred date/time, reason for visit",
+    "Create usePatientPortal.ts hook (under 100 lines): wraps React Query calls to /api/v1/patient-portal/* endpoints, provides { appointments, labResults, prescriptions, requestAppointment mutation }",
+    "Extract table components if any page approaches 100 lines: PatientAppointmentsTable.tsx, PatientLabResultsTable.tsx, PrescriptionCard.tsx",
+    "Add routes to frontend/src/AppRoutes.tsx: /patient-portal (dashboard), /patient-portal/appointments, /patient-portal/lab-results, /patient-portal/prescriptions - all wrapped in PatientPortalRoute guard checking for Patient role",
+    "Create PatientPortalRoute.tsx guard component (under 100 lines): checks AuthContext for user, fetches user's memberships, verifies at least one membership has role='Patient', redirects to login or 'not authorized' page if no patient role found",
+    "Update frontend/src/components/layout/Header.tsx: add conditional 'Patient Portal' nav link visible only to users with Patient role",
+    "Update frontend/src/lib/api.ts: add methods getMyAppointments(), getMyLabResults(), getMyPrescriptions(), requestAppointment(data)",
+    "Update frontend/src/constants/routes.ts: add PATIENT_PORTAL_DASHBOARD, PATIENT_PORTAL_APPOINTMENTS, PATIENT_PORTAL_LAB_RESULTS, PATIENT_PORTAL_PRESCRIPTIONS route constants",
+    "Create patient-portal.config.ts (under 100 lines): configuration object for appointment status badges, lab result status indicators, prescription frequency display strings",
+    "Create patientPortal.types.ts (under 100 lines): TypeScript interfaces for PatientAppointment, PatientLabResult, PatientPrescription, AppointmentRequest",
+    "If any page/component exceeds 100 lines, split: extract sub-components to components/ subdirectory, extract hooks to hooks/ subdirectory, extract utilities to patient-portal.utils.ts"
+  ],
+  "acceptance_criteria": [
+    "Four patient portal pages exist: dashboard, appointments, lab results, prescriptions",
+    "All pages use components from frontend/src/components/ui/ - no raw HTML outside ui/",
+    "PatientPortalRoute guard checks for Patient role and redirects unauthorized users",
+    "usePatientPortal hook uses React Query (useQuery/useMutation) for all data fetching",
+    "All API calls go through frontend/src/lib/api.ts client - zero direct Supabase calls",
+    "All files are under 100 lines - components/hooks/utils extracted as needed",
+    "No TypeScript 'any' types",
+    "TypeScript strict mode compliance - all data shapes have interfaces in types file",
+    "Patient portal link appears in Header navigation for Patient role users only",
+    "Appointment request modal creates appointment with status='pending' and shows success toast"
+  ],
+  "verification": [
+    "Run frontend build: cd frontend && npm run build - must succeed with no TypeScript errors",
+    "Start frontend dev: cd frontend && npm run dev",
+    "Login as a patient user (user with Patient role membership at a hospital)",
+    "Navigate to /patient-portal - should see dashboard with summary cards",
+    "Navigate to /patient-portal/appointments - should see list of patient's appointments",
+    "Click 'Request Appointment' button - modal opens, fill form, submit - should create pending appointment and show success toast",
+    "Navigate to /patient-portal/lab-results - should see patient's lab results in table",
+    "Navigate to /patient-portal/prescriptions - should see patient's prescriptions grouped by encounter",
+    "Verify all files under frontend/src/pages/patientPortal/ are under 100 lines via: Get-Content <file> | Measure-Object -Line",
+    "Try accessing patient portal as non-patient user - should be redirected or see 'not authorized' message"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -50,6 +50,18 @@ export const PERMISSIONS = {
   // ABDM
   ABDM_READ: "abdm.read",
   ABDM_WRITE: "abdm.write",
+  // Attendance & Leave
+  ATTENDANCE_READ: "attendance.read",
+  ATTENDANCE_WRITE: "attendance.write",
+  LEAVE_READ: "leave.read",
+  LEAVE_WRITE: "leave.write",
+  // Biometric Devices
+  DEVICES_MANAGE: "devices.manage",
+  // Patient Portal Self-Service
+  APPOINTMENTS_READ_OWN: "appointments.read_own",
+  APPOINTMENTS_REQUEST: "appointments.request",
+  LAB_READ_OWN: "lab.read_own",
+  PRESCRIPTIONS_READ_OWN: "prescriptions.read_own",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

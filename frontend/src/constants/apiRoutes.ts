@@ -39,6 +39,17 @@ export const API_ROUTES = {
     shifts: (hId: string) => `/hospitals/${hId}/shifts`,
     shift: (hId: string, id: string) => `/hospitals/${hId}/shifts/${id}`,
     memberships: (hId: string) => `/hospitals/${hId}/memberships`,
+    attendance: (hId: string) => `/hospitals/${hId}/attendance`,
+    myAttendance: (hId: string) => `/hospitals/${hId}/attendance/my-records`,
+    checkIn: (hId: string) => `/hospitals/${hId}/attendance/check-in`,
+    checkOut: (hId: string) => `/hospitals/${hId}/attendance/check-out`,
+    leaveApplications: (hId: string) => `/hospitals/${hId}/leave-applications`,
+    leaveApplication: (hId: string, id: string) =>
+      `/hospitals/${hId}/leave-applications/${id}`,
+    approveLeave: (hId: string, id: string) =>
+      `/hospitals/${hId}/leave-applications/${id}/approve`,
+    rejectLeave: (hId: string, id: string) =>
+      `/hospitals/${hId}/leave-applications/${id}/reject`,
     abdm: {
       linkRequests: (hId: string, pId: string) =>
         `/hospitals/${hId}/patients/${pId}/abdm/link-requests`,

@@ -77,4 +77,11 @@ export const API_ROUTES = {
     consentOnInit: "/abdm/callbacks/consent-requests/on-init",
     hiuNotify: "/abdm/callbacks/consents/hiu/notify",
   },
+  platform: {
+    hospitals: "/platform/hospitals",
+    hospitalStats: "/platform/hospitals/:hospitalId/stats",
+    analytics: "/platform/analytics",
+    activateHospital: "/platform/hospitals/:hospitalId/activate",
+    deactivateHospital: "/platform/hospitals/:hospitalId/deactivate",
+  },
 } as const;

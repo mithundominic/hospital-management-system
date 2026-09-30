@@ -8,7 +8,7 @@ import {
 } from "@/services/patient.service";
 import { getConsentArtifacts } from "@/services/abdm.service";
 import { QUERY_KEYS } from "@/constants";
-import { useHospital } from "@/contexts/HospitalContext";
+import { useHospital } from "@/contexts/useHospital";
 import type { ConsentArtifact } from "../abdm.types";
 import type { ConsentTabId } from "../abdm.config";
 
