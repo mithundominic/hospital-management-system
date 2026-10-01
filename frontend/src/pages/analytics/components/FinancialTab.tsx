@@ -7,9 +7,6 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import {
   LineChart,
   Line,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -21,6 +18,7 @@ import { useAnalytics } from "../hooks/useAnalytics";
 import { FinancialAnalytics } from "../analytics.types";
 import { CHART_COLORS } from "../analytics.config";
 import { FinancialKPIs } from "./FinancialKPIs";
+import { PaymentMethodsChart } from "./PaymentMethodsChart";
 
 interface FinancialTabProps {
   hospitalId: string;
@@ -39,14 +37,9 @@ export const FinancialTab = ({
     startDate,
     endDate,
   );
+
   if (isLoading) return <LoadingSpinner size="lg" />;
   if (!data) return null;
-  const paymentColors = [
-    CHART_COLORS.primary,
-    CHART_COLORS.secondary,
-    CHART_COLORS.success,
-    CHART_COLORS.warning,
-  ];
 
   return (
     <Box className="space-y-6">
@@ -77,33 +70,7 @@ export const FinancialTab = ({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="p-6">
-        <Heading level={3} className="mb-4">
-          Payment Methods
-        </Heading>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data.payment_by_method}
-              dataKey="amount"
-              nameKey="method"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              label
-            >
-              {data.payment_by_method.map((_entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={paymentColors[index % paymentColors.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </Card>
+      <PaymentMethodsChart data={data.payment_by_method} />
     </Box>
   );
 };

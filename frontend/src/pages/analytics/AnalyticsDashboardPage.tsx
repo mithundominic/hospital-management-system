@@ -13,6 +13,21 @@ import { ClinicalTab } from "./components/ClinicalTab";
 import { InventoryTab } from "./components/InventoryTab";
 import { ANALYTICS_TABS, DATE_RANGE_PRESETS } from "./analytics.config";
 import { DateRange, AnalyticsCategory } from "./analytics.types";
+import type { ComponentType } from "react";
+
+interface TabProps {
+  hospitalId: string;
+  startDate: string;
+  endDate: string;
+}
+
+const TAB_COMPONENTS: Record<AnalyticsCategory, ComponentType<TabProps>> = {
+  overview: OverviewTab,
+  financial: FinancialTab,
+  operational: OperationalTab,
+  clinical: ClinicalTab,
+  inventory: InventoryTab,
+};
 
 export default function AnalyticsDashboardPage() {
   const { currentHospital } = useHospital();
@@ -25,26 +40,14 @@ export default function AnalyticsDashboardPage() {
   const renderTabContent = () => {
     if (!currentHospital?.id) return null;
 
+    const TabComponent = TAB_COMPONENTS[activeTab];
     const props = {
       hospitalId: currentHospital.id,
       startDate: dateRange.startDate,
       endDate: dateRange.endDate,
     };
 
-    switch (activeTab) {
-      case "overview":
-        return <OverviewTab {...props} />;
-      case "financial":
-        return <FinancialTab {...props} />;
-      case "operational":
-        return <OperationalTab {...props} />;
-      case "clinical":
-        return <ClinicalTab {...props} />;
-      case "inventory":
-        return <InventoryTab {...props} />;
-      default:
-        return null;
-    }
+    return <TabComponent {...props} />;
   };
 
   return (
