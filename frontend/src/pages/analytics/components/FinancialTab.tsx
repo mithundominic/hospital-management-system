@@ -2,7 +2,6 @@
 
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
-import { Grid } from "@/components/ui/Grid";
 import { Box } from "@/components/ui/Box";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import {
@@ -21,6 +20,7 @@ import {
 import { useAnalytics } from "../hooks/useAnalytics";
 import { FinancialAnalytics } from "../analytics.types";
 import { CHART_COLORS } from "../analytics.config";
+import { FinancialKPIs } from "./FinancialKPIs";
 
 interface FinancialTabProps {
   hospitalId: string;
@@ -39,10 +39,8 @@ export const FinancialTab = ({
     startDate,
     endDate,
   );
-
   if (isLoading) return <LoadingSpinner size="lg" />;
   if (!data) return null;
-
   const paymentColors = [
     CHART_COLORS.primary,
     CHART_COLORS.secondary,
@@ -52,32 +50,11 @@ export const FinancialTab = ({
 
   return (
     <Box className="space-y-6">
-      <Grid cols={3} gap={6}>
-        <Card className="p-6">
-          <Heading level={3} className="mb-2">
-            Total Revenue
-          </Heading>
-          <Box className="text-3xl font-bold text-primary-600">
-            ₹{data.total_revenue.toLocaleString()}
-          </Box>
-        </Card>
-        <Card className="p-6">
-          <Heading level={3} className="mb-2">
-            Collected
-          </Heading>
-          <Box className="text-3xl font-bold text-green-600">
-            ₹{data.total_collected.toLocaleString()}
-          </Box>
-        </Card>
-        <Card className="p-6">
-          <Heading level={3} className="mb-2">
-            Outstanding
-          </Heading>
-          <Box className="text-3xl font-bold text-orange-600">
-            ₹{data.total_outstanding.toLocaleString()}
-          </Box>
-        </Card>
-      </Grid>
+      <FinancialKPIs
+        totalRevenue={data.total_revenue}
+        totalCollected={data.total_collected}
+        totalOutstanding={data.total_outstanding}
+      />
 
       <Card className="p-6">
         <Heading level={3} className="mb-4">

@@ -2,7 +2,6 @@
 
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
-import { Grid } from "@/components/ui/Grid";
 import { Box } from "@/components/ui/Box";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import {
@@ -20,6 +19,7 @@ import {
 import { useAnalytics } from "../hooks/useAnalytics";
 import { OperationalAnalytics } from "../analytics.types";
 import { CHART_COLORS, STATUS_COLORS } from "../analytics.config";
+import { BedUtilizationKPIs } from "./BedUtilizationKPIs";
 
 interface OperationalTabProps {
   hospitalId: string;
@@ -49,32 +49,7 @@ export const OperationalTab = ({
 
   return (
     <Box className="space-y-6">
-      <Grid cols={3} gap={6}>
-        <Card className="p-6">
-          <Heading level={3} className="mb-2">
-            Total Beds
-          </Heading>
-          <Box className="text-3xl font-bold">
-            {data.bed_utilization.total_beds}
-          </Box>
-        </Card>
-        <Card className="p-6">
-          <Heading level={3} className="mb-2">
-            Occupied
-          </Heading>
-          <Box className="text-3xl font-bold text-orange-600">
-            {data.bed_utilization.occupied_beds}
-          </Box>
-        </Card>
-        <Card className="p-6">
-          <Heading level={3} className="mb-2">
-            Occupancy Rate
-          </Heading>
-          <Box className="text-3xl font-bold text-blue-600">
-            {data.bed_utilization.occupancy_rate}%
-          </Box>
-        </Card>
-      </Grid>
+      <BedUtilizationKPIs data={data.bed_utilization} />
 
       <Card className="p-6">
         <Heading level={3} className="mb-4">
