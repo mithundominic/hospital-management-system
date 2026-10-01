@@ -4,6 +4,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { patientPortalService } from "../../../services/patientPortal.service";
 import type { AppointmentRequest } from "../patientPortal.types";
 
+export const useMyRegistrations = () => {
+  return useQuery({
+    queryKey: ["myRegistrations"],
+    queryFn: () => patientPortalService.getMyRegistrations(),
+  });
+};
+
 export const useMyAppointments = (filters?: {
   status?: string;
   from_date?: string;

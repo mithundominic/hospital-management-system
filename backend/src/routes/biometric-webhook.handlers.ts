@@ -2,27 +2,29 @@
 // NO authentication required - follows Rule 9: Auth Exceptions pattern
 
 import { Request, Response, NextFunction } from "express";
-import { getAdminClient } from "../config/supabase";
+import { adminClient } from "../config/supabase";
 import { processAttendanceLogs } from "../services/biometric/BiometricWebhookService";
 
 export const webhookHandler = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const serialNumber = req.query.SN as string;
     const table = req.query.table as string;
 
     if (!serialNumber) {
-      return res.status(400).json({ error: "Missing device serial number" });
+      res.status(400).json({ error: "Missing device serial number" });
+      return;
     }
 
     if (table !== "ATTLOG") {
-      return res.status(200).send("OK");
+      res.status(200).send("OK");
+      return;
     }
 
-    const supabase = getAdminClient();
+    const supabase = adminClient;
 
     const { data: device, error: deviceError } = await supabase
       .from("biometric_devices")
@@ -32,17 +34,20 @@ export const webhookHandler = async (
 
     if (deviceError || !device) {
       console.warn(`Unknown device serial: ${serialNumber}`);
-      return res.status(404).json({ error: "Device not registered" });
+      res.status(404).json({ error: "Device not registered" });
+      return;
     }
 
     if (device.status !== "active") {
       console.warn(`Inactive device attempted sync: ${serialNumber}`);
-      return res.status(403).json({ error: "Device is not active" });
+      res.status(403).json({ error: "Device is not active" });
+      return;
     }
 
     const logsBody = req.body;
     if (typeof logsBody !== "string" || !logsBody.trim()) {
-      return res.status(200).send("OK");
+      res.status(200).send("OK");
+      return;
     }
 
     const results = await processAttendanceLogs(

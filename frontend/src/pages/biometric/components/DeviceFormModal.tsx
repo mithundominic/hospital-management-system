@@ -27,7 +27,7 @@ export const DeviceFormModal = ({
 
   return (
     <FormModal
-      open={open}
+      isOpen={open}
       onClose={() => {
         reset();
         onClose();

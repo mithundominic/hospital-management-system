@@ -4,22 +4,27 @@ import { useState } from "react";
 import { FormModal } from "@/components/common/FormModal";
 import { Box } from "@/components/ui/Box";
 import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { useRequestAppointment } from "../hooks/usePatientPortal";
 import toast from "react-hot-toast";
+import type { PatientRegistration } from "../patientPortal.types";
 
 interface AppointmentRequestModalProps {
   onClose: () => void;
   onSuccess: () => void;
   patientRegistrationId: string;
+  registrations: PatientRegistration[];
 }
 
 export const AppointmentRequestModal = ({
   onClose,
   onSuccess,
   patientRegistrationId,
+  registrations,
 }: AppointmentRequestModalProps) => {
   const [formData, setFormData] = useState({
+    patient_registration_id: patientRegistrationId,
     appointment_date: "",
     appointment_time: "",
     reason: "",
@@ -29,26 +34,17 @@ export const AppointmentRequestModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate(
-      {
-        patient_registration_id: patientRegistrationId,
-        appointment_date: formData.appointment_date,
-        appointment_time: formData.appointment_time,
-        reason: formData.reason,
+    mutate(formData, {
+      onSuccess: () => {
+        toast.success("Appointment request submitted successfully");
+        onSuccess();
+        onClose();
       },
-      {
-        onSuccess: () => {
-          toast.success("Appointment request submitted successfully");
-          onSuccess();
-          onClose();
-        },
-        onError: (err) => {
-          toast.error(
-            err instanceof Error ? err.message : "Failed to request appointment",
-          );
-        },
+      onError: (err) => {
+        const msg = err instanceof Error ? err.message : "Request failed";
+        toast.error(msg);
       },
-    );
+    });
   };
 
   return (
@@ -61,6 +57,25 @@ export const AppointmentRequestModal = ({
       isLoading={isPending}
     >
       <Box className="space-y-4">
+        {registrations.length > 1 && (
+          <Select
+            label="Hospital *"
+            required
+            value={formData.patient_registration_id}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                patient_registration_id: e.target.value,
+              })
+            }
+          >
+            {registrations.map((reg) => (
+              <option key={reg.id} value={reg.id}>
+                {reg.hospital?.name || "Unknown Hospital"}
+              </option>
+            ))}
+          </Select>
+        )}
         <Input
           label="Preferred Date *"
           type="date"

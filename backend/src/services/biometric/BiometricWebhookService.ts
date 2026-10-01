@@ -12,26 +12,24 @@ interface ParsedAttendanceRecord {
 }
 
 const STATUS_MAP: Record<number, string> = {
-  0: "checked_in", // Check In
-  1: "checked_out", // Check Out
-  2: "checked_in", // Break Out
-  3: "checked_in", // Break In
-  4: "checked_in", // Overtime In
-  5: "checked_out", // Overtime Out
+  0: "checked_in",
+  1: "checked_out",
+  2: "checked_in",
+  3: "checked_in",
+  4: "checked_in",
+  5: "checked_out",
 };
 
 const parseAttendanceLog = (logLine: string): ParsedAttendanceRecord | null => {
   const parts = logLine.trim().split("\t");
-  if (parts.length < 3) return null;
-
-  const [pin, timestamp, statusStr, verifyModeStr, workCode] = parts;
+  if (parts.length < 3 || !parts[0] || !parts[1] || !parts[2]) return null;
 
   return {
-    pin,
-    timestamp,
-    status: parseInt(statusStr, 10),
-    verifyMode: parseInt(verifyModeStr || "0", 10),
-    workCode: workCode || undefined,
+    pin: parts[0],
+    timestamp: parts[1],
+    status: parseInt(parts[2], 10),
+    verifyMode: parseInt(parts[3] || "0", 10),
+    workCode: parts[4] || undefined,
   };
 };
 
@@ -81,10 +79,7 @@ export const processAttendanceLogs = async (
         device_id: deviceId,
         verify_mode: log.verifyMode,
         work_code: log.workCode,
-        notes:
-          log.status >= 2
-            ? `${log.status === 2 ? "Break Out" : log.status === 3 ? "Break In" : log.status === 4 ? "Overtime In" : "Overtime Out"}`
-            : null,
+        notes: log.status >= 2 ? (STATUS_MAP[log.status] || "Special") : null,
       });
 
       results.success++;

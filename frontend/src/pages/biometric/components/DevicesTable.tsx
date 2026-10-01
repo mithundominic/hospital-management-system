@@ -1,21 +1,14 @@
 // Responsibility: Display biometric devices in a table
 
-import { Badge } from "../../../components/ui/Badge";
-import { Button } from "../../../components/ui/Button";
 import {
   Table,
   TableHeader,
   TableBody,
   TableRow,
   TableHead,
-  TableCell,
-} from "../../../components/ui/Table";
-import type { BiometricDevice } from "../../../types/biometric";
-import {
-  DEVICE_STATUS_LABELS,
-  DEVICE_STATUS_COLORS,
-} from "../../../types/biometric";
-import { formatDistanceToNow } from "date-fns";
+} from "@/components/ui/Table";
+import type { BiometricDevice } from "@/types/biometric";
+import { DeviceTableRow } from "./DeviceTableRow";
 
 interface DevicesTableProps {
   devices: BiometricDevice[];
@@ -52,51 +45,13 @@ export const DevicesTable = ({
       </TableHeader>
       <TableBody>
         {devices.map((device) => (
-          <TableRow key={device.id}>
-            <TableCell className="font-medium">{device.name}</TableCell>
-            <TableCell className="font-mono text-sm">
-              {device.serial_number}
-            </TableCell>
-            <TableCell>{device.location || "-"}</TableCell>
-            <TableCell>
-              <Badge className={DEVICE_STATUS_COLORS[device.status]}>
-                {DEVICE_STATUS_LABELS[device.status]}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {device.last_sync_at
-                ? formatDistanceToNow(new Date(device.last_sync_at), {
-                    addSuffix: true,
-                  })
-                : "Never"}
-            </TableCell>
-            <TableCell>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => onEdit(device)}>
-                  Edit
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    onToggleStatus(
-                      device.id,
-                      device.status === "active" ? "inactive" : "active",
-                    )
-                  }
-                >
-                  {device.status === "active" ? "Deactivate" : "Activate"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => onDelete(device.id)}
-                >
-                  Delete
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
+          <DeviceTableRow
+            key={device.id}
+            device={device}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onToggleStatus={onToggleStatus}
+          />
         ))}
       </TableBody>
     </Table>

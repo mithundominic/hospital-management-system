@@ -84,4 +84,11 @@ export const API_ROUTES = {
     activateHospital: "/platform/hospitals/:hospitalId/activate",
     deactivateHospital: "/platform/hospitals/:hospitalId/deactivate",
   },
+  patientPortal: {
+    registrations: "/patient-portal/my-registrations",
+    myAppointments: "/patient-portal/my-appointments",
+    appointmentRequests: "/patient-portal/appointment-requests",
+    myLabResults: "/patient-portal/my-lab-results",
+    myPrescriptions: "/patient-portal/my-prescriptions",
+  },
 } as const;

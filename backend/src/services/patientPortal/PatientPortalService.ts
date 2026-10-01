@@ -1,6 +1,25 @@
-// Responsibility: Patient portal data access and business logic
+// Responsibility: Patient portal data access - appointments and registrations
 
 import { SupabaseClient } from "@supabase/supabase-js";
+
+export const queryMyPatientRegistrations = async (supabase: SupabaseClient) => {
+  const { data, error } = await supabase
+    .from("patient_registrations")
+    .select(
+      `
+      id,
+      registration_date,
+      hospital:hospital_id (
+        id,
+        name
+      )
+    `,
+    )
+    .order("registration_date", { ascending: false });
+
+  if (error) throw error;
+  return data;
+};
 
 export const queryMyAppointments = async (
   supabase: SupabaseClient,
@@ -67,36 +86,6 @@ export const createAppointmentRequest = async (
     })
     .select()
     .single();
-
-  if (error) throw error;
-  return data;
-};
-
-export const queryMyLabResults = async (supabase: SupabaseClient) => {
-  const { data, error } = await supabase
-    .from("lab_results")
-    .select(
-      `
-      id,
-      test_name,
-      result_value,
-      reference_range,
-      status,
-      result_date,
-      notes,
-      lab_order:lab_order_id (
-        encounter:encounter_id (
-          encounter_date,
-          patient_registration:patient_registration_id (
-            hospital:hospital_id (
-              name
-            )
-          )
-        )
-      )
-    `,
-    )
-    .order("result_date", { ascending: false });
 
   if (error) throw error;
   return data;

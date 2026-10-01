@@ -1,7 +1,7 @@
 // Responsibility: Biometric device and webhook route definitions
 
 import express from "express";
-import { requireHospitalPermission } from "../middleware/auth";
+import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
 import { PERMISSIONS } from "../constants";
 import {
   getDevices,

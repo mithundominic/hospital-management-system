@@ -1,18 +1,30 @@
 // Responsibility: Patient portal self-service routes
 
 import express from "express";
-import { requireHospitalPermission } from "../middleware/requireHospitalPermission";
+import { requirePatientPermission } from "../middleware/requirePatientPermission";
 import { PERMISSIONS } from "../constants";
 import { sendData } from "../utils/respond";
 import { AuthenticatedRequest, RouteHandler } from "../types";
+import { API_ROUTES } from "../constants/routes";
 import {
   queryMyAppointments,
   createAppointmentRequest,
-  queryMyLabResults,
+  queryMyPatientRegistrations,
 } from "../services/patientPortal/PatientPortalService";
+import { queryMyLabResults } from "../services/patientPortal/LabResultsService";
 import { queryMyPrescriptions } from "../services/patientPortal/PrescriptionService";
 
 const router = express.Router();
+
+const getMyPatientRegistrations: RouteHandler = async (req, res, next) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const data = await queryMyPatientRegistrations(authReq.supabase);
+    sendData(res, data);
+  } catch (err) {
+    next(err);
+  }
+};
 
 const getMyAppointments: RouteHandler = async (req, res, next) => {
   try {
@@ -58,26 +70,32 @@ const getMyPrescriptions: RouteHandler = async (req, res, next) => {
 };
 
 router.get(
-  "/patient-portal/my-appointments",
-  requireHospitalPermission(PERMISSIONS.APPOINTMENTS_READ_OWN),
+  API_ROUTES.patientPortal.registrations,
+  requirePatientPermission(PERMISSIONS.APPOINTMENTS_READ_OWN),
+  getMyPatientRegistrations,
+);
+
+router.get(
+  API_ROUTES.patientPortal.myAppointments,
+  requirePatientPermission(PERMISSIONS.APPOINTMENTS_READ_OWN),
   getMyAppointments,
 );
 
 router.post(
-  "/patient-portal/appointment-requests",
-  requireHospitalPermission(PERMISSIONS.APPOINTMENTS_REQUEST),
+  API_ROUTES.patientPortal.appointmentRequests,
+  requirePatientPermission(PERMISSIONS.APPOINTMENTS_REQUEST),
   requestAppointment,
 );
 
 router.get(
-  "/patient-portal/my-lab-results",
-  requireHospitalPermission(PERMISSIONS.LAB_READ_OWN),
+  API_ROUTES.patientPortal.myLabResults,
+  requirePatientPermission(PERMISSIONS.LAB_READ_OWN),
   getMyLabResults,
 );
 
 router.get(
-  "/patient-portal/my-prescriptions",
-  requireHospitalPermission(PERMISSIONS.PRESCRIPTIONS_READ_OWN),
+  API_ROUTES.patientPortal.myPrescriptions,
+  requirePatientPermission(PERMISSIONS.PRESCRIPTIONS_READ_OWN),
   getMyPrescriptions,
 );
 

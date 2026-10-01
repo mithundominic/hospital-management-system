@@ -5,29 +5,33 @@ import type {
   PatientAppointment,
   PatientLabResult,
   PatientPrescription,
+  PatientRegistration,
   AppointmentRequest,
 } from "../pages/patient-portal/patientPortal.types";
 
 export const patientPortalService = {
+  getMyRegistrations: () =>
+    api.get<PatientRegistration[]>("/patient-portal/my-registrations"),
+
   getMyAppointments: (filters?: { status?: string; from_date?: string }) => {
     const params = new URLSearchParams();
     if (filters?.status) params.set("status", filters.status);
     if (filters?.from_date) params.set("from_date", filters.from_date);
     const query = params.toString();
     return api.get<PatientAppointment[]>(
-      `/api/v1/patient-portal/my-appointments${query ? `?${query}` : ""}`,
+      `/patient-portal/my-appointments${query ? `?${query}` : ""}`,
     );
   },
 
   requestAppointment: (data: AppointmentRequest) =>
     api.post<void, AppointmentRequest>(
-      "/api/v1/patient-portal/appointment-requests",
+      "/patient-portal/appointment-requests",
       data,
     ),
 
   getMyLabResults: () =>
-    api.get<PatientLabResult[]>("/api/v1/patient-portal/my-lab-results"),
+    api.get<PatientLabResult[]>("/patient-portal/my-lab-results"),
 
   getMyPrescriptions: () =>
-    api.get<PatientPrescription[]>("/api/v1/patient-portal/my-prescriptions"),
+    api.get<PatientPrescription[]>("/patient-portal/my-prescriptions"),
 };

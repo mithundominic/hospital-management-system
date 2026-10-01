@@ -1,5 +1,14 @@
 // Responsibility: Type definitions for patient portal domain
 
+export interface PatientRegistration {
+  id: string;
+  registration_date: string;
+  hospital?: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface PatientAppointment {
   id: string;
   appointment_date: string;

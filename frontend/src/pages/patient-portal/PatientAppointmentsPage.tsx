@@ -4,18 +4,20 @@ import { useState } from "react";
 import { Box } from "@/components/ui/Box";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { useMyAppointments } from "./hooks/usePatientPortal";
+import {
+  useMyAppointments,
+  useMyRegistrations,
+} from "./hooks/usePatientPortal";
 import { PatientAppointmentsTable } from "./components/PatientAppointmentsTable";
 import { AppointmentRequestModal } from "./components/AppointmentRequestModal";
 
 export const PatientAppointmentsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const { data: appointments, isLoading, refetch } = useMyAppointments();
+  const { data: registrations, isLoading: isLoadingRegistrations } =
+    useMyRegistrations();
 
-  // TODO: Get actual patient registration ID from context or user profile
-  const patientRegistrationId = "temp-id";
-
-  if (isLoading) {
+  if (isLoading || isLoadingRegistrations) {
     return (
       <Box className="p-6">
         <p>Loading appointments...</p>
@@ -23,11 +25,18 @@ export const PatientAppointmentsPage = () => {
     );
   }
 
+  const defaultRegistrationId = registrations?.[0]?.id;
+
   return (
     <Box className="p-6 space-y-6">
       <Box className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">My Appointments</h1>
-        <Button onClick={() => setShowModal(true)}>Request Appointment</Button>
+        <Button
+          onClick={() => setShowModal(true)}
+          disabled={!defaultRegistrationId}
+        >
+          Request Appointment
+        </Button>
       </Box>
 
       <Card className="p-6">
@@ -40,11 +49,12 @@ export const PatientAppointmentsPage = () => {
         )}
       </Card>
 
-      {showModal && (
+      {showModal && defaultRegistrationId && (
         <AppointmentRequestModal
           onClose={() => setShowModal(false)}
           onSuccess={() => refetch()}
-          patientRegistrationId={patientRegistrationId}
+          patientRegistrationId={defaultRegistrationId}
+          registrations={registrations || []}
         />
       )}
     </Box>
