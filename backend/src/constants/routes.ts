@@ -78,6 +78,7 @@ export const API_ROUTES = {
     hiuNotify: "/abdm/callbacks/consents/hiu/notify",
   },
   platform: {
+    status: "/platform/status",
     hospitals: "/platform/hospitals",
     hospitalStats: "/platform/hospitals/:hospitalId/stats",
     analytics: "/platform/analytics",

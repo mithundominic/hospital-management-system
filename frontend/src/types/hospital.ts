@@ -54,4 +54,7 @@ export interface HospitalContextType {
   setCurrentHospital: (hospital: Hospital) => void;
   refreshHospitals: () => Promise<Hospital[]>;
   loading: boolean;
+  initialized: boolean;
+  error: string | null;
 }
+

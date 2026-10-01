@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
+import { PlatformProvider } from "./contexts/PlatformContext";
 import { HospitalProvider } from "./contexts/HospitalContext";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { AppRoutes } from "./AppRoutes";
@@ -28,10 +29,12 @@ export default function App() {
           }}
         >
           <AuthProvider>
-            <HospitalProvider>
-              <AppRoutes />
-              <Toaster position="top-right" />
-            </HospitalProvider>
+            <PlatformProvider>
+              <HospitalProvider>
+                <AppRoutes />
+                <Toaster position="top-right" />
+              </HospitalProvider>
+            </PlatformProvider>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

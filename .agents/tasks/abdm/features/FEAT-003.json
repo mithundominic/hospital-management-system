@@ -1,0 +1,38 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Implement HIP (Health Information Provider) data-push workflow: FHIR R4 Document Bundle construction for Patient demographics, Encounters, Prescriptions (MedicationRequest), and Lab results (DiagnosticReport + Observation). Encrypt bundles per ABDM spec (ECDH-ES key agreement) and push to gateway when HIU requests data after consent granted. Uses NCP1.0 ABDM FHIR profiles. This is the core M2 HIP functionality.",
+  "status": "pending",
+  "steps": [
+    "1. Create backend/src/services/abdm/fhir/ directory for FHIR-related services (keeps Rule 20 compliance via multiple files)",
+    "2. Create backend/src/services/abdm/fhir/FhirBundleBuilder.ts with methods: buildPatientResource(patient), buildEncounterResource(encounter), buildMedicationRequestResources(prescriptionItems), buildDiagnosticReportResource(labOrder, labResults)",
+    "3. Follow FHIR R4 structure from https://github.com/Nirmitee-tech/abdm-fhir-bundle-examples - use OPConsultation and Prescription bundle patterns",
+    "4. Each FHIR resource must include proper identifiers prefixed with HIP_ID from config.abdm.hipId",
+    "5. Create backend/src/services/abdm/fhir/FhirEncryptionService.ts for ECDH-ES encryption using Node.js crypto built-ins (no external deps if possible)",
+    "6. Create backend/src/services/abdm/AbdmHipService.ts with pushHealthInformation(consentArtifactId) method that: (a) fetches consent artifact from DB, (b) queries patient records matching consent scope, (c) builds FHIR bundle via FhirBundleBuilder, (d) encrypts with HIU public key from consent artifact, (e) POSTs to {gatewayUrl}/v0.5/health-information/hip/on-request",
+    "7. Add callback handler processHipDataRequest in AbdmCallbackService.ts for health-information/hip/request callback (ABDM calls this when HIU requests data after consent granted) - delegates to AbdmHipService.pushHealthInformation",
+    "8. Add route handler handleHipDataRequest in abdmCallbacks.handlers.ts - calls processHipDataRequest",
+    "9. Mount new callback route in abdmCallbacks.ts: router.post(API_ROUTES.callbacks.hipDataRequest, handleHipDataRequest)",
+    "10. Add hipDataRequest route constant to backend/src/constants/routes.ts: '/abdm/callbacks/health-information/hip/request'",
+    "11. Create backend/src/types/fhir.types.ts with FHIR R4 resource interfaces: FhirPatient, FhirEncounter, FhirMedicationRequest, FhirDiagnosticReport, FhirObservation, FhirBundle",
+    "12. Extract SNOMED CT / LOINC code mappings to backend/src/services/abdm/fhir/fhirCodes.data.ts (configuration-driven, Rule 18)",
+    "13. If any file approaches 100 lines, extract sub-concerns: separate builder per resource type (PatientBuilder.ts, EncounterBuilder.ts, etc.)"
+  ],
+  "acceptance_criteria": [
+    "FhirBundleBuilder can construct valid FHIR R4 Document Bundles for Patient, Encounter, Prescription, Lab results following ABDM NCP1.0 profiles",
+    "All FHIR resources include proper identifiers with HIP_ID prefix",
+    "Bundles are encrypted using ECDH-ES before transmission",
+    "health-information/hip/request callback triggers data push to gateway",
+    "TypeScript typecheck passes",
+    "All files remain under 100 lines (Rule 20)"
+  ],
+  "verification": [
+    "Run `npm run typecheck` from backend/ - must pass",
+    "Check all files in backend/src/services/abdm/fhir/ are under 100 lines each",
+    "Code review: confirm FHIR bundles follow structure from https://github.com/Nirmitee-tech/abdm-fhir-bundle-examples",
+    "Code review: confirm identifiers use config.abdm.hipId prefix",
+    "Manual test: trigger processHipDataRequest with mock consent artifact - should build FHIR bundle without errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Add missing M2 HIP link-care-context route (staff-facing) to trigger care context linking after encounter creation, and verify all ABDM-related files comply with 100-line limit (Rule 20). This route is referenced in docs but doesn't exist in abdm.ts yet.",
+  "status": "pending",
+  "steps": [
+    "1. Add POST /hospitals/:hospitalId/patients/:patientId/abdm/link-care-context route to backend/src/routes/abdm.ts with requireHospitalPermission(PERMISSIONS.ABDM_WRITE) middleware",
+    "2. Add route constant to backend/src/constants/routes.ts in abdm section: linkCareContext: '/hospitals/:hospitalId/patients/:patientId/abdm/link-care-context'",
+    "3. Create handler linkCareContext in abdmVerification.handlers.ts (or create new abdmLinking.handlers.ts if verification handlers file approaches 100 lines) - accepts {abha_address, encounter_id, care_context_reference} in body",
+    "4. Create linkCareContextWorkflow in AbdmWorkflowService.ts that: (a) validates encounter exists and belongs to patient/hospital, (b) calls AbdmClient.linkCareContext, (c) logs request to abdm_link_requests table with link_type='care_context'",
+    "5. Add LinkCareContextRequest interface to backend/src/types/abdm.types.ts with fields: abha_address (string), encounter_id (string), care_context_reference (string)",
+    "6. Update abdm.handlers.ts barrel export to include linkCareContext if needed",
+    "7. Audit ALL files touched by FEAT-001/002/003/004 and confirm none exceed 100 lines - if any do, extract immediately per Rule 20 extraction strategy",
+    "8. Run final typecheck to confirm all TypeScript compiles cleanly"
+  ],
+  "acceptance_criteria": [
+    "POST /hospitals/:hospitalId/patients/:patientId/abdm/link-care-context route exists and is protected by abdm.write permission",
+    "Route handler validates encounter belongs to specified patient and hospital before calling ABDM",
+    "Successful link request is logged to abdm_link_requests table with link_type='care_context'",
+    "All ABDM-related TypeScript files are under 100 lines (AbdmAuth, all M1/M2/M3 services, callback handlers, route handlers, middleware)",
+    "TypeScript typecheck passes"
+  ],
+  "verification": [
+    "Run `npm run typecheck` from backend/ - must pass with zero errors",
+    "Check line count of all files in backend/src/services/abdm/, backend/src/routes/abdm*.ts, backend/src/middleware/verifyAbdmCallback.ts - all must be ≤100 lines",
+    "Manual test: POST to link-care-context route with valid encounter_id - should call AbdmM2Service.linkCareContext and log to abdm_link_requests",
+    "Manual test: POST with encounter_id not belonging to patient - should return 400/404 error"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

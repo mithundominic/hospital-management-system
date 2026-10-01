@@ -9,9 +9,12 @@ import {
   getAnalytics,
   activateHospital,
   deactivateHospital,
+  getPlatformStatus,
 } from "./platform.handlers";
 
 const router = Router();
+
+router.get(API_ROUTES.platform.status, getPlatformStatus);
 
 router.get(
   API_ROUTES.platform.hospitals,

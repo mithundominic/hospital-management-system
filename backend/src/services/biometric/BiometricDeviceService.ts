@@ -1,7 +1,7 @@
 // Responsibility: Business logic for managing biometric devices
 
 import { SupabaseClient } from "@supabase/supabase-js";
-import type { BiometricDevice, CreateDeviceInput } from "./types";
+import type { CreateDeviceInput } from "./types";
 
 export const listDevices = async (
   supabase: SupabaseClient,

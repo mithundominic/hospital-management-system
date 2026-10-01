@@ -1,21 +1,51 @@
-// Responsibility: Main lab orders management page displaying summary metrics and test orders table
+// Responsibility: Main lab orders management page displaying summary metrics and tabbed orders table
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Button } from "@/components/ui/Button";
+import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { LabOrdersStatCards } from "./LabOrdersStatCards";
 import { LabOrdersTable } from "./LabOrdersTable";
 import { LabOrderFormModal } from "./LabOrderFormModal";
-import { LabReportPrintModal } from "./LabReportPrintModal";
+import {
+  buildLabOrdersTabs,
+  type LabOrdersTabId,
+} from "./lab.config";
 import { useLabOrdersPage } from "./useLabOrdersPage";
-import type { LabOrder } from "@/types";
 
 export const LabOrdersPage = () => {
-  const { labOrders, isLoading, showModal, openModal, closeModal, refetch } =
-    useLabOrdersPage();
-  const [printOrder, setPrintOrder] = useState<LabOrder | null>(null);
+  const {
+    labOrders,
+    isLoading,
+    showModal,
+    openModal,
+    closeModal,
+    refetch,
+  } = useLabOrdersPage();
+  const [activeTab, setActiveTab] = useState<LabOrdersTabId>("all");
+
+  const pendingOrders = useMemo(
+    () => labOrders.filter((o) => o.status === "pending"),
+    [labOrders],
+  );
+  const completedOrders = useMemo(
+    () => labOrders.filter((o) => o.status === "completed"),
+    [labOrders],
+  );
+
+  const tabs = buildLabOrdersTabs(
+    labOrders.length,
+    pendingOrders.length,
+    completedOrders.length,
+  );
+
+  const displayedOrders = useMemo(() => {
+    if (activeTab === "pending") return pendingOrders;
+    if (activeTab === "completed") return completedOrders;
+    return labOrders;
+  }, [activeTab, labOrders, pendingOrders, completedOrders]);
 
   return (
     <Box className="space-y-6">
@@ -31,22 +61,17 @@ export const LabOrdersPage = () => {
 
       <LabOrdersStatCards orders={labOrders} />
 
-      <LabOrdersTable
-        orders={labOrders}
-        isLoading={isLoading}
-        onNew={openModal}
-        onPrint={setPrintOrder}
-      />
+      <Box className="space-y-4">
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <LabOrdersTable
+          orders={displayedOrders}
+          isLoading={isLoading}
+          onNew={openModal}
+        />
+      </Box>
 
       {showModal && (
         <LabOrderFormModal onClose={closeModal} onSuccess={() => refetch()} />
-      )}
-
-      {printOrder && (
-        <LabReportPrintModal
-          labOrder={printOrder}
-          onClose={() => setPrintOrder(null)}
-        />
       )}
     </Box>
   );

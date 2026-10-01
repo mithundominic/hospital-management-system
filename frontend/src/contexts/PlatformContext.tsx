@@ -1,30 +1,50 @@
 // Responsibility: Platform admin status detection and permission checking
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
-import { PERMISSIONS } from "@/constants";
+import { getPlatformStatus } from "@/services/platform.service";
 
 interface PlatformContextValue {
   isPlatformAdmin: boolean;
-  hasManageHospitals: boolean;
-  hasSupportAccess: boolean;
+  loading: boolean;
 }
 
-const PlatformContext = createContext<PlatformContextValue | undefined>(
-  undefined,
-);
+const PlatformContext = createContext<PlatformContextValue | undefined>(undefined);
 
 export const PlatformProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
+  const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const isPlatformAdmin = false;
-  const hasManageHospitals = false;
-  const hasSupportAccess = false;
+  useEffect(() => {
+    if (!user) {
+      setIsPlatformAdmin(false);
+      setLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    getPlatformStatus()
+      .then((status) => {
+        if (isMounted) {
+          setIsPlatformAdmin(status.isPlatformAdmin);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIsPlatformAdmin(false);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   return (
-    <PlatformContext.Provider
-      value={{ isPlatformAdmin, hasManageHospitals, hasSupportAccess }}
-    >
+    <PlatformContext.Provider value={{ isPlatformAdmin, loading }}>
       {children}
     </PlatformContext.Provider>
   );

@@ -1,6 +1,6 @@
 // Responsibility: Patient prescriptions viewing interface
 
-import { Box } from "@/components/ui/Box";
+import { Box, Heading, Text } from "@/components/ui";
 import { useMyPrescriptions } from "./hooks/usePatientPortal";
 import { PrescriptionCard } from "./components/PrescriptionCard";
 
@@ -10,14 +10,14 @@ export const PatientPrescriptionsPage = () => {
   if (isLoading) {
     return (
       <Box className="p-6">
-        <p>Loading prescriptions...</p>
+        <Text>Loading prescriptions...</Text>
       </Box>
     );
   }
 
   return (
     <Box className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">My Prescriptions</h1>
+      <Heading>My Prescriptions</Heading>
 
       {prescriptions && prescriptions.length > 0 ? (
         <Box className="space-y-4">
@@ -29,9 +29,9 @@ export const PatientPrescriptionsPage = () => {
           ))}
         </Box>
       ) : (
-        <Box className="text-center text-gray-500 py-8">
+        <Text className="text-center py-8" variant="muted">
           No prescriptions found.
-        </Box>
+        </Text>
       )}
     </Box>
   );

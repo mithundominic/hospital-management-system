@@ -1,19 +1,27 @@
-// Responsibility: Main pharmacy inventory management page displaying stock alerts and medicine catalog
+// Responsibility: Main pharmacy inventory management page with tabbed catalog filtering
 
+import { useState } from "react";
 import { Plus, Package } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
-import { Heading } from "@/components/ui/Heading";
-import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { Tabs } from "@/components/ui/Tabs";
 import { NoticeCard } from "@/components/common/NoticeCard";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PharmacyStatCards } from "./PharmacyStatCards";
 import { PharmacyTable } from "./PharmacyTable";
+import {
+  buildPharmacyTabs,
+  type PharmacyTabId,
+} from "./pharmacy.config";
 import { usePharmacyPage } from "./usePharmacyPage";
 
 export const PharmacyPage = () => {
   const { inventory, isLoading, lowStock, totalValue } = usePharmacyPage();
+  const [activeTab, setActiveTab] = useState<PharmacyTabId>("all");
+
+  const tabs = buildPharmacyTabs(inventory.length, lowStock.length);
+  const displayedItems = activeTab === "low_stock" ? lowStock : inventory;
 
   return (
     <Box className="space-y-6">
@@ -44,7 +52,10 @@ export const PharmacyPage = () => {
         totalValue={totalValue}
       />
 
-      <PharmacyTable items={inventory} isLoading={isLoading} />
+      <Box className="space-y-4">
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <PharmacyTable items={displayedItems} isLoading={isLoading} />
+      </Box>
     </Box>
   );
 };

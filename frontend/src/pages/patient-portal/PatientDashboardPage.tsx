@@ -1,9 +1,7 @@
 // Responsibility: Patient portal dashboard overview with summary statistics
 
 import { useNavigate } from "react-router-dom";
-import { Box } from "@/components/ui/Box";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Box, Card, Button, Heading, Text } from "@/components/ui";
 import { Calendar, FileText, FlaskConical } from "lucide-react";
 import {
   useMyAppointments,
@@ -28,15 +26,17 @@ export const PatientDashboardPage = () => {
 
   return (
     <Box className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Patient Portal</h1>
+      <Heading>Patient Portal</Heading>
 
       <Box className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-6">
           <Box className="flex items-center gap-4">
             <Calendar className="w-10 h-10 text-blue-600" />
             <Box>
-              <p className="text-3xl font-bold">{upcomingAppointments}</p>
-              <p className="text-sm text-gray-600">Upcoming Appointments</p>
+              <Text className="text-3xl font-bold">{upcomingAppointments}</Text>
+              <Text size="sm" variant="muted">
+                Upcoming Appointments
+              </Text>
             </Box>
           </Box>
           <Button
@@ -52,8 +52,10 @@ export const PatientDashboardPage = () => {
           <Box className="flex items-center gap-4">
             <FlaskConical className="w-10 h-10 text-green-600" />
             <Box>
-              <p className="text-3xl font-bold">{recentLabResults}</p>
-              <p className="text-sm text-gray-600">Recent Lab Results</p>
+              <Text className="text-3xl font-bold">{recentLabResults}</Text>
+              <Text size="sm" variant="muted">
+                Recent Lab Results
+              </Text>
             </Box>
           </Box>
           <Button
@@ -69,8 +71,10 @@ export const PatientDashboardPage = () => {
           <Box className="flex items-center gap-4">
             <FileText className="w-10 h-10 text-purple-600" />
             <Box>
-              <p className="text-3xl font-bold">{activePrescriptions}</p>
-              <p className="text-sm text-gray-600">Active Prescriptions</p>
+              <Text className="text-3xl font-bold">{activePrescriptions}</Text>
+              <Text size="sm" variant="muted">
+                Active Prescriptions
+              </Text>
             </Box>
           </Box>
           <Button

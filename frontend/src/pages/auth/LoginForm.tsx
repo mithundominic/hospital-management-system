@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useHospital } from "@/contexts/useHospital";
 import { Box } from "@/components/ui/Box";
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
@@ -18,6 +19,7 @@ export const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const { refreshHospitals } = useHospital();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -25,7 +27,8 @@ export const LoginForm = () => {
     setLoading(true);
     try {
       await signIn(email, password);
-      navigate(APP_ROUTES.DASHBOARD);
+      const list = await refreshHospitals();
+      navigate(list.length === 0 ? APP_ROUTES.ONBOARDING : APP_ROUTES.DASHBOARD);
     } catch {
       // Error notification handled in AuthContext
     } finally {
@@ -87,7 +90,7 @@ export const LoginForm = () => {
           Email: admin@hospital.com
         </Text>
         <Text size="xs" variant="muted">
-          Password: (Set during setup)
+          Password: password123
         </Text>
       </Box>
     </Card>

@@ -1,16 +1,22 @@
-// Responsibility: Main attendance tracking page with check-in/out and records display
- 
+// Responsibility: Main attendance tracking page with tabs for my records and staff records
+
 "use client";
 
-import { Calendar, Clock } from "lucide-react";
+import { useState } from "react";
+import { Calendar } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
+import { Tabs } from "@/components/ui/Tabs";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { AttendanceTable } from "./AttendanceTable";
+import { TodayAttendanceCard } from "./TodayAttendanceCard";
+import {
+  buildAttendanceTabs,
+  type AttendanceTabId,
+} from "./attendance.config";
 import { useAttendancePage } from "./useAttendancePage";
 
 export const AttendancePage = () => {
@@ -26,10 +32,13 @@ export const AttendancePage = () => {
     isCheckingIn,
     isCheckingOut,
   } = useAttendancePage();
+  const [activeTab, setActiveTab] = useState<AttendanceTabId>("my");
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
+
+  const tabs = buildAttendanceTabs(myRecords.length, allRecords.length);
 
   return (
     <Box className="space-y-6">
@@ -41,57 +50,33 @@ export const AttendancePage = () => {
         </Flex>
       </Flex>
 
-      <Card>
-        <CardHeader>
-          <Heading level={3} className="text-lg font-semibold flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Today's Attendance
-          </Heading>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {todayRecord && (
-            <Box className="text-sm space-y-2">
-              <Text>
-                <Text as="span" weight="medium">Checked In: </Text>
-                <Text as="span">{new Date(todayRecord.check_in_time).toLocaleTimeString()}</Text>
-              </Text>
-              {todayRecord.check_out_time && (
-                <Text>
-                  <Text as="span" weight="medium">Checked Out: </Text>
-                  <Text as="span">{new Date(todayRecord.check_out_time).toLocaleTimeString()}</Text>
-                </Text>
-              )}
-            </Box>
-          )}
+      <TodayAttendanceCard
+        todayRecord={todayRecord}
+        isCheckedIn={isCheckedIn}
+        isCheckingIn={isCheckingIn}
+        isCheckingOut={isCheckingOut}
+        onCheckIn={handleCheckIn}
+        onCheckOut={handleCheckOut}
+      />
 
-          <Flex className="gap-4">
-            {!isCheckedIn ? (
-              <Button onClick={handleCheckIn} disabled={isCheckingIn}>
-                {isCheckingIn ? "Checking In..." : "Check In"}
-              </Button>
-            ) : (
-              <Button
-                onClick={handleCheckOut}
-                disabled={isCheckingOut}
-                variant="outline"
-              >
-                {isCheckingOut ? "Checking Out..." : "Check Out"}
-              </Button>
-            )}
-          </Flex>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <Heading level={3} className="text-lg font-semibold">
-            {canViewAll ? "All Staff Attendance" : "My Attendance History"}
-          </Heading>
-        </CardHeader>
-        <CardContent>
-          <AttendanceTable records={canViewAll ? allRecords : myRecords} />
-        </CardContent>
-      </Card>
+      {canViewAll ? (
+        <Box className="space-y-4">
+          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          <Card>
+            <CardContent className="pt-6">
+              <AttendanceTable
+                records={activeTab === "my" ? myRecords : allRecords}
+              />
+            </CardContent>
+          </Card>
+        </Box>
+      ) : (
+        <Card>
+          <CardContent className="pt-6">
+            <AttendanceTable records={myRecords} />
+          </CardContent>
+        </Card>
+      )}
     </Box>
   );
 };

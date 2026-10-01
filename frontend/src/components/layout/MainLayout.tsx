@@ -9,10 +9,10 @@ import { useHospitalBranding } from "@/lib/hooks/useHospitalBranding";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export const MainLayout = () => {
-  const { hospitals, loading } = useHospital();
+  const { hospitals, loading, initialized } = useHospital();
   useHospitalBranding();
 
-  if (loading) {
+  if (!initialized || loading) {
     return <LoadingSpinner fullScreen />;
   }
 

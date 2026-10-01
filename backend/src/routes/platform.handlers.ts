@@ -69,3 +69,20 @@ export const deactivateHospital: RouteHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getPlatformStatus: RouteHandler = async (req, res, next) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const { data, error } = await authReq.supabase.rpc("is_platform_admin", {
+      p_user_id: authReq.userId,
+    });
+    if (error) {
+      sendData(res, { isPlatformAdmin: false });
+      return;
+    }
+    sendData(res, { isPlatformAdmin: Boolean(data) });
+  } catch (err) {
+    next(err);
+  }
+};
+

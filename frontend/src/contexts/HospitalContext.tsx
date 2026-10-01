@@ -22,10 +22,13 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [currentHospital, setCurrentHospital] = useState<Hospital | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadHospitals = async (): Promise<Hospital[]> => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getHospitals();
       const list = data || [];
@@ -41,13 +44,14 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
         setCurrentHospital(null);
       }
       return list;
-    } catch (error) {
-      console.error("Failed to load hospitals:", error);
-      setHospitals([]);
-      setCurrentHospital(null);
+    } catch (err) {
+      console.error("Failed to load hospitals:", err);
+      const msg = err instanceof Error ? err.message : "Failed to load hospitals";
+      setError(msg);
       return [];
     } finally {
       setLoading(false);
+      setInitialized(true);
     }
   };
 
@@ -56,11 +60,12 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
       setHospitals([]);
       setCurrentHospital(null);
       setLoading(false);
+      setInitialized(false);
+      setError(null);
       return;
     }
 
-    if (location.pathname === "/onboarding") {
-      setLoading(false);
+    if (location.pathname === "/login" || location.pathname === "/onboarding") {
       return;
     }
 
@@ -75,6 +80,8 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
         setCurrentHospital,
         refreshHospitals: loadHospitals,
         loading,
+        initialized,
+        error,
       }}
     >
       {children}

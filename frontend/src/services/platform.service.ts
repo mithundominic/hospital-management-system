@@ -7,6 +7,14 @@ import type {
   PlatformAnalytics,
 } from "@/types/platform";
 
+export interface PlatformStatus {
+  isPlatformAdmin: boolean;
+}
+
+export const getPlatformStatus = async (): Promise<PlatformStatus> => {
+  return api.get<PlatformStatus>("/platform/status");
+};
+
 export const getPlatformHospitals = async (): Promise<PlatformHospital[]> => {
   return api.get<PlatformHospital[]>("/platform/hospitals");
 };

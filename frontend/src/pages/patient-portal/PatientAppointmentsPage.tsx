@@ -1,9 +1,7 @@
 // Responsibility: Patient appointments list and request interface
 
 import { useState } from "react";
-import { Box } from "@/components/ui/Box";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Box, Button, Card, Heading, Text } from "@/components/ui";
 import {
   useMyAppointments,
   useMyRegistrations,
@@ -20,7 +18,7 @@ export const PatientAppointmentsPage = () => {
   if (isLoading || isLoadingRegistrations) {
     return (
       <Box className="p-6">
-        <p>Loading appointments...</p>
+        <Text>Loading appointments...</Text>
       </Box>
     );
   }
@@ -30,7 +28,7 @@ export const PatientAppointmentsPage = () => {
   return (
     <Box className="p-6 space-y-6">
       <Box className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">My Appointments</h1>
+        <Heading>My Appointments</Heading>
         <Button
           onClick={() => setShowModal(true)}
           disabled={!defaultRegistrationId}
@@ -43,9 +41,9 @@ export const PatientAppointmentsPage = () => {
         {appointments && appointments.length > 0 ? (
           <PatientAppointmentsTable appointments={appointments} />
         ) : (
-          <p className="text-center text-gray-500 py-8">
+          <Text className="text-center py-8" variant="muted">
             No appointments found.
-          </p>
+          </Text>
         )}
       </Card>
 

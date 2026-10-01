@@ -1,7 +1,10 @@
-// Responsibility: Configuration objects for attendance and leave status badges and table columns
+// Responsibility: Configuration objects for attendance and leave status badges, tabs, and table columns
 
 import type { TableColumn } from "@/types/table.types";
+import type { TabItem } from "@/components/ui/Tabs";
 import type { AttendanceRecord, LeaveApplication } from "./attendance.types";
+
+export type AttendanceTabId = "my" | "all";
 
 export const ATTENDANCE_STATUS_CONFIG = {
   checked_in: {
@@ -61,4 +64,12 @@ export const LEAVE_TABLE_COLUMNS: readonly TableColumn<LeaveApplication>[] = [
   { key: "end_date", header: "End Date" },
   { key: "days_count", header: "Days" },
   { key: "status", header: "Status" },
+] as const;
+
+export const buildAttendanceTabs = (
+  myCount: number,
+  allCount: number,
+): readonly TabItem<AttendanceTabId>[] => [
+  { id: "my", label: "My Attendance History", count: myCount },
+  { id: "all", label: "All Staff Attendance", count: allCount },
 ] as const;

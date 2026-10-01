@@ -1,7 +1,6 @@
 // Responsibility: Table displaying patient appointments
 
-import { Table } from "@/components/ui/Table";
-import { Badge } from "@/components/ui/Badge";
+import { Table, Badge, Text } from "@/components/ui";
 import type { PatientAppointment } from "../patientPortal.types";
 import { appointmentStatusConfig } from "../patientPortal.config";
 
@@ -31,10 +30,10 @@ export const PatientAppointmentsTable = ({
             <td>
               {apt.doctor_membership?.doctor?.full_name || "N/A"}
               {apt.doctor_membership?.doctor?.specialization && (
-                <span className="text-sm text-gray-500">
+                <Text as="span" size="sm" variant="muted">
                   {" "}
                   ({apt.doctor_membership.doctor.specialization})
-                </span>
+                </Text>
               )}
             </td>
             <td>{apt.department?.name || "N/A"}</td>

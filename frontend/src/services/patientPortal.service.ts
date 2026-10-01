@@ -10,6 +10,9 @@ import type {
 } from "../pages/patient-portal/patientPortal.types";
 
 export const patientPortalService = {
+  checkHasPatientRole: () =>
+    api.get<{ hasRole: boolean }>("/patient-portal/has-patient-role"),
+
   getMyRegistrations: () =>
     api.get<PatientRegistration[]>("/patient-portal/my-registrations"),
 

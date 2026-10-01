@@ -1,6 +1,6 @@
 // Responsibility: Table displaying patient lab results
 
-import { Table } from "@/components/ui/Table";
+import { Table, Text } from "@/components/ui";
 import type { PatientLabResult } from "../patientPortal.types";
 import { labResultStatusConfig } from "../patientPortal.config";
 
@@ -30,9 +30,12 @@ export const PatientLabResultsTable = ({
             <td>{result.reference_range || "N/A"}</td>
             <td>{new Date(result.result_date).toLocaleDateString()}</td>
             <td>
-              <span className={labResultStatusConfig[result.status].indicator}>
+              <Text
+                as="span"
+                className={labResultStatusConfig[result.status].indicator}
+              >
                 {labResultStatusConfig[result.status].label}
-              </span>
+              </Text>
             </td>
           </tr>
         ))}

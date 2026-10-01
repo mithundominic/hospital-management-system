@@ -3,40 +3,26 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { Box } from "@/components/ui/Box";
+import { Box, Text } from "@/components/ui";
+import { patientPortalService } from "@/services/patientPortal.service";
 
 interface PatientPortalGuardProps {
   children: React.ReactNode;
 }
 
-const checkPatientRole = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("memberships")
-    .select("role:roles!inner(name)")
-    .eq("user_id", userId)
-    .eq("role.name", "Patient")
-    .eq("status", "active")
-    .limit(1)
-    .single();
-
-  if (error || !data) return false;
-  return true;
-};
-
 export const PatientPortalGuard = ({ children }: PatientPortalGuardProps) => {
   const { user, loading: authLoading } = useAuth();
 
-  const { data: hasPatientRole, isLoading: roleLoading } = useQuery({
+  const { data, isLoading: roleLoading } = useQuery({
     queryKey: ["hasPatientRole", user?.id],
-    queryFn: () => checkPatientRole(user!.id),
+    queryFn: () => patientPortalService.checkHasPatientRole(),
     enabled: !!user,
   });
 
   if (authLoading || roleLoading) {
     return (
       <Box className="flex items-center justify-center min-h-screen">
-        <p>Loading...</p>
+        <Text>Loading...</Text>
       </Box>
     );
   }
@@ -45,12 +31,12 @@ export const PatientPortalGuard = ({ children }: PatientPortalGuardProps) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (!hasPatientRole) {
+  if (!data?.hasRole) {
     return (
       <Box className="flex items-center justify-center min-h-screen">
-        <p className="text-red-600">
+        <Text variant="error">
           Access Denied: You must have Patient role to access this portal.
-        </p>
+        </Text>
       </Box>
     );
   }
