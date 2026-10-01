@@ -3,6 +3,9 @@
 
 export interface SupabaseConfig {
   url: string;
+  publishableKey: string;
+  secretKey: string;
+  jwksUrl?: string;
   anonKey: string;
   serviceRoleKey: string;
 }

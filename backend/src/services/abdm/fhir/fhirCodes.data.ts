@@ -30,8 +30,7 @@ export const FHIR_SYSTEMS = {
   observationCategory:
     "http://terminology.hl7.org/CodeSystem/observation-category",
   v3ActCode: "http://terminology.hl7.org/CodeSystem/v3-ActCode",
-  confidentiality:
-    "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+  confidentiality: "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
 } as const;
 
 export const COMMON_CODINGS = {
@@ -39,33 +38,33 @@ export const COMMON_CODINGS = {
     system: FHIR_SYSTEMS.v2IdType,
     code: "MR",
     display: "Medical record number",
-  },
+  } satisfies FhirCoding,
   socialBeneficiary: {
     system: FHIR_SYSTEMS.v2IdType,
     code: "SB",
     display: "Social Beneficiary Identifier",
-  },
+  } satisfies FhirCoding,
   providerNumber: {
     system: FHIR_SYSTEMS.v2IdType,
     code: "PRN",
     display: "Provider number",
-  },
+  } satisfies FhirCoding,
   ambulatory: {
     system: FHIR_SYSTEMS.v3ActCode,
     code: "AMB",
     display: "ambulatory",
-  },
+  } satisfies FhirCoding,
   vitalSigns: {
     system: FHIR_SYSTEMS.observationCategory,
     code: "vital-signs",
     display: "Vital Signs",
-  },
+  } satisfies FhirCoding,
   veryRestricted: {
     system: FHIR_SYSTEMS.confidentiality,
     code: "V",
     display: "very restricted",
-  },
-} as const;
+  } satisfies FhirCoding,
+};
 
 export const LOINC_CODES: Record<string, FhirCoding> = {
   bloodPressure: {

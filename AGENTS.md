@@ -125,6 +125,7 @@ Strong success criteria let the LLM loop independently. Weak criteria ("make it 
 - **Rule 22 (TypeScript ES6+ - Functional Only)**: No class-based components except `components/common/ErrorBoundary.tsx`. Use const arrow functions or named function declarations. Never use `any`.
 - **Rule 23 (Component Anatomy)**: Every component follows this structure: (1) "use client" directive if needed, (2) external imports, (3) internal imports, (4) types/interfaces, (5) component with hooks first, derived values, early returns, then JSX.
 - **Rule 24 (Hooks Anatomy)**: One hook = one concern. Always return a stable object or tuple with `as const`. Never fetch data inside a component — always delegate to a hook.
+- **Rule 25 (React Fast Refresh Compatibility)**: Context and component files must export ONLY React components (createContext, providers, HOCs) OR ONLY non-component values (types, constants, utilities) — never mix both. Type re-exports (`export type { ... }`) break Fast Refresh. Import types directly from their source files.
 
 ---
 

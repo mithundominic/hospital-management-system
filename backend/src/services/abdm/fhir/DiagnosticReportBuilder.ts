@@ -61,7 +61,6 @@ export class DiagnosticReportBuilder {
 
   static buildObservations(
     results: LabResultData[],
-    orderId: string,
     patientId: string,
     encounterId: string,
   ): FhirObservation[] {

@@ -21,8 +21,10 @@ export class AuthorizationService {
     userId: string,
     hospitalId: string,
     permission: string,
+    scopedClient?: SupabaseClient,
   ): Promise<boolean> {
-    const { data, error } = await this.supabase.rpc(
+    const client = scopedClient || this.supabase;
+    const { data, error } = await client.rpc(
       "rbac_effective_hospital_permission",
       {
         p_user_id: userId,
@@ -43,14 +45,16 @@ export class AuthorizationService {
    * @param userId - User ID
    * @param hospitalId - Hospital ID
    * @param permission - Permission key
+   * @param scopedClient - Optional user-scoped Supabase client
    * @throws Error with code 'FORBIDDEN' if permission denied
    */
   async assert(
     userId: string,
     hospitalId: string,
     permission: string,
+    scopedClient?: SupabaseClient,
   ): Promise<void> {
-    const allowed = await this.can(userId, hospitalId, permission);
+    const allowed = await this.can(userId, hospitalId, permission, scopedClient);
 
     if (!allowed) {
       const err = new Error(

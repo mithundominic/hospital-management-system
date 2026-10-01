@@ -9,6 +9,7 @@ import {
   handleLinkOnInit,
   handleConsentOnInit,
   handleHiuNotify,
+  handleHipDataRequest,
 } from "./abdmCallbacks.handlers";
 
 const router = Router();
@@ -30,5 +31,8 @@ router.post(API_ROUTES.callbacks.consentOnInit, handleConsentOnInit);
 
 // M3: Patient granted/denied consent via Consent Manager app
 router.post(API_ROUTES.callbacks.hiuNotify, handleHiuNotify);
+
+// M2: HIU requests patient health data after consent granted
+router.post(API_ROUTES.callbacks.hipDataRequest, handleHipDataRequest);
 
 export default router;

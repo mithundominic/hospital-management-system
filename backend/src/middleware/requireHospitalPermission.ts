@@ -48,7 +48,12 @@ export const requireHospitalPermission: PermissionMiddleware = (
     }
 
     try {
-      await authService.assert(authReq.userId, hospitalId, permission);
+      await authService.assert(
+        authReq.userId,
+        hospitalId,
+        permission,
+        authReq.supabase,
+      );
       next();
     } catch (err) {
       const error = err as Error & { code?: string };

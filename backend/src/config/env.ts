@@ -8,13 +8,14 @@ import { AppConfig } from "../types/config.types";
  * Validate required environment variables at startup
  */
 function validateEnv(): void {
-  const required = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"];
+  const hasUrl = Boolean(process.env.SUPABASE_URL);
+  const hasSecret = Boolean(
+    process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
+  );
 
-  const missing = required.filter((key) => !process.env[key]);
-
-  if (missing.length > 0) {
+  if (!hasUrl || !hasSecret) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}\n` +
+      "Missing required Supabase environment variables: SUPABASE_URL and SUPABASE_SECRET_KEY\n" +
         "Please check your .env file against .env.example",
     );
   }
@@ -46,8 +47,19 @@ const config: Readonly<AppConfig> = Object.freeze({
   // Supabase
   supabase: Object.freeze({
     url: process.env.SUPABASE_URL!,
-    anonKey: process.env.SUPABASE_ANON_KEY!,
-    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    publishableKey: (process.env.SUPABASE_PUBLISHABLE_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      "")!,
+    secretKey: (process.env.SUPABASE_SECRET_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      "")!,
+    jwksUrl: process.env.SUPABASE_JWKS_URL || "",
+    anonKey: (process.env.SUPABASE_PUBLISHABLE_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      "")!,
+    serviceRoleKey: (process.env.SUPABASE_SECRET_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      "")!,
   }),
 
   // ABDM Integration (Phase 5 - Optional)

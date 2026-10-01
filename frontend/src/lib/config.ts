@@ -3,7 +3,9 @@
 interface Config {
   supabase: {
     url: string;
+    publishableKey: string;
     anonKey: string;
+    jwksUrl?: string;
   };
   api: {
     baseUrl: string;
@@ -13,22 +15,31 @@ interface Config {
 }
 
 function validateConfig(): Config {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl =
+    import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL;
+  const publishableKey =
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+    import.meta.env.SUPABASE_PUBLISHABLE_KEY ||
+    import.meta.env.VITE_SUPABASE_ANON_KEY ||
+    import.meta.env.SUPABASE_ANON_KEY;
+  const jwksUrl =
+    import.meta.env.VITE_SUPABASE_JWKS_URL || import.meta.env.SUPABASE_JWKS_URL;
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!supabaseUrl || !publishableKey) {
     console.error(
-      "Missing required environment variables. Please check your .env file:\n" +
-        "- VITE_SUPABASE_URL\n" +
-        "- VITE_SUPABASE_ANON_KEY",
+      "Missing required Supabase environment variables. Check .env file:\n" +
+        "- SUPABASE_URL / VITE_SUPABASE_URL\n" +
+        "- SUPABASE_PUBLISHABLE_KEY / VITE_SUPABASE_PUBLISHABLE_KEY",
     );
   }
 
   return {
     supabase: {
       url: supabaseUrl || "",
-      anonKey: supabaseAnonKey || "",
+      publishableKey: publishableKey || "",
+      anonKey: publishableKey || "",
+      jwksUrl: jwksUrl || "",
     },
     api: {
       baseUrl:

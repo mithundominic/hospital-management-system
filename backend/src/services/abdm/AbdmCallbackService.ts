@@ -21,7 +21,9 @@ export const logCallback = async (
   });
 };
 
-export const processAuthOnInit = async (body: AbdmAuthInitCallback): Promise<void> => {
+export const processAuthOnInit = async (
+  body: AbdmAuthInitCallback,
+): Promise<void> => {
   await logCallback("users/auth/on-init", body);
   const transactionId = body.transactionId;
   if (transactionId) {
@@ -32,7 +34,9 @@ export const processAuthOnInit = async (body: AbdmAuthInitCallback): Promise<voi
   }
 };
 
-export const processAuthOnConfirm = async (body: AbdmAuthConfirmCallback): Promise<void> => {
+export const processAuthOnConfirm = async (
+  body: AbdmAuthConfirmCallback,
+): Promise<void> => {
   await logCallback("users/auth/on-confirm", body);
   const transactionId = body.transactionId;
   if (transactionId) {
@@ -47,7 +51,9 @@ export const processAuthOnConfirm = async (body: AbdmAuthConfirmCallback): Promi
   }
 };
 
-export const processLinkOnInit = async (body: Record<string, unknown>): Promise<void> => {
+export const processLinkOnInit = async (
+  body: Record<string, unknown>,
+): Promise<void> => {
   await logCallback("links/link/on-init", body);
 };
 
@@ -80,5 +86,28 @@ export const processHiuNotify = async (
         resolved_at: new Date().toISOString(),
       })
       .eq("consent_request_id", body.notification.consentRequestId);
+  }
+};
+
+interface HipDataRequestCallback extends Record<string, unknown> {
+  transactionId: string;
+  hiRequest: {
+    consent: {
+      id: string;
+    };
+  };
+}
+
+export const processHipDataRequest = async (
+  body: HipDataRequestCallback,
+): Promise<void> => {
+  await logCallback("health-information/hip/request", body);
+  const consentId = body.hiRequest?.consent?.id;
+  const transactionId = body.transactionId;
+
+  if (consentId && transactionId) {
+    const { AbdmHipService } = await import("./AbdmHipService");
+    const hipService = new AbdmHipService();
+    await hipService.pushHealthInformation(consentId, transactionId);
   }
 };

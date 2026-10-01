@@ -7,6 +7,7 @@ import {
   processLinkOnInit,
   processConsentOnInit,
   processHiuNotify,
+  processHipDataRequest,
 } from "../services/abdm/AbdmCallbackService";
 
 export const handleAuthOnInit = async (req: Request, res: Response) => {
@@ -31,5 +32,10 @@ export const handleConsentOnInit = async (req: Request, res: Response) => {
 
 export const handleHiuNotify = async (req: Request, res: Response) => {
   await processHiuNotify(req.body);
+  res.status(202).json({ received: true });
+};
+
+export const handleHipDataRequest = async (req: Request, res: Response) => {
+  await processHipDataRequest(req.body);
   res.status(202).json({ received: true });
 };

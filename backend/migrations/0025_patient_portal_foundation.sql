@@ -2,11 +2,11 @@
 -- Responsibility: Add patient self-service portal RBAC and RLS policies
 
 -- Add user_id to patients table to link Supabase Auth users
-ALTER TABLE patients 
-  ADD COLUMN user_id UUID REFERENCES auth.users(id);
+ALTER TABLE patients
+  ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id);
 
 -- Index for efficient user_id lookups
-CREATE INDEX idx_patients_user_id ON patients(user_id);
+CREATE INDEX IF NOT EXISTS idx_patients_user_id ON patients(user_id);
 
 -- Insert Patient role (hospital-scoped like other roles)
 INSERT INTO roles (name, scope, description)
@@ -54,13 +54,12 @@ CREATE POLICY "Patients can view own registrations"
   );
 
 -- RLS Policy: Patients can view own appointments
+-- appointments.patient_id links directly to patients.id
 CREATE POLICY "Patients can view own appointments"
   ON appointments FOR SELECT
   USING (
-    patient_registration_id IN (
-      SELECT pr.id FROM patient_registrations pr
-      INNER JOIN patients p ON pr.patient_id = p.id
-      WHERE p.user_id = auth.uid()
+    patient_id IN (
+      SELECT id FROM patients WHERE user_id = auth.uid()
     )
   );
 
@@ -69,34 +68,34 @@ CREATE POLICY "Patients can request appointments"
   ON appointments FOR INSERT
   WITH CHECK (
     status = 'pending' AND
-    patient_registration_id IN (
-      SELECT pr.id FROM patient_registrations pr
-      INNER JOIN patients p ON pr.patient_id = p.id
-      WHERE p.user_id = auth.uid()
+    patient_id IN (
+      SELECT id FROM patients WHERE user_id = auth.uid()
     )
   );
 
--- RLS Policy: Patients can view own lab results via encounters
+-- RLS Policy: Patients can view own lab results
+-- lab_results -> lab_orders -> encounters -> patients
 CREATE POLICY "Patients can view own lab results"
   ON lab_results FOR SELECT
   USING (
     lab_order_id IN (
       SELECT lo.id FROM lab_orders lo
       INNER JOIN encounters e ON lo.encounter_id = e.id
-      INNER JOIN patient_registrations pr ON e.patient_registration_id = pr.id
-      INNER JOIN patients p ON pr.patient_id = p.id
-      WHERE p.user_id = auth.uid()
+      WHERE e.patient_id IN (
+        SELECT id FROM patients WHERE user_id = auth.uid()
+      )
     )
   );
 
--- RLS Policy: Patients can view own prescriptions via encounters
+-- RLS Policy: Patients can view own prescriptions
+-- prescriptions -> encounters -> patients
 CREATE POLICY "Patients can view own prescriptions"
   ON prescriptions FOR SELECT
   USING (
     encounter_id IN (
       SELECT e.id FROM encounters e
-      INNER JOIN patient_registrations pr ON e.patient_registration_id = pr.id
-      INNER JOIN patients p ON pr.patient_id = p.id
-      WHERE p.user_id = auth.uid()
+      WHERE e.patient_id IN (
+        SELECT id FROM patients WHERE user_id = auth.uid()
+      )
     )
   );

@@ -23,7 +23,7 @@ export class MedicationRequestBuilder {
     items: PrescriptionItemData[],
     context: BuildContext,
   ): FhirMedicationRequest[] {
-    return items.map((item, index) => ({
+    return items.map((item) => ({
       resourceType: "MedicationRequest",
       id: `medication-request-${item.id}`,
       meta: {

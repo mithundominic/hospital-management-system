@@ -5,7 +5,10 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import config from "./env";
 
-const { url, anonKey, serviceRoleKey } = config.supabase;
+const { url, publishableKey, secretKey, anonKey, serviceRoleKey } =
+  config.supabase;
+const effectiveKey = publishableKey || anonKey;
+const effectiveSecret = secretKey || serviceRoleKey;
 
 /**
  * Admin client with service role key
@@ -16,11 +19,11 @@ const { url, anonKey, serviceRoleKey } = config.supabase;
  *
  * NEVER use for route data operations - bypasses RLS
  */
-export const adminClient: SupabaseClient = createClient(url, serviceRoleKey, {
+export const adminClient: SupabaseClient = createClient(url, effectiveSecret, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-export const publicClient: SupabaseClient = createClient(url, anonKey, {
+export const publicClient: SupabaseClient = createClient(url, effectiveKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
@@ -30,7 +33,7 @@ export const publicClient: SupabaseClient = createClient(url, anonKey, {
  * @returns Supabase client authenticated as the user (RLS applies)
  */
 export function userClient(accessToken: string): SupabaseClient {
-  return createClient(url, anonKey, {
+  return createClient(url, effectiveKey, {
     auth: { autoRefreshToken: false, persistSession: false },
     global: {
       headers: { Authorization: `Bearer ${accessToken}` },

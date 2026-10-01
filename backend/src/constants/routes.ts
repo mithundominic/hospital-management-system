@@ -76,6 +76,7 @@ export const API_ROUTES = {
     linkOnInit: "/abdm/callbacks/links/link/on-init",
     consentOnInit: "/abdm/callbacks/consent-requests/on-init",
     hiuNotify: "/abdm/callbacks/consents/hiu/notify",
+    hipDataRequest: "/abdm/callbacks/health-information/hip/request",
   },
   platform: {
     status: "/platform/status",

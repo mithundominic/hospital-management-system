@@ -1,17 +1,10 @@
 // Responsibility: React context managing available hospitals and current active hospital selection
 
-import {
-  createContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { getHospitals } from "@/services/hospital.service";
 import type { Hospital, HospitalContextType } from "@/types/hospital";
-
-export type { Hospital, HospitalContextType };
 
 export const HospitalContext = createContext<HospitalContextType | undefined>(
   undefined,
@@ -46,7 +39,8 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
       return list;
     } catch (err) {
       console.error("Failed to load hospitals:", err);
-      const msg = err instanceof Error ? err.message : "Failed to load hospitals";
+      const msg =
+        err instanceof Error ? err.message : "Failed to load hospitals";
       setError(msg);
       return [];
     } finally {

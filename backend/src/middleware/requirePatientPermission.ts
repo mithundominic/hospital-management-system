@@ -28,7 +28,8 @@ export const requirePatientPermission = (permission: string) => {
 
     try {
       // Query user's memberships to find any hospital with Patient role + this permission
-      const { data, error } = await authService["supabase"]
+      const client = authReq.supabase || authService["supabase"];
+      const { data, error } = await client
         .from("memberships")
         .select(`
           hospital_id,
