@@ -1,0 +1,36 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "severity": "critical",
+      "title": "Curve mismatch in encryption",
+      "description": "Code calls createECDH('prime256v1') but returns curve: 'Curve25519' in keyMaterial. These are incompatible elliptic curves. The HIU will attempt Curve25519 decryption on P-256-encrypted data and fail. Confirm the ABDM spec's required curve (likely X25519/Curve25519 per NHA standards) and use Node's diffieHellman with 'x25519' or the @noble/curves library instead of createECDH."
+    },
+    {
+      "severity": "high",
+      "title": "Admin client bypass of RLS for patient data",
+      "description": "HipDataFetcher uses adminClient to fetch patient demographics, encounters, prescriptions, and lab data. This bypasses RLS policies that enforce hospital scope via patient_registrations. While callback context has no user session, the consent artifact contains hospital and patient identifiers that should gate the query scope. Either filter queries by hospital_id from the consent artifact or use a hospital-scoped service role client."
+    },
+    {
+      "severity": "critical",
+      "title": "GCM auth tag concatenation breaks decryption",
+      "description": "Line 48 of FhirEncryptionService concatenates the base64-encoded ciphertext with the base64-encoded auth tag. Standard GCM implementations expect the 16-byte tag appended to the raw ciphertext bytes before base64 encoding, not two separate base64 strings concatenated. The HIU's decryption will fail. Append the tag buffer before encoding."
+    },
+    {
+      "severity": "high",
+      "title": "Silent network failure in gateway transmission",
+      "description": "AbdmHipService.sendToGateway() calls fetch() but does not check the response status or await the promise resolution for errors. A 4xx/5xx response or network timeout fails silently, leaving the consent artifact in granted status with no indication that data push failed. Add response status validation and propagate errors to the caller for logging or retry."
+    },
+    {
+      "severity": "medium",
+      "title": "Missing transaction boundary for multi-query data fetch",
+      "description": "HipDataFetcher.fetchLabData() runs two queries (order then results) without a transaction. If the order exists but result query fails (connection drop, RLS policy change mid-flight), the partial state propagates into the FHIR bundle builder. Wrap related fetches in a transaction or handle missing results gracefully in the builder."
+    },
+    {
+      "severity": "low",
+      "title": "Encounter status string mapping is lossy",
+      "description": "EncounterBuilder.build() maps status === 'completed' to 'finished' and everything else to 'in-progress'. FHIR Encounter.status is required and has 7 valid values. If the database uses a different set of statuses (e.g., 'scheduled', 'cancelled'), they incorrectly map to 'in-progress'. Define an explicit status mapping or validate that database values align with FHIR's value set."
+    }
+  ],
+  "reviewDoc": "f:\\mithun-dominic\\Projects\\hospital-management-system\\.agents\\tasks\\abdm\\feat003-review.md"
+}

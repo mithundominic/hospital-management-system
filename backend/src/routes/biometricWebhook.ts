@@ -1,17 +1,10 @@
-// Responsibility: Public biometric webhook route (no authentication)
-
+// Responsibility: Public biometric webhook route with rate limiting
 import express from "express";
 import { webhookHandler } from "./biometric-webhook.handlers";
+import { webhookRateLimiter } from "../middleware/rateLimiter";
 
 const router = express.Router();
 
-/**
- * ABDM-style public webhook endpoint
- * NO AUTHENTICATION - called by ZKTeco device
- * Follows Rule 9: Auth Exceptions pattern
- *
- * Security: Validates device serial_number against registered devices
- */
-router.post("/biometric/webhook", webhookHandler);
+router.post("/biometric/webhook", webhookRateLimiter, webhookHandler);
 
 export default router;

@@ -48,6 +48,7 @@ export const approveLeaveHandler: RouteHandler = async (req, res, next) => {
       authReq.supabase,
       authReq.params.leaveId!,
       authReq.userId!,
+      authReq.params.hospitalId,
     );
     sendData(res, data);
   } catch (err) {
@@ -63,6 +64,7 @@ export const rejectLeaveHandler: RouteHandler = async (req, res, next) => {
       authReq.params.leaveId!,
       authReq.userId!,
       authReq.body.reason || "No reason provided",
+      authReq.params.hospitalId,
     );
     sendData(res, data);
   } catch (err) {

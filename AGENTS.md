@@ -652,6 +652,7 @@ Before submitting any code, verify none of these exist:
 - [ ] UPDATE or DELETE on ledger tables
 - [ ] Direct Supabase calls in frontend
 - [ ] Admin client usage in route handlers
+- [ ] Context files mixing component exports with type re-exports (breaks Fast Refresh)
 
 ---
 

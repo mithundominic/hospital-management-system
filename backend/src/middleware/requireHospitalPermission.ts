@@ -58,7 +58,12 @@ export const requireHospitalPermission: PermissionMiddleware = (
     } catch (err) {
       const error = err as Error & { code?: string };
       if (error.code === "FORBIDDEN") {
-        sendError(res, 403, "FORBIDDEN", error.message);
+        sendError(
+          res,
+          403,
+          "FORBIDDEN",
+          "You do not have permission to perform this action.",
+        );
         return;
       }
       next(err);

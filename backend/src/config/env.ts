@@ -76,6 +76,16 @@ const config: Readonly<AppConfig> = Object.freeze({
       process.env.ABDM_JWKS_URI ||
       "https://dev.abdm.gov.in/.well-known/jwks.json",
   }),
+
+  // Rate Limiting
+  rateLimit: Object.freeze({
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "900000", 10),
+    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "300", 10),
+    authMaxRequests: parseInt(
+      process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || "30",
+      10,
+    ),
+  }),
 });
 
 export default config;

@@ -2,23 +2,40 @@
 
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import config from "./config/env";
 import { corsOptions } from "./config/cors";
 import { auth } from "./middleware/auth";
 import { errorHandler } from "./middleware/errorHandler";
+import { apiRateLimiter } from "./middleware/rateLimiter";
 import { registerPublicRoutes } from "./routes/public";
 import { registerRoutes } from "./routes";
+import { healthCheckHandler } from "./routes/health";
 
 const app = express();
+
+/* Security headers & proxy trust */
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+    frameguard: { action: "deny" },
+    noSniff: true,
+  }),
+);
 
 /* Global middleware */
 app.use(cors(corsOptions));
 app.use(express.json({ limit: config.server.bodyLimit }));
 
-/* Health check endpoint */
-app.get("/health", (_req, res) => {
-  res.status(200).json({ status: "ok" });
-});
+/* Health check endpoint (bypasses rate limiter) */
+app.get("/health", healthCheckHandler);
+
+/* Apply rate limiting to each and every API endpoint */
+app.use(apiRateLimiter);
 
 /*
  * API v1 Application Router
@@ -27,9 +44,7 @@ app.get("/health", (_req, res) => {
 const apiV1 = express();
 
 /* Health check endpoint under /api/v1 */
-apiV1.get("/health", (_req, res) => {
-  res.status(200).json({ status: "ok" });
-});
+apiV1.get("/health", healthCheckHandler);
 
 /*
  * Public routes
@@ -53,9 +68,9 @@ registerRoutes(apiV1);
 /* Error handler for API v1 routes */
 apiV1.use(errorHandler);
 
-/* Mount API router at root and /api/v1 for backwards compatibility */
-app.use(apiV1);
+/* Mount API router at /api/v1 and root for backwards compatibility */
 app.use("/api/v1", apiV1);
+app.use(apiV1);
 
 /*
  * Global error handler

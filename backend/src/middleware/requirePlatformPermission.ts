@@ -35,7 +35,7 @@ export function requirePlatformPermission(permission: string): RequestHandler {
           res,
           403,
           "FORBIDDEN",
-          `Platform permission required: ${permission}`,
+          "You do not have permission to perform this action.",
         );
         return;
       }

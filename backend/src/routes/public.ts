@@ -4,6 +4,7 @@ import type { Express } from "express";
 import onboardingRouter from "./onboarding";
 import abdmCallbacksRouter from "./abdmCallbacks";
 import biometricWebhookRouter from "./biometricWebhook";
+import { webhookRateLimiter } from "../middleware/rateLimiter";
 
 /**
  * Register all public routes
@@ -27,6 +28,6 @@ import biometricWebhookRouter from "./biometricWebhook";
  */
 export const registerPublicRoutes = (app: Express): void => {
   app.use(onboardingRouter);
-  app.use(abdmCallbacksRouter);
-  app.use(biometricWebhookRouter);
+  app.use(webhookRateLimiter, abdmCallbacksRouter);
+  app.use(webhookRateLimiter, biometricWebhookRouter);
 };

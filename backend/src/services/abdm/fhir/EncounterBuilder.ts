@@ -11,12 +11,20 @@ interface EncounterData {
   status: string;
 }
 
+const ENCOUNTER_STATUS_MAP: Record<string, string> = {
+  completed: "finished",
+  active: "in-progress",
+  scheduled: "planned",
+  cancelled: "cancelled",
+  "on-hold": "onleave",
+};
+
 export class EncounterBuilder {
   static build(encounter: EncounterData): FhirEncounter {
     return {
       resourceType: "Encounter",
       id: `encounter-${encounter.id}`,
-      status: encounter.status === "completed" ? "finished" : "in-progress",
+      status: ENCOUNTER_STATUS_MAP[encounter.status] || "unknown",
       class: COMMON_CODINGS.ambulatory,
       subject: {
         reference: `urn:uuid:patient-${encounter.patient_id}`,

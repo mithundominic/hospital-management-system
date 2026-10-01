@@ -10,8 +10,11 @@ import {
   queryLowStockAlerts,
 } from "../services/reports/ReportsService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
+import { reportsRateLimiter } from "../middleware/rateLimiter";
 
 const router = express.Router();
+
+router.use(reportsRateLimiter);
 
 const getBedOccupancy: RouteHandler = async (req, res, next) => {
   try {

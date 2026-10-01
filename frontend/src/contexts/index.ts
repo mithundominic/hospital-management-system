@@ -3,4 +3,5 @@
 export { HospitalProvider, HospitalContext } from "./HospitalContext";
 export { useHospital } from "./useHospital";
 export { AuthProvider, useAuth } from "./AuthContext";
-export type { Hospital, HospitalContextType } from "./HospitalContext";
+// Types should be imported from their original source: @/types/hospital
+// export type { Hospital, HospitalContextType } from "./HospitalContext";

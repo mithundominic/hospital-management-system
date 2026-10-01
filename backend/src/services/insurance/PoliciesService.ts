@@ -42,7 +42,14 @@ export const createPolicy: RouteHandler = async (req, res, next) => {
       })
       .select()
       .single();
-    if (error) return sendError(res, 403, "FORBIDDEN", error.message);
+    if (error) {
+      return sendError(
+        res,
+        403,
+        "FORBIDDEN",
+        "Unable to create insurance policy. Please verify patient registration.",
+      );
+    }
     sendData(res, data, 201);
   } catch (err) {
     next(err);

@@ -56,13 +56,13 @@ router.post(
 
 router.patch(
   "/hospitals/:hospitalId/leave-applications/:leaveId/approve",
-  requireHospitalPermission(PERMISSIONS.LEAVE_READ),
+  requireHospitalPermission(PERMISSIONS.LEAVE_WRITE),
   approveLeaveHandler,
 );
 
 router.patch(
   "/hospitals/:hospitalId/leave-applications/:leaveId/reject",
-  requireHospitalPermission(PERMISSIONS.LEAVE_READ),
+  requireHospitalPermission(PERMISSIONS.LEAVE_WRITE),
   rejectLeaveHandler,
 );
 

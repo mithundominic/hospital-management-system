@@ -1,10 +1,12 @@
 // Responsibility: ECDH-ES encryption for FHIR bundles per ABDM spec
 
 import {
-  createECDH,
+  diffieHellman,
+  generateKeyPairSync,
   createCipheriv,
   randomBytes,
   createHash,
+  KeyObject,
 } from "crypto";
 
 interface EncryptedData {
@@ -22,28 +24,35 @@ interface EncryptedData {
 
 export class FhirEncryptionService {
   /**
-   * Encrypt FHIR bundle using ECDH-ES with HIU's public key
+   * Encrypt FHIR bundle using X25519 ECDH with HIU's public key
    * @param bundleJson - Stringified FHIR bundle
-   * @param hiuPublicKeyPem - HIU's X25519 public key from consent artifact
+   * @param hiuPublicKeyBase64 - HIU's X25519 public key from consent artifact
    */
-  static encrypt(bundleJson: string, hiuPublicKeyPem: string): EncryptedData {
-    const ecdh = createECDH("prime256v1");
-    ecdh.generateKeys();
+  static encrypt(
+    bundleJson: string,
+    hiuPublicKeyBase64: string,
+  ): EncryptedData {
+    const ephemeralKeys = generateKeyPairSync("x25519");
+    const hiuPublicKey = this.importX25519PublicKey(hiuPublicKeyBase64);
 
-    const sharedSecret = ecdh.computeSecret(
-      Buffer.from(hiuPublicKeyPem, "base64"),
-    );
+    const sharedSecret = diffieHellman({
+      privateKey: ephemeralKeys.privateKey,
+      publicKey: hiuPublicKey,
+    });
 
     const kek = createHash("sha256").update(sharedSecret).digest();
 
-    const nonce = randomBytes(16);
+    const nonce = randomBytes(12);
     const cipher = createCipheriv("aes-256-gcm", kek, nonce);
 
-    let encrypted = cipher.update(bundleJson, "utf8", "base64");
-    encrypted += cipher.final("base64");
-
+    const ciphertext = Buffer.concat([
+      cipher.update(bundleJson, "utf8"),
+      cipher.final(),
+    ]);
     const authTag = cipher.getAuthTag();
-    const encryptedWithTag = encrypted + authTag.toString("base64");
+    const encryptedWithTag = Buffer.concat([ciphertext, authTag]).toString(
+      "base64",
+    );
 
     return {
       encryptedData: encryptedWithTag,
@@ -51,11 +60,23 @@ export class FhirEncryptionService {
         cryptoAlg: "ECDH",
         curve: "Curve25519",
         dhPublicKey: {
-          keyValue: ecdh.getPublicKey("base64"),
+          keyValue: this.exportX25519PublicKey(ephemeralKeys.publicKey),
           parameters: "Curve25519",
         },
         nonce: nonce.toString("base64"),
       },
     };
+  }
+
+  private static importX25519PublicKey(base64Key: string): KeyObject {
+    const keyBuffer = Buffer.from(base64Key, "base64");
+    return {
+      asymmetricKeyType: "x25519",
+      export: () => keyBuffer,
+    } as KeyObject;
+  }
+
+  private static exportX25519PublicKey(publicKey: KeyObject): string {
+    return publicKey.export({ type: "spki", format: "der" }).toString("base64");
   }
 }

@@ -12,40 +12,53 @@ export class HipDataFetcher {
     return data;
   }
 
-  static async fetchPatientData(patientId: string) {
+  static async fetchPatientData(patientId: string, hospitalId: string) {
     const { data } = await adminClient
-      .from("patients")
-      .select("*")
-      .eq("id", patientId)
+      .from("patient_registrations")
+      .select("patients(*)")
+      .eq("patient_id", patientId)
+      .eq("hospital_id", hospitalId)
       .single();
-    return data;
+
+    if (!data || !data.patients) return null;
+    return data.patients as unknown as Record<string, unknown>;
   }
 
-  static async fetchLatestEncounter(patientId: string) {
+  static async fetchLatestEncounter(patientId: string, hospitalId: string) {
     const { data } = await adminClient
       .from("encounters")
       .select("*")
       .eq("patient_id", patientId)
+      .eq("hospital_id", hospitalId)
       .order("encounter_date", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     return data;
   }
 
   static async fetchPrescriptionItems(encounterId: string) {
+    const { data: prescription } = await adminClient
+      .from("prescriptions")
+      .select("id")
+      .eq("encounter_id", encounterId)
+      .maybeSingle();
+
+    if (!prescription) return [];
+
     const { data } = await adminClient
       .from("prescription_items")
       .select("*")
-      .eq("encounter_id", encounterId);
+      .eq("prescription_id", prescription.id);
     return data || [];
   }
 
-  static async fetchLabData(encounterId: string) {
+  static async fetchLabData(encounterId: string, hospitalId: string) {
     const { data: order } = await adminClient
       .from("lab_orders")
       .select("*")
       .eq("encounter_id", encounterId)
-      .single();
+      .eq("hospital_id", hospitalId)
+      .maybeSingle();
 
     if (!order) return null;
 

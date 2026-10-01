@@ -31,6 +31,12 @@ export interface ServerConfig {
   bodyLimit: string;
 }
 
+export interface RateLimitConfig {
+  windowMs: number;
+  maxRequests: number;
+  authMaxRequests: number;
+}
+
 export interface AppConfig {
   port: number;
   nodeEnv: "development" | "production" | "test";
@@ -38,4 +44,5 @@ export interface AppConfig {
   frontend: FrontendConfig;
   supabase: SupabaseConfig;
   abdm: AbdmConfig;
+  rateLimit: RateLimitConfig;
 }

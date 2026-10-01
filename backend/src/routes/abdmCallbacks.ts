@@ -14,25 +14,22 @@ import {
 
 const router = Router();
 
-// Mount JWT signature verification middleware for all callback routes
-router.use(verifyAbdmCallback);
-
 // M1: Result of initiateAbhaVerification()
-router.post(API_ROUTES.callbacks.authOnInit, handleAuthOnInit);
+router.post(API_ROUTES.callbacks.authOnInit, verifyAbdmCallback, handleAuthOnInit);
 
 // M1: Result of confirmAbhaLink()
-router.post(API_ROUTES.callbacks.authOnConfirm, handleAuthOnConfirm);
+router.post(API_ROUTES.callbacks.authOnConfirm, verifyAbdmCallback, handleAuthOnConfirm);
 
 // M2: Result of linkCareContext()
-router.post(API_ROUTES.callbacks.linkOnInit, handleLinkOnInit);
+router.post(API_ROUTES.callbacks.linkOnInit, verifyAbdmCallback, handleLinkOnInit);
 
 // M3: Result of requestConsent()
-router.post(API_ROUTES.callbacks.consentOnInit, handleConsentOnInit);
+router.post(API_ROUTES.callbacks.consentOnInit, verifyAbdmCallback, handleConsentOnInit);
 
 // M3: Patient granted/denied consent via Consent Manager app
-router.post(API_ROUTES.callbacks.hiuNotify, handleHiuNotify);
+router.post(API_ROUTES.callbacks.hiuNotify, verifyAbdmCallback, handleHiuNotify);
 
 // M2: HIU requests patient health data after consent granted
-router.post(API_ROUTES.callbacks.hipDataRequest, handleHipDataRequest);
+router.post(API_ROUTES.callbacks.hipDataRequest, verifyAbdmCallback, handleHipDataRequest);
 
 export default router;

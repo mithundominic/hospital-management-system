@@ -25,27 +25,33 @@ export class AbdmHipService {
       await HipDataFetcher.fetchConsentArtifact(consentArtifactId);
     if (!consent) throw new Error("Consent artifact not found");
 
+    const hospitalId = consent.hospital_id;
+
     const patientData = await HipDataFetcher.fetchPatientData(
       consent.patient_id,
+      hospitalId,
     );
     if (!patientData) throw new Error("Patient data not found");
 
     const encounterData = await HipDataFetcher.fetchLatestEncounter(
       consent.patient_id,
+      hospitalId,
     );
     const prescriptionData = encounterData
       ? await HipDataFetcher.fetchPrescriptionItems(encounterData.id)
       : [];
     const labData = encounterData
-      ? await HipDataFetcher.fetchLabData(encounterData.id)
+      ? await HipDataFetcher.fetchLabData(encounterData.id, hospitalId)
       : null;
 
     const fhirBundle = this.bundleBuilder.buildBundle({
-      patient: patientData,
+      patient: patientData as unknown as Parameters<
+        typeof import("./fhir/PatientBuilder").PatientBuilder.build
+      >[0],
       encounter: encounterData || undefined,
       prescriptionItems: prescriptionData,
       labOrder: labData?.order,
-      labResults: labData?.results,
+      labResults: labData?.results || [],
     });
 
     const bundleJson = JSON.stringify(fhirBundle);
@@ -65,14 +71,24 @@ export class AbdmHipService {
     const token = await this.auth.getAccessToken();
     const headers = this.auth.createHeaders(token, hipId);
 
-    await fetch(`${gatewayUrl}/v0.5/health-information/hip/on-request`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        transactionId,
-        consentId: consentArtifactId,
-        entries: [encrypted],
-      }),
-    });
+    const response = await fetch(
+      `${gatewayUrl}/v0.5/health-information/hip/on-request`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          transactionId,
+          consentId: consentArtifactId,
+          entries: [encrypted],
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(
+        `Gateway rejected HIP data push: ${response.status} ${errorBody}`,
+      );
+    }
   }
 }

@@ -14,7 +14,10 @@ export const useHospitalBranding = () => {
       document.title = appConfig.name;
     }
 
-    if (currentHospital?.logo_url) {
+    const isSafeUrl = (url: string) =>
+      /^https?:\/\//i.test(url) || url.startsWith("/");
+
+    if (currentHospital?.logo_url && isSafeUrl(currentHospital.logo_url)) {
       const link =
         (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
         document.createElement("link");

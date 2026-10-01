@@ -7,7 +7,7 @@ import autoprefixer from "autoprefixer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  envPrefix: ["VITE_", "SUPABASE_"],
+  envPrefix: "VITE_",
   plugins: [react()],
   css: {
     postcss: {

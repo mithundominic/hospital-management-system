@@ -37,7 +37,12 @@ export const createAdmission: RouteHandler = async (req, res, next) => {
       })
       .select()
       .single();
-    if (error) return sendError(res, 409, "CONFLICT", error.message);
+    if (error) {
+      const msg = error.code === "23505"
+        ? "The selected bed is already occupied"
+        : "Unable to process admission request";
+      return sendError(res, 409, "CONFLICT", msg);
+    }
     sendData(res, data, 201);
   } catch (err) {
     next(err);
@@ -47,14 +52,27 @@ export const createAdmission: RouteHandler = async (req, res, next) => {
 export const updateAdmission: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
+    const { status, bed_id, discharge_date, discharge_notes } = req.body || {};
+    const updates = {
+      ...(status !== undefined && { status }),
+      ...(bed_id !== undefined && { bed_id }),
+      ...(discharge_date !== undefined && { discharge_date }),
+      ...(discharge_notes !== undefined && { discharge_notes }),
+    };
+
     const { data, error } = await authReq
       .supabase!.from("admissions")
-      .update(req.body)
+      .update(updates)
       .eq("id", req.params.admId)
       .eq("hospital_id", req.params.hospitalId)
       .select()
       .single();
-    if (error) return sendError(res, 409, "CONFLICT", error.message);
+    if (error) {
+      const msg = error.code === "23505"
+        ? "The selected bed is already occupied"
+        : "Unable to update admission";
+      return sendError(res, 409, "CONFLICT", msg);
+    }
     sendData(res, data);
   } catch (err) {
     next(err);
