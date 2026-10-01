@@ -36,11 +36,12 @@ export class HipDataFetcher {
     return data;
   }
 
-  static async fetchPrescriptionItems(encounterId: string) {
+  static async fetchPrescriptionItems(encounterId: string, hospitalId: string) {
     const { data: prescription } = await adminClient
       .from("prescriptions")
-      .select("id")
+      .select("id, hospital_id")
       .eq("encounter_id", encounterId)
+      .eq("hospital_id", hospitalId)
       .maybeSingle();
 
     if (!prescription) return [];
@@ -62,11 +63,16 @@ export class HipDataFetcher {
 
     if (!order) return null;
 
-    const { data: results } = await adminClient
-      .from("lab_results")
-      .select("*")
-      .eq("order_id", order.id);
+    try {
+      const { data: results } = await adminClient
+        .from("lab_results")
+        .select("*")
+        .eq("order_id", order.id);
 
-    return { order, results: results || [] };
+      return { order, results: results || [] };
+    } catch (error) {
+      console.error("Failed to fetch lab results:", error);
+      return { order, results: [] };
+    }
   }
 }

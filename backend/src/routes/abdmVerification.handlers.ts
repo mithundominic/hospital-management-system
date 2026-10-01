@@ -6,11 +6,13 @@ import {
   initiateAbhaVerificationWorkflow,
   confirmAbhaVerificationWorkflow,
 } from "../services/abdm/AbdmWorkflowService";
+import { linkCareContextWorkflow } from "../services/abdm/abdmLinking.utils";
 import {
   AuthenticatedRequest,
   RouteHandler,
   InitiateAbhaVerificationRequest,
   ConfirmAbhaLinkRequest,
+  LinkCareContextRequest,
 } from "../types";
 
 export const getLinkRequests: RouteHandler = async (req, res, next) => {
@@ -52,6 +54,27 @@ export const confirmVerification: RouteHandler = async (req, res, next) => {
 
     await confirmAbhaVerificationWorkflow(transaction_id, otp);
     sendData(res, { submitted: true }, 202);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const linkCareContext: RouteHandler = async (req, res, next) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const { abha_address, encounter_id, care_context_reference } =
+      authReq.body as LinkCareContextRequest;
+
+    const result = await linkCareContextWorkflow(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.params.patientId!,
+      encounter_id,
+      abha_address,
+      care_context_reference,
+    );
+
+    sendData(res, result, 202);
   } catch (err) {
     next(err);
   }

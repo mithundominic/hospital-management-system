@@ -67,6 +67,8 @@ export const API_ROUTES = {
       "/hospitals/:hospitalId/patients/:patientId/abdm/link-requests",
     verify: "/hospitals/:hospitalId/patients/:patientId/abdm/verify",
     confirm: "/hospitals/:hospitalId/patients/:patientId/abdm/confirm",
+    linkCareContext:
+      "/hospitals/:hospitalId/patients/:patientId/abdm/link-care-context",
     consentRequests:
       "/hospitals/:hospitalId/patients/:patientId/abdm/consent-requests",
   },

@@ -7,6 +7,7 @@ import {
   getLinkRequests,
   initiateVerification,
   confirmVerification,
+  linkCareContext,
   requestConsent,
 } from "./abdm.handlers";
 
@@ -28,6 +29,12 @@ router.post(
   API_ROUTES.abdm.confirm,
   requireHospitalPermission(PERMISSIONS.ABDM_WRITE),
   confirmVerification,
+);
+
+router.post(
+  API_ROUTES.abdm.linkCareContext,
+  requireHospitalPermission(PERMISSIONS.ABDM_WRITE),
+  linkCareContext,
 );
 
 router.post(

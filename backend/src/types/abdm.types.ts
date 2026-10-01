@@ -63,6 +63,7 @@ export interface ConfirmAbhaLinkRequest {
  */
 export interface LinkCareContextRequest {
   abha_address: string;
+  encounter_id: string;
   care_context_reference: string;
 }
 

@@ -38,7 +38,10 @@ export class AbdmHipService {
       hospitalId,
     );
     const prescriptionData = encounterData
-      ? await HipDataFetcher.fetchPrescriptionItems(encounterData.id)
+      ? await HipDataFetcher.fetchPrescriptionItems(
+          encounterData.id,
+          hospitalId,
+        )
       : [];
     const labData = encounterData
       ? await HipDataFetcher.fetchLabData(encounterData.id, hospitalId)

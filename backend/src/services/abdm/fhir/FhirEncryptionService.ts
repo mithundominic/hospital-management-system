@@ -32,12 +32,28 @@ export class FhirEncryptionService {
     bundleJson: string,
     hiuPublicKeyBase64: string,
   ): EncryptedData {
-    const ephemeralKeys = generateKeyPairSync("x25519");
-    const hiuPublicKey = this.importX25519PublicKey(hiuPublicKeyBase64);
+    // Generate X25519 keypair
+    const { privateKey, publicKey } = generateKeyPairSync("x25519", {
+      privateKeyEncoding: { type: "pkcs8", format: "der" },
+      publicKeyEncoding: { type: "spki", format: "der" },
+    });
 
+    // Import HIU public key
+    const hiuKeyBuffer = Buffer.from(hiuPublicKeyBase64, "base64");
+    const hiuKey = {
+      asymmetricKeyType: "x25519",
+      export: () => hiuKeyBuffer,
+    } as KeyObject;
+
+    const myPrivateKey = {
+      asymmetricKeyType: "x25519",
+      export: () => privateKey,
+    } as KeyObject;
+
+    // Compute shared secret using X25519
     const sharedSecret = diffieHellman({
-      privateKey: ephemeralKeys.privateKey,
-      publicKey: hiuPublicKey,
+      privateKey: myPrivateKey,
+      publicKey: hiuKey,
     });
 
     const kek = createHash("sha256").update(sharedSecret).digest();
@@ -45,14 +61,15 @@ export class FhirEncryptionService {
     const nonce = randomBytes(12);
     const cipher = createCipheriv("aes-256-gcm", kek, nonce);
 
-    const ciphertext = Buffer.concat([
+    const ciphertextBuffer = Buffer.concat([
       cipher.update(bundleJson, "utf8"),
       cipher.final(),
     ]);
     const authTag = cipher.getAuthTag();
-    const encryptedWithTag = Buffer.concat([ciphertext, authTag]).toString(
-      "base64",
-    );
+    const encryptedWithTag = Buffer.concat([
+      ciphertextBuffer,
+      authTag,
+    ]).toString("base64");
 
     return {
       encryptedData: encryptedWithTag,
@@ -60,23 +77,11 @@ export class FhirEncryptionService {
         cryptoAlg: "ECDH",
         curve: "Curve25519",
         dhPublicKey: {
-          keyValue: this.exportX25519PublicKey(ephemeralKeys.publicKey),
+          keyValue: (publicKey as Buffer).toString("base64"),
           parameters: "Curve25519",
         },
         nonce: nonce.toString("base64"),
       },
     };
-  }
-
-  private static importX25519PublicKey(base64Key: string): KeyObject {
-    const keyBuffer = Buffer.from(base64Key, "base64");
-    return {
-      asymmetricKeyType: "x25519",
-      export: () => keyBuffer,
-    } as KeyObject;
-  }
-
-  private static exportX25519PublicKey(publicKey: KeyObject): string {
-    return publicKey.export({ type: "spki", format: "der" }).toString("base64");
   }
 }
