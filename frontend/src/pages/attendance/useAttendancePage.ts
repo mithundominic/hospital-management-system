@@ -1,10 +1,11 @@
 // Responsibility: Attendance page state management and business logic
 
-import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/useHospital";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePermissions } from "@/lib/hooks/usePermissions";
+import { PERMISSIONS } from "@/constants";
 import {
   getMyAttendanceRecords,
   getAttendanceRecords,
@@ -15,8 +16,9 @@ import {
 export const useAttendancePage = () => {
   const { currentHospital } = useHospital();
   const { user } = useAuth();
+  const { hasPermission } = usePermissions();
   const queryClient = useQueryClient();
-  const [canViewAll] = useState(false); // TODO: Check permissions
+  const canViewAll = hasPermission(PERMISSIONS.ATTENDANCE_READ);
 
   const { data: myRecords = [], isLoading: isLoadingMy } = useQuery({
     queryKey: ["my-attendance", currentHospital?.id],

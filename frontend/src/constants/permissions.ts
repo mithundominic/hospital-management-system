@@ -57,6 +57,9 @@ export const PERMISSIONS = {
   LEAVE_WRITE: "leave.write",
   // Biometric Devices
   DEVICES_MANAGE: "devices.manage",
+  // Analytics
+  ANALYTICS_READ: "analytics.read",
+  ANALYTICS_EXPORT: "analytics.export",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

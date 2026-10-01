@@ -23,7 +23,9 @@ export const HospitalTableRow = ({
   isDeactivating,
 }: HospitalTableRowProps) => {
   const staffCount =
-    hospital.memberships?.filter((m) => m.status === "active").length || 0;
+    hospital.staff_count ??
+    (hospital.memberships?.filter((m) => m.status === "active").length || 0);
+  const patientCount = hospital.patient_count ?? 0;
   const onboardedDate = new Date(hospital.created_at).toLocaleDateString();
   const statusConfig = staffStatusConfig[hospital.is_active ? "active" : "inactive"];
 
@@ -32,6 +34,7 @@ export const HospitalTableRow = ({
       <TableCell className="px-4 py-3 font-medium">{hospital.name}</TableCell>
       <TableCell className="px-4 py-3">{hospital.city || "—"}</TableCell>
       <TableCell className="px-4 py-3">{hospital.registration_number || "—"}</TableCell>
+      <TableCell className="px-4 py-3 text-center">{patientCount}</TableCell>
       <TableCell className="px-4 py-3 text-center">{staffCount}</TableCell>
       <TableCell className="px-4 py-3">
         <Badge variant={statusConfig.variant}>

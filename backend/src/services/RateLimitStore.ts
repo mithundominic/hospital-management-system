@@ -12,7 +12,6 @@ export class DatabaseRateLimitStore implements Store {
   private windowMs = 900000;
   private maxRequests = 300;
   private memoryFallback = new Map<string, MemoryRecord>();
-  private useFallback = false;
 
   init(options: Options): void {
     this.windowMs = options.windowMs;
@@ -20,28 +19,29 @@ export class DatabaseRateLimitStore implements Store {
   }
 
   async increment(key: string): Promise<ClientRateLimitInfo> {
-    if (!this.useFallback) {
-      try {
-        const windowSec = Math.ceil(this.windowMs / 1000);
-        const { data, error } = await publicClient.rpc("check_rate_limit", {
-          p_key: key,
-          p_window_seconds: windowSec,
-          p_max_requests: this.maxRequests,
-        });
+    try {
+      const windowSec = Math.ceil(this.windowMs / 1000);
+      const { data, error } = await publicClient.rpc("check_rate_limit", {
+        p_key: key,
+        p_window_seconds: windowSec,
+        p_max_requests: this.maxRequests,
+      });
 
-        if (!error && data) {
-          const resetSec = (data.reset_seconds as number) || windowSec;
-          const remaining = (data.remaining as number) ?? 0;
-          return {
-            totalHits: this.maxRequests - remaining,
-            resetTime: new Date(Date.now() + resetSec * 1000),
-          };
-        }
-        // Fall back gracefully if RPC is unavailable in database
-        this.useFallback = true;
-      } catch {
-        this.useFallback = true;
+      if (!error && data) {
+        const resetSec = (data.reset_seconds as number) || windowSec;
+        const remaining = (data.remaining as number) ?? 0;
+        return {
+          totalHits: this.maxRequests - remaining,
+          resetTime: new Date(Date.now() + resetSec * 1000),
+        };
       }
+      if (error) {
+        console.warn(
+          `[RateLimitStore] DB check_rate_limit error: ${error.message}`,
+        );
+      }
+    } catch (err) {
+      console.warn("[RateLimitStore] RPC call failed, using memory", err);
     }
     return this.incrementMemory(key);
   }

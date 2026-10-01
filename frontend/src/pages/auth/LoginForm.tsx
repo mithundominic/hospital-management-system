@@ -1,10 +1,7 @@
 // Responsibility: Render the user login form with email/password and demo hints
 
-import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useHospital } from "@/contexts/useHospital";
 import { Box } from "@/components/ui/Box";
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
@@ -13,28 +10,12 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Form } from "@/components/ui/Form";
 import { APP_ROUTES } from "@/constants";
+import { useLoginForm } from "./useLoginForm";
 
 export const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
-  const { refreshHospitals } = useHospital();
+  const { email, setEmail, password, setPassword, loading, handleSubmit } =
+    useLoginForm();
   const navigate = useNavigate();
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await signIn(email, password);
-      const list = await refreshHospitals();
-      navigate(list.length === 0 ? APP_ROUTES.ONBOARDING : APP_ROUTES.DASHBOARD);
-    } catch {
-      // Error notification handled in AuthContext
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Card className="p-8 shadow-lg">

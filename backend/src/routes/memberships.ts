@@ -8,6 +8,7 @@ import {
   queryHospitalMemberships,
   createNewMembership,
   updateExistingMembership,
+  queryUserHospitalPermissions,
 } from "../services/staff/MembershipsService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
 
@@ -54,6 +55,22 @@ const updateMembership: RouteHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+const getMyPermissions: RouteHandler = async (req, res, next) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const data = await queryUserHospitalPermissions(
+      authReq.supabase,
+      authReq.params.hospitalId!,
+      authReq.userId!,
+    );
+    sendData(res, data || { role: null, permissions: [] });
+  } catch (err) {
+    next(err);
+  }
+};
+
+router.get(API_ROUTES.memberships.myPermissions, getMyPermissions);
 
 router.get(
   API_ROUTES.memberships.list,

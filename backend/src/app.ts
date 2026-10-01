@@ -34,14 +34,14 @@ app.use(express.json({ limit: config.server.bodyLimit }));
 /* Health check endpoint (bypasses rate limiter) */
 app.get("/health", healthCheckHandler);
 
-/* Apply rate limiting to each and every API endpoint */
-app.use(apiRateLimiter);
-
 /*
  * API v1 Application Router
  * Centralized mount point for versioned API routes (/api/v1)
  */
 const apiV1 = express();
+
+/* Apply rate limiting to API routes */
+apiV1.use(apiRateLimiter);
 
 /* Health check endpoint under /api/v1 */
 apiV1.get("/health", healthCheckHandler);

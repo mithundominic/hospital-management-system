@@ -46,8 +46,12 @@ export const AppRoutes = () => (
         <Route path="shifts" element={<Pages.ShiftsPage />} />
         <Route path="attendance" element={<Pages.AttendancePage />} />
         <Route path="leave" element={<Pages.LeavePage />} />
-        <Route path="biometric-devices" element={<Pages.BiometricDevicesPage />} />
+        <Route
+          path="biometric-devices"
+          element={<Pages.BiometricDevicesPage />}
+        />
         <Route path="reports" element={<Pages.ReportsPage />} />
+        <Route path="analytics" element={<Pages.AnalyticsPage />} />
         <Route
           path="platform/hospitals"
           element={
@@ -77,9 +81,15 @@ export const AppRoutes = () => (
         }
       >
         <Route index element={<Pages.PatientDashboardPage />} />
-        <Route path="appointments" element={<Pages.PatientAppointmentsPage />} />
+        <Route
+          path="appointments"
+          element={<Pages.PatientAppointmentsPage />}
+        />
         <Route path="lab-results" element={<Pages.PatientLabResultsPage />} />
-        <Route path="prescriptions" element={<Pages.PatientPrescriptionsPage />} />
+        <Route
+          path="prescriptions"
+          element={<Pages.PatientPrescriptionsPage />}
+        />
       </Route>
       <Route path="*" element={<Navigate to={APP_ROUTES.HOME} replace />} />
     </Routes>

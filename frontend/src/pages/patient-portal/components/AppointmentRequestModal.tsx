@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import { FormModal } from "@/components/common/FormModal";
-import { Box } from "@/components/ui/Box";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { Textarea } from "@/components/ui/Textarea";
 import { useRequestAppointment } from "../hooks/usePatientPortal";
+import { AppointmentRequestFields } from "./AppointmentRequestFields";
 import toast from "react-hot-toast";
 import type { PatientRegistration } from "../patientPortal.types";
 
@@ -32,6 +29,10 @@ export const AppointmentRequestModal = ({
 
   const { mutate, isPending } = useRequestAppointment();
 
+  const handleFieldChange = (field: string, value: string) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutate(formData, {
@@ -56,51 +57,11 @@ export const AppointmentRequestModal = ({
       submitLabel="Submit Request"
       isLoading={isPending}
     >
-      <Box className="space-y-4">
-        {registrations.length > 1 && (
-          <Select
-            label="Hospital *"
-            required
-            value={formData.patient_registration_id}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                patient_registration_id: e.target.value,
-              })
-            }
-          >
-            {registrations.map((reg) => (
-              <option key={reg.id} value={reg.id}>
-                {reg.hospital?.name || "Unknown Hospital"}
-              </option>
-            ))}
-          </Select>
-        )}
-        <Input
-          label="Preferred Date *"
-          type="date"
-          required
-          value={formData.appointment_date}
-          onChange={(e) =>
-            setFormData({ ...formData, appointment_date: e.target.value })
-          }
-        />
-        <Input
-          label="Preferred Time *"
-          type="time"
-          required
-          value={formData.appointment_time}
-          onChange={(e) =>
-            setFormData({ ...formData, appointment_time: e.target.value })
-          }
-        />
-        <Textarea
-          label="Reason for Visit"
-          value={formData.reason}
-          onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-          rows={3}
-        />
-      </Box>
+      <AppointmentRequestFields
+        formData={formData}
+        registrations={registrations}
+        onChange={handleFieldChange}
+      />
     </FormModal>
   );
 };

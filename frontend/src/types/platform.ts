@@ -20,6 +20,8 @@ export interface PlatformHospital {
   created_at: string;
   updated_at: string;
   memberships?: PlatformMembership[];
+  patient_count?: number;
+  staff_count?: number;
 }
 
 export interface HospitalStats {
@@ -35,5 +37,6 @@ export interface PlatformAnalytics {
   total_staff: number;
   total_patients: number;
   total_appointments: number;
-  recent_hospitals: PlatformHospital[];
+  total_revenue?: number;
+  recent_hospitals?: PlatformHospital[];
 }

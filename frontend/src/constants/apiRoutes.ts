@@ -39,6 +39,7 @@ export const API_ROUTES = {
     shifts: (hId: string) => `/hospitals/${hId}/shifts`,
     shift: (hId: string, id: string) => `/hospitals/${hId}/shifts/${id}`,
     memberships: (hId: string) => `/hospitals/${hId}/memberships`,
+    myPermissions: (hId: string) => `/hospitals/${hId}/permissions/me`,
     attendance: (hId: string) => `/hospitals/${hId}/attendance`,
     myAttendance: (hId: string) => `/hospitals/${hId}/attendance/my-records`,
     checkIn: (hId: string) => `/hospitals/${hId}/attendance/check-in`,

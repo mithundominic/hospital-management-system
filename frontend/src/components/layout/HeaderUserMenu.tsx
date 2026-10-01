@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, Globe, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useHospital } from "@/contexts/useHospital";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +13,7 @@ import { APP_ROUTES } from "@/constants";
 
 export const HeaderUserMenu = () => {
   const { user, signOut } = useAuth();
+  const { currentHospital } = useHospital();
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
@@ -40,18 +42,20 @@ export const HeaderUserMenu = () => {
               {user?.email}
             </Text>
           </Box>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setShowMenu(false);
-              navigate(APP_ROUTES.SETTINGS);
-            }}
-            className="w-full justify-start px-4 py-2 text-gray-700 hover:text-gray-900 flex items-center gap-2"
-          >
-            <Settings className="h-4 w-4 text-gray-500" />
-            Hospital Settings
-          </Button>
+          {currentHospital && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowMenu(false);
+                navigate(APP_ROUTES.SETTINGS);
+              }}
+              className="w-full justify-start px-4 py-2 text-gray-700 hover:text-gray-900 flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4 text-gray-500" />
+              Hospital Settings
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"

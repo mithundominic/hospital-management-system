@@ -21,6 +21,7 @@ export const APP_ROUTES = {
   LEAVE: "/leave",
   BIOMETRIC_DEVICES: "/biometric-devices",
   REPORTS: "/reports",
+  ANALYTICS: "/analytics",
   PLATFORM_HOSPITALS: "/platform/hospitals",
   PLATFORM_ANALYTICS: "/platform/analytics",
   SETTINGS: "/settings",

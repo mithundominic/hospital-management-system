@@ -1,6 +1,8 @@
-// Responsibility: Render the active hospital tenant brand header and location in sidebar
+// Responsibility: Render active hospital tenant or platform administration brand header in sidebar
 
+import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/useHospital";
+import { usePlatform } from "@/contexts";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Heading } from "@/components/ui/Heading";
@@ -8,28 +10,50 @@ import { Text } from "@/components/ui/Text";
 import { HospitalBrandLogo } from "./HospitalBrandLogo";
 
 export const SidebarBrandHeader = () => {
+  const { user } = useAuth();
   const { currentHospital } = useHospital();
+  const { isPlatformAdmin } = usePlatform();
 
-  const locationSubtitle = currentHospital?.city
-    ? [currentHospital.city, currentHospital.state].filter(Boolean).join(", ")
-    : "Hospital Management";
+  const isPlatformUser =
+    isPlatformAdmin ||
+    Boolean(
+      user?.app_metadata?.is_platform_admin ||
+      user?.app_metadata?.platform_role === "SuperAdmin" ||
+      user?.app_metadata?.platform_role === "Support",
+    );
+
+  const isPlatformMode = isPlatformUser && !currentHospital;
+
+  const brandName = isPlatformMode
+    ? "HealthCare Platform"
+    : currentHospital?.name || "HealthCare";
+
+  const subtitle = isPlatformMode
+    ? "Platform Administration"
+    : currentHospital?.city
+      ? [currentHospital.city, currentHospital.state].filter(Boolean).join(", ")
+      : "Hospital Management";
 
   return (
-    <Flex align="center" gap={3} className="h-16 shrink-0 border-b border-gray-100">
+    <Flex
+      align="center"
+      gap={3}
+      className="h-16 shrink-0 border-b border-gray-100"
+    >
       <HospitalBrandLogo
-        logoUrl={currentHospital?.logo_url}
-        name={currentHospital?.name}
+        logoUrl={isPlatformMode ? undefined : currentHospital?.logo_url}
+        name={brandName}
         size="md"
       />
-      <Box className="min-w-0 flex-1" title={currentHospital?.name || "HealthCare"}>
+      <Box className="min-w-0 flex-1" title={brandName}>
         <Heading
           level={1}
           className="text-base font-bold text-gray-900 truncate"
         >
-          {currentHospital?.name || "HealthCare"}
+          {brandName}
         </Heading>
         <Text variant="caption" className="truncate text-gray-500 block">
-          {locationSubtitle}
+          {subtitle}
         </Text>
       </Box>
     </Flex>

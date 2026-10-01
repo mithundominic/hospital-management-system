@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useHospital } from "@/contexts/useHospital";
+import { usePermissions } from "@/lib/hooks/usePermissions";
+import { PERMISSIONS } from "@/constants";
 import {
   getLeaveApplications,
   approveLeaveApplication,
@@ -12,9 +14,10 @@ import {
 
 export const useLeavePage = () => {
   const { currentHospital } = useHospital();
+  const { hasPermission } = usePermissions();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [canApprove] = useState(false); // TODO: Check if user has leave.read permission
+  const canApprove = hasPermission(PERMISSIONS.LEAVE_WRITE);
 
   const { data: leaveApplications = [], isLoading } = useQuery({
     queryKey: ["leave-applications", currentHospital?.id],

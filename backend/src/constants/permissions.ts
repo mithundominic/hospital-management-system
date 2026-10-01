@@ -62,6 +62,9 @@ export const PERMISSIONS = {
   APPOINTMENTS_REQUEST: "appointments.request",
   LAB_READ_OWN: "lab.read_own",
   PRESCRIPTIONS_READ_OWN: "prescriptions.read_own",
+  // Analytics
+  ANALYTICS_READ: "analytics.read",
+  ANALYTICS_EXPORT: "analytics.export",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

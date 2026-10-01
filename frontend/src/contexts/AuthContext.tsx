@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) throw error;
       setUser(data.user);
       toast.success("Signed in successfully");
+      return data;
     } catch (e) {
       handleError(e, "Failed to sign in");
     }

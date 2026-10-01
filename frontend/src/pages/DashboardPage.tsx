@@ -1,5 +1,6 @@
 // Responsibility: Main dashboard page container rendering overview metrics, tabs, and selected panel
 
+import { Navigate } from "react-router-dom";
 import { Box } from "@/components/ui/Box";
 import { Grid } from "@/components/ui/Grid";
 import { Tabs } from "@/components/ui/Tabs";
@@ -11,9 +12,18 @@ import {
   DASHBOARD_TAB_COMPONENTS,
 } from "./dashboard/dashboard.config";
 import { useDashboardPage } from "./dashboard/useDashboardPage";
+import { useHospital } from "@/contexts/useHospital";
+import { usePlatform } from "@/contexts";
+import { APP_ROUTES } from "@/constants";
 
 export const DashboardPage = () => {
+  const { currentHospital } = useHospital();
+  const { isPlatformAdmin } = usePlatform();
   const { stats, isLoading, activeTab, setActiveTab } = useDashboardPage();
+
+  if (isPlatformAdmin && !currentHospital) {
+    return <Navigate to={APP_ROUTES.PLATFORM_HOSPITALS} replace />;
+  }
 
   if (isLoading) {
     return (

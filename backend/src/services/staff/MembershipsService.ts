@@ -54,3 +54,16 @@ export const updateExistingMembership = async (
   if (error) throw error;
   return data;
 };
+
+export const queryUserHospitalPermissions = async (
+  supabase: SupabaseClient,
+  hospitalId: string,
+  userId: string,
+) => {
+  const { data, error } = await supabase.rpc("get_user_hospital_permissions", {
+    p_user_id: userId,
+    p_hospital_id: hospitalId,
+  });
+  if (error) throw error;
+  return data;
+};

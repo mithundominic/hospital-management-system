@@ -1,18 +1,9 @@
 // Responsibility: Canonical API route path definitions for backend Express routers
 
 export const API_ROUTES = {
-  hospitals: {
-    list: "/hospitals",
-    detail: "/hospitals/:hospitalId",
-  },
-  patients: {
-    list: "/hospitals/:hospitalId/patients",
-    detail: "/hospitals/:hospitalId/patients/:patientId",
-  },
-  appointments: {
-    list: "/hospitals/:hospitalId/appointments",
-    detail: "/hospitals/:hospitalId/appointments/:apptId",
-  },
+  hospitals: { list: "/hospitals", detail: "/hospitals/:hospitalId" },
+  patients: { list: "/hospitals/:hospitalId/patients", detail: "/hospitals/:hospitalId/patients/:patientId" },
+  appointments: { list: "/hospitals/:hospitalId/appointments", detail: "/hospitals/:hospitalId/appointments/:apptId" },
   encounters: {
     list: "/hospitals/:hospitalId/encounters",
     detail: "/hospitals/:hospitalId/encounters/:encId",
@@ -49,10 +40,7 @@ export const API_ROUTES = {
     dailyRevenue: "/hospitals/:hospitalId/reports/daily-revenue",
     lowStock: "/hospitals/:hospitalId/reports/low-stock",
   },
-  shifts: {
-    list: "/hospitals/:hospitalId/shifts",
-    detail: "/hospitals/:hospitalId/shifts/:shiftId",
-  },
+  shifts: { list: "/hospitals/:hospitalId/shifts", detail: "/hospitals/:hospitalId/shifts/:shiftId" },
   staff: {
     doctors: "/hospitals/:hospitalId/doctors",
     doctorDetail: "/hospitals/:hospitalId/doctors/:doctorId",
@@ -61,16 +49,14 @@ export const API_ROUTES = {
   memberships: {
     list: "/hospitals/:hospitalId/memberships",
     detail: "/hospitals/:hospitalId/memberships/:membershipId",
+    myPermissions: "/hospitals/:hospitalId/permissions/me",
   },
   abdm: {
-    linkRequests:
-      "/hospitals/:hospitalId/patients/:patientId/abdm/link-requests",
+    linkRequests: "/hospitals/:hospitalId/patients/:patientId/abdm/link-requests",
     verify: "/hospitals/:hospitalId/patients/:patientId/abdm/verify",
     confirm: "/hospitals/:hospitalId/patients/:patientId/abdm/confirm",
-    linkCareContext:
-      "/hospitals/:hospitalId/patients/:patientId/abdm/link-care-context",
-    consentRequests:
-      "/hospitals/:hospitalId/patients/:patientId/abdm/consent-requests",
+    linkCareContext: "/hospitals/:hospitalId/patients/:patientId/abdm/link-care-context",
+    consentRequests: "/hospitals/:hospitalId/patients/:patientId/abdm/consent-requests",
   },
   callbacks: {
     authOnInit: "/abdm/callbacks/users/auth/on-init",
@@ -94,5 +80,13 @@ export const API_ROUTES = {
     appointmentRequests: "/patient-portal/appointment-requests",
     myLabResults: "/patient-portal/my-lab-results",
     myPrescriptions: "/patient-portal/my-prescriptions",
+  },
+  analytics: {
+    overview: "/hospitals/:hospitalId/analytics/overview",
+    financial: "/hospitals/:hospitalId/analytics/financial",
+    operational: "/hospitals/:hospitalId/analytics/operational",
+    clinical: "/hospitals/:hospitalId/analytics/clinical",
+    inventory: "/hospitals/:hospitalId/analytics/inventory",
+    export: "/hospitals/:hospitalId/analytics/export",
   },
 } as const;

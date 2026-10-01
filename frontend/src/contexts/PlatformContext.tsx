@@ -1,15 +1,17 @@
 // Responsibility: Platform admin status detection and permission checking
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useEffect, useState, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
 import { getPlatformStatus } from "@/services/platform.service";
 
-interface PlatformContextValue {
+export interface PlatformContextValue {
   isPlatformAdmin: boolean;
   loading: boolean;
 }
 
-const PlatformContext = createContext<PlatformContextValue | undefined>(undefined);
+export const PlatformContext = createContext<PlatformContextValue | undefined>(
+  undefined,
+);
 
 export const PlatformProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -23,17 +25,28 @@ export const PlatformProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    const isMetaAdmin = Boolean(
+      user.app_metadata?.is_platform_admin ||
+      user.app_metadata?.platform_role === "SuperAdmin" ||
+      user.app_metadata?.platform_role === "Support",
+    );
+
+    if (isMetaAdmin) {
+      setIsPlatformAdmin(true);
+      setLoading(false);
+    }
+
     let isMounted = true;
     getPlatformStatus()
       .then((status) => {
         if (isMounted) {
-          setIsPlatformAdmin(status.isPlatformAdmin);
+          setIsPlatformAdmin(status.isPlatformAdmin || isMetaAdmin);
           setLoading(false);
         }
       })
       .catch(() => {
         if (isMounted) {
-          setIsPlatformAdmin(false);
+          setIsPlatformAdmin(isMetaAdmin);
           setLoading(false);
         }
       });
@@ -48,10 +61,4 @@ export const PlatformProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </PlatformContext.Provider>
   );
-};
-
-export const usePlatform = () => {
-  const ctx = useContext(PlatformContext);
-  if (!ctx) throw new Error("usePlatform must be used within PlatformProvider");
-  return ctx;
 };

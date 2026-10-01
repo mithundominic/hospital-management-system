@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePlatform } from "@/contexts/PlatformContext";
+import { usePlatform } from "@/contexts";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { APP_ROUTES } from "@/constants";
 

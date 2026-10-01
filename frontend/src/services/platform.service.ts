@@ -11,8 +11,10 @@ export interface PlatformStatus {
   isPlatformAdmin: boolean;
 }
 
-export const getPlatformStatus = async (): Promise<PlatformStatus> => {
-  return api.get<PlatformStatus>("/platform/status");
+export const getPlatformStatus = async (
+  token?: string,
+): Promise<PlatformStatus> => {
+  return api.get<PlatformStatus>("/platform/status", token);
 };
 
 export const getPlatformHospitals = async (): Promise<PlatformHospital[]> => {
