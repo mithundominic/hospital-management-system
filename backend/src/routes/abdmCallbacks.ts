@@ -2,6 +2,7 @@
 
 import { Router } from "express";
 import { API_ROUTES } from "../constants";
+import { verifyAbdmCallback } from "../middleware/verifyAbdmCallback";
 import {
   handleAuthOnInit,
   handleAuthOnConfirm,
@@ -11,6 +12,9 @@ import {
 } from "./abdmCallbacks.handlers";
 
 const router = Router();
+
+// Mount JWT signature verification middleware for all callback routes
+router.use(verifyAbdmCallback);
 
 // M1: Result of initiateAbhaVerification()
 router.post(API_ROUTES.callbacks.authOnInit, handleAuthOnInit);

@@ -60,6 +60,9 @@ const config: Readonly<AppConfig> = Object.freeze({
     abhaUrl: process.env.ABDM_ABHA_URL || "https://healthidsbx.abdm.gov.in/api",
     gatewayUrl:
       process.env.ABDM_GATEWAY_URL || "https://dev.abdm.gov.in/gateway",
+    jwksUri:
+      process.env.ABDM_JWKS_URI ||
+      "https://dev.abdm.gov.in/.well-known/jwks.json",
   }),
 });
 

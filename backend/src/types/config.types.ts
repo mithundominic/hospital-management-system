@@ -15,6 +15,7 @@ export interface AbdmConfig {
   callbackBaseUrl: string;
   abhaUrl: string;
   gatewayUrl: string;
+  jwksUri: string;
 }
 
 export interface FrontendConfig {
