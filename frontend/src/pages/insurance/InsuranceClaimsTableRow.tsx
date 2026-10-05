@@ -16,7 +16,14 @@ export const InsuranceClaimsTableRow = ({
   claim,
 }: InsuranceClaimsTableRowProps) => {
   const badgeConfig = claimStatusConfig[claim.status as ClaimStatus] || {
-    label: claim.status.replace("_", " "),
+    label: (claim.status || "submitted").replace("_", " "),
+    variant: "default" as const,
+  };
+  const dateStr = claim.claim_date || claim.submitted_at || claim.created_at;
+  const amount = Number(claim.claimed_amount ?? claim.claim_amount) || 0;
+  const claimType = claim.claim_type || "cashless";
+  const typeConfig = claimTypeConfig[claimType] || {
+    label: claimType.toUpperCase(),
     variant: "default" as const,
   };
 
@@ -29,22 +36,18 @@ export const InsuranceClaimsTableRow = ({
       </TableCell>
       <TableCell>
         <Text size="sm">
-          {claim.claim_date
-            ? format(new Date(claim.claim_date), "dd MMM yyyy")
-            : "N/A"}
+          {dateStr ? format(new Date(dateStr), "dd MMM yyyy") : "N/A"}
         </Text>
       </TableCell>
       <TableCell>
-        <Badge
-          variant={claimTypeConfig[claim.claim_type]?.variant || "default"}
-        >
-          {claimTypeConfig[claim.claim_type]?.label || claim.claim_type}
+        <Badge variant={typeConfig.variant}>
+          {typeConfig.label}
         </Badge>
       </TableCell>
       <TableCell>
         <Text weight="semibold">
           {appConfig.currency.symbol}
-          {claim.claim_amount.toLocaleString("en-IN")}
+          {amount.toLocaleString("en-IN")}
         </Text>
       </TableCell>
       <TableCell>

@@ -3,7 +3,10 @@
 
 import { Request, Response, NextFunction } from "express";
 import { adminClient } from "../config/supabase";
-import { processAttendanceLogs } from "../services/biometric/BiometricWebhookService";
+import {
+  processAttendanceLogs,
+  getDeviceForWebhook,
+} from "../services/biometric/BiometricWebhookService";
 
 export const webhookHandler = async (
   req: Request,
@@ -25,14 +28,9 @@ export const webhookHandler = async (
     }
 
     const supabase = adminClient;
+    const device = await getDeviceForWebhook(supabase, serialNumber);
 
-    const { data: device, error: deviceError } = await supabase
-      .from("biometric_devices")
-      .select("id, hospital_id, status")
-      .eq("serial_number", serialNumber)
-      .single();
-
-    if (deviceError || !device) {
+    if (!device) {
       console.warn(`Unknown device serial: ${serialNumber}`);
       res.status(404).json({ error: "Device not registered" });
       return;

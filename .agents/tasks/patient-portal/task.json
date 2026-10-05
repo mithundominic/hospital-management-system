@@ -1,7 +1,0 @@
-{
-  "task_id": "task-patient-portal",
-  "task_description": "Build a patient portal allowing patients to view their appointments, lab results, prescriptions, and request new appointments online",
-  "status": "pending",
-  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
-  "blocked_reason": null
-}

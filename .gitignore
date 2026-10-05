@@ -8,5 +8,9 @@ dist/
 build/
 *.md
 .kiro/
+.agents*
 docs/
-scripts/
+scripts/*
+!scripts/pre-commit-gate.cjs
+!scripts/audit_compliance.cjs
+!scripts/verify-compliance.ts

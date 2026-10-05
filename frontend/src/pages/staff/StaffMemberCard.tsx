@@ -1,5 +1,6 @@
 // Responsibility: Render individual staff member profile card with contact and role badge
 
+import { memo } from "react";
 import { Mail, Phone } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Flex } from "@/components/ui/Flex";
@@ -24,7 +25,7 @@ export interface StaffMemberCardProps {
   member: Membership;
 }
 
-export const StaffMemberCard = ({ member }: StaffMemberCardProps) => {
+export const StaffMemberCard = memo(({ member }: StaffMemberCardProps) => {
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">
       <Flex align="center" gap={3}>
@@ -80,4 +81,8 @@ export const StaffMemberCard = ({ member }: StaffMemberCardProps) => {
       </Flex>
     </Card>
   );
-};
+});
+
+StaffMemberCard.displayName = "StaffMemberCard";
+
+export default StaffMemberCard;

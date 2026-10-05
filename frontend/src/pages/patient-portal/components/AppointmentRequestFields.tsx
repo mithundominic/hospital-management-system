@@ -30,13 +30,11 @@ export const AppointmentRequestFields = ({
           required
           value={formData.patient_registration_id}
           onChange={(e) => onChange("patient_registration_id", e.target.value)}
-        >
-          {registrations.map((reg) => (
-            <option key={reg.id} value={reg.id}>
-              {reg.hospital?.name || "Unknown Hospital"}
-            </option>
-          ))}
-        </Select>
+          options={registrations.map((reg) => ({
+            value: reg.id,
+            label: reg.hospital?.name || "Unknown Hospital",
+          }))}
+        />
       )}
       <Input
         label="Preferred Date *"

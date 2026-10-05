@@ -23,13 +23,17 @@ export const LabReportPrintModal = ({ labOrder, onClose }: LabReportPrintModalPr
     window.print();
   };
 
+  const docDate = labOrder.ordered_at || labOrder.created_at || labOrder.ordered_date;
+  const priority = labOrder.priority || "routine";
+  const status = labOrder.status || "ordered";
+
   return (
     <Modal isOpen={Boolean(labOrder)} onClose={onClose} title="Diagnostic Lab Report" maxWidth="2xl">
       <Box className="p-6 bg-white print:p-0">
         <HospitalLetterhead
           documentTitle="CLINICAL PATHOLOGY REPORT"
           documentNumber={`LAB-${labOrder.id.slice(0, 8).toUpperCase()}`}
-          documentDate={labOrder.created_at ? new Date(labOrder.created_at).toLocaleDateString() : undefined}
+          documentDate={docDate ? new Date(docDate).toLocaleDateString() : undefined}
           badgeVariant="info"
         />
 
@@ -41,8 +45,8 @@ export const LabReportPrintModal = ({ labOrder, onClose }: LabReportPrintModalPr
           <Box className="text-right">
             <Text variant="caption">Status / Priority:</Text>
             <Flex gap={2} justify="end" className="mt-0.5">
-              <Badge variant="default">{labOrder.priority.toUpperCase()}</Badge>
-              <Badge variant="success">{labOrder.status.toUpperCase()}</Badge>
+              <Badge variant="default">{priority.toUpperCase()}</Badge>
+              <Badge variant="success">{status.toUpperCase()}</Badge>
             </Flex>
           </Box>
         </Flex>

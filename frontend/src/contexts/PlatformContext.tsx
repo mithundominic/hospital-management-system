@@ -1,17 +1,9 @@
 // Responsibility: Platform admin status detection and permission checking
 
-import { createContext, useEffect, useState, ReactNode } from "react";
-import { useAuth } from "./AuthContext";
+import { useEffect, useState, type ReactNode } from "react";
+import { useAuth } from "./useAuth";
 import { getPlatformStatus } from "@/services/platform.service";
-
-export interface PlatformContextValue {
-  isPlatformAdmin: boolean;
-  loading: boolean;
-}
-
-export const PlatformContext = createContext<PlatformContextValue | undefined>(
-  undefined,
-);
+import { PlatformContext } from "./usePlatform";
 
 export const PlatformProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();

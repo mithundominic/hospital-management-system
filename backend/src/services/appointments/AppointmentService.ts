@@ -16,7 +16,9 @@ export const queryAppointments = async (
 ) => {
   let query = supabase
     .from("appointments")
-    .select("*")
+    .select(
+      "id, hospital_id, patient_id, doctor_membership_id, department_id, scheduled_at, status, notes, created_at, updated_at",
+    )
     .eq("hospital_id", hospitalId);
 
   if (filters.doctor_membership_id) {

@@ -1,22 +1,15 @@
 // Responsibility: Root application component configuring global providers, query client, and error boundary
 
 import { BrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { queryClient } from "@/lib/queryClient";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PlatformProvider } from "./contexts/PlatformContext";
+import { OrganizationProvider } from "./contexts/OrganizationContext";
 import { HospitalProvider } from "./contexts/HospitalContext";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { AppRoutes } from "./AppRoutes";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
 
 export default function App() {
   return (
@@ -30,10 +23,12 @@ export default function App() {
         >
           <AuthProvider>
             <PlatformProvider>
-              <HospitalProvider>
-                <AppRoutes />
-                <Toaster position="top-right" />
-              </HospitalProvider>
+              <OrganizationProvider>
+                <HospitalProvider>
+                  <AppRoutes />
+                  <Toaster position="top-right" />
+                </HospitalProvider>
+              </OrganizationProvider>
             </PlatformProvider>
           </AuthProvider>
         </BrowserRouter>

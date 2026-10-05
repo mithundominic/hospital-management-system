@@ -8,9 +8,11 @@ import { corsOptions } from "./config/cors";
 import { auth } from "./middleware/auth";
 import { errorHandler } from "./middleware/errorHandler";
 import { apiRateLimiter } from "./middleware/rateLimiter";
+import { compressionMiddleware, cacheControlMiddleware } from "./middleware/httpOptimization";
 import { registerPublicRoutes } from "./routes/public";
 import { registerRoutes } from "./routes";
 import { healthCheckHandler } from "./routes/health";
+import { sendError } from "./utils/respond";
 
 const app = express();
 
@@ -28,16 +30,15 @@ app.use(
 );
 
 /* Global middleware */
+app.use(compressionMiddleware);
+app.use(cacheControlMiddleware);
 app.use(cors(corsOptions));
 app.use(express.json({ limit: config.server.bodyLimit }));
 
 /* Health check endpoint (bypasses rate limiter) */
 app.get("/health", healthCheckHandler);
 
-/*
- * API v1 Application Router
- * Centralized mount point for versioned API routes (/api/v1)
- */
+/* API v1 Application Router */
 const apiV1 = express();
 
 /* Apply rate limiting to API routes */
@@ -46,36 +47,30 @@ apiV1.use(apiRateLimiter);
 /* Health check endpoint under /api/v1 */
 apiV1.get("/health", healthCheckHandler);
 
-/*
- * Public routes
- * These are called by external systems (ABDM Gateway, onboarding)
- * and must not require user JWT authentication.
- *
- * SECURITY: Public routes must implement their own verification
- * (signature verification, timestamp validation, etc.)
- */
+/* Public routes (ABDM Gateway, onboarding) - no user JWT */
 registerPublicRoutes(apiV1);
 
-/*
- * Protected routes
- * Everything registered below this middleware requires authentication.
- * User JWT must be valid and req.userId/req.supabase will be available.
- */
+/* Protected routes - requires authentication */
 apiV1.use(auth);
-
 registerRoutes(apiV1);
+
+/* 404 handler for API v1 routes */
+apiV1.use((_req, res) => {
+  sendError(res, 404, "NOT_FOUND", "Endpoint not found");
+});
 
 /* Error handler for API v1 routes */
 apiV1.use(errorHandler);
 
-/* Mount API router at /api/v1 and root for backwards compatibility */
+/* Mount API router at /api/v1 */
 app.use("/api/v1", apiV1);
-app.use(apiV1);
 
-/*
- * Global error handler
- * Must always be registered last to catch all errors.
- */
+/* 404 handler for root app */
+app.use((_req, res) => {
+  sendError(res, 404, "NOT_FOUND", "Endpoint not found");
+});
+
+/* Global error handler */
 app.use(errorHandler);
 
 export default app;

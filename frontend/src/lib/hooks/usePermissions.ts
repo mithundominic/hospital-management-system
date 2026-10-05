@@ -3,14 +3,11 @@
 import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useHospital } from "@/contexts/useHospital";
-import { useAuth } from "@/contexts/AuthContext";
-import { api } from "@/lib/api";
-import { API_ROUTES } from "@/constants";
-
-interface UserHospitalPermissionsDto {
-  role: string | null;
-  permissions: string[];
-}
+import { useAuth } from "@/contexts/useAuth";
+import {
+  getMyPermissions,
+  type UserHospitalPermissionsDto,
+} from "@/services/hospital.service";
 
 export const usePermissions = () => {
   const { currentHospital } = useHospital();
@@ -25,9 +22,7 @@ export const usePermissions = () => {
     queryKey: ["my-permissions", currentHospital?.id],
     queryFn: async () => {
       if (!currentHospital?.id) return { role: null, permissions: [] };
-      return await api.get<UserHospitalPermissionsDto>(
-        API_ROUTES.hospitals.myPermissions(currentHospital.id),
-      );
+      return await getMyPermissions(currentHospital.id);
     },
     enabled: !!currentHospital?.id && !!user,
     staleTime: 5 * 60 * 1000,

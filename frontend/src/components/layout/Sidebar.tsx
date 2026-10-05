@@ -5,7 +5,7 @@ import { SidebarBrandHeader } from "./SidebarBrandHeader";
 import { SidebarNavItem } from "./SidebarNavItem";
 import { navigationItems } from "./sidebar.config";
 import { platformNavigationItems } from "./sidebar.platform";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { usePlatform } from "@/contexts";
 import { useHospital } from "@/contexts/useHospital";
 

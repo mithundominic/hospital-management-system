@@ -38,3 +38,20 @@ export const onboardHospital = async (
 ): Promise<OnboardHospitalResponse> => {
   return api.postPublic<OnboardHospitalResponse>("/onboarding", payload);
 };
+
+export interface UserHospitalPermissionsDto {
+  role: string | null;
+  permissions: string[];
+}
+
+export const getMyPermissions = async (
+  hospitalId: string,
+): Promise<UserHospitalPermissionsDto> => {
+  const data = await api.get<UserHospitalPermissionsDto>(
+    API_ROUTES.hospitals.myPermissions(hospitalId),
+  );
+  return data || { role: null, permissions: [] };
+};
+
+export const getMyHospitalPermissions = getMyPermissions;
+

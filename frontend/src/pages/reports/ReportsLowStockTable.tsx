@@ -1,11 +1,8 @@
-// Responsibility: Render low stock inventory alert table for reports dashboard
+// Responsibility: Render low stock inventory alert table using reusable DataTable component
 
 import { AlertTriangle } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Heading } from "@/components/ui/Heading";
-import { Flex } from "@/components/ui/Flex";
-import { Table, TableBody, TableRow, TableCell } from "@/components/ui/Table";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { TableRow, TableCell } from "@/components/ui/Table";
+import { DataTable } from "@/components/common/DataTable";
 import { REPORTS_LOW_STOCK_COLUMNS } from "./reports.config";
 import type { LowStockItem } from "@/types";
 
@@ -19,31 +16,26 @@ export const ReportsLowStockTable = ({
   if (lowStock.length === 0) return null;
 
   return (
-    <Card className="p-6">
-      <Flex align="center" gap={2} className="mb-4">
-        <AlertTriangle className="h-5 w-5 text-amber-600" />
-        <Heading level={3} className="text-lg font-semibold text-gray-900">
-          Low Stock Alerts
-        </Heading>
-      </Flex>
-      <Table>
-        <DataTableHeader columns={REPORTS_LOW_STOCK_COLUMNS} />
-        <TableBody>
-          {lowStock.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell className="font-medium text-gray-900">
-                {item.item_name}
-              </TableCell>
-              <TableCell className="font-semibold text-red-600">
-                {item.quantity_in_stock}
-              </TableCell>
-              <TableCell>{item.reorder_level}</TableCell>
-              <TableCell>{item.category || "General"}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
+    <DataTable
+      columns={REPORTS_LOW_STOCK_COLUMNS}
+      data={lowStock}
+      emptyIcon={AlertTriangle}
+      emptyTitle="No low stock alerts"
+      emptyDescription="All inventory items are currently above their reorder thresholds."
+      containerClassName="max-h-[460px] overflow-auto"
+      renderRow={(item) => (
+        <TableRow key={item.id}>
+          <TableCell className="font-medium text-gray-900">
+            {item.item_name}
+          </TableCell>
+          <TableCell className="font-semibold text-red-600">
+            {item.quantity_in_stock}
+          </TableCell>
+          <TableCell>{item.reorder_level}</TableCell>
+          <TableCell>{item.category || "General"}</TableCell>
+        </TableRow>
+      )}
+    />
   );
 };
 

@@ -1,14 +1,18 @@
-// Responsibility: Display biometric devices in a table
-
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-} from "@/components/ui/Table";
+// Responsibility: Display biometric devices in table or cards view using reusable DataTable
+import { Cpu } from "lucide-react";
+import { DataTable } from "@/components/common/DataTable";
 import type { BiometricDevice } from "@/types/biometric";
 import { DeviceTableRow } from "./DeviceTableRow";
+import { DeviceCard } from "./DeviceCard";
+
+const DEVICE_COLUMNS = [
+  { key: "name", header: "Device Name" },
+  { key: "serial", header: "Serial Number" },
+  { key: "location", header: "Location" },
+  { key: "status", header: "Status" },
+  { key: "last_sync", header: "Last Sync" },
+  { key: "actions", header: "Actions" },
+] as const;
 
 interface DevicesTableProps {
   devices: BiometricDevice[];
@@ -22,38 +26,33 @@ export const DevicesTable = ({
   onEdit,
   onDelete,
   onToggleStatus,
-}: DevicesTableProps) => {
-  if (devices.length === 0) {
-    return (
-      <div className="text-center py-12 text-gray-500">
-        No devices registered. Add your first biometric device to get started.
-      </div>
-    );
-  }
+}: DevicesTableProps) => (
+  <DataTable
+    columns={DEVICE_COLUMNS}
+    data={devices}
+    showViewToggle={true}
+    emptyIcon={Cpu}
+    emptyTitle="No devices registered"
+    emptyDescription="Add your first biometric attendance device to get started."
+    renderRow={(device) => (
+      <DeviceTableRow
+        key={device.id}
+        device={device}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onToggleStatus={onToggleStatus}
+      />
+    )}
+    renderCard={(device) => (
+      <DeviceCard
+        key={device.id}
+        device={device}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onToggleStatus={onToggleStatus}
+      />
+    )}
+  />
+);
 
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Device Name</TableHead>
-          <TableHead>Serial Number</TableHead>
-          <TableHead>Location</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Last Sync</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {devices.map((device) => (
-          <DeviceTableRow
-            key={device.id}
-            device={device}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onToggleStatus={onToggleStatus}
-          />
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
+export default DevicesTable;

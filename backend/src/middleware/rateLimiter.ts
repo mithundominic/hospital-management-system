@@ -35,14 +35,15 @@ export const resolveRateLimitKey = (req: Request): string => {
   return `anonymous`;
 };
 
-const createLimiter = (options: Partial<Options>) =>
+const createLimiter = (prefix: string, options: Partial<Options>) =>
   rateLimit({
     windowMs: config.rateLimit.windowMs,
     limit: config.rateLimit.maxRequests,
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: resolveRateLimitKey,
-    store: new DatabaseRateLimitStore(),
+    store: new DatabaseRateLimitStore(prefix),
+    validate: { singleCount: false },
     skip: (req: Request) =>
       req.path === "/health" || req.path === "/api/v1/health",
     handler: (_req: Request, res: Response) => {
@@ -53,27 +54,27 @@ const createLimiter = (options: Partial<Options>) =>
         "Too many requests. Please try again later.",
       );
     },
-    skipSuccessfulRequests: false, // Count all requests
+    skipSuccessfulRequests: false,
     ...options,
   });
 
 /** Global API rate limiter for standard CRUD operations */
-export const apiRateLimiter = createLimiter({
+export const apiRateLimiter = createLimiter("api:", {
   limit: config.rateLimit.maxRequests,
 });
 
 /** Stricter rate limiter for sensitive routes (e.g. public onboarding) */
-export const strictRateLimiter = createLimiter({
+export const strictRateLimiter = createLimiter("strict:", {
   limit: config.rateLimit.authMaxRequests,
 });
 
 /** Rate limiter for heavy analytics & reporting queries */
-export const reportsRateLimiter = createLimiter({
+export const reportsRateLimiter = createLimiter("reports:", {
   limit: Math.max(30, Math.floor(config.rateLimit.maxRequests / 5)),
 });
 
 /** Rate limiter for machine-to-machine integrations & device webhooks */
-export const webhookRateLimiter = createLimiter({
+export const webhookRateLimiter = createLimiter("webhook:", {
   windowMs: 60000,
   limit: 120,
 });

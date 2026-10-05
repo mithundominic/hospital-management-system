@@ -1,8 +1,6 @@
 // Responsibility: React context providing authentication state and auth methods
 
 import {
-  createContext,
-  useContext,
   useEffect,
   useState,
   type ReactNode,
@@ -10,11 +8,7 @@ import {
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import toast from "react-hot-toast";
-import type { AuthContextType } from "@/types/auth";
-
-export type { AuthContextType };
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from "./useAuth";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -81,12 +75,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

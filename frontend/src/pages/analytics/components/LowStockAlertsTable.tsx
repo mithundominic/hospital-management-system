@@ -2,8 +2,17 @@
 
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
-import { Table } from "@/components/ui/Table";
+import { Table, TableBody, TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
+
+const LOW_STOCK_COLUMNS = [
+  { key: "name", header: "Item Name" },
+  { key: "code", header: "Code" },
+  { key: "current_quantity", header: "Current Quantity" },
+  { key: "reorder_level", header: "Reorder Level" },
+  { key: "status", header: "Status" },
+] as const;
 
 interface LowStockAlert {
   name: string;
@@ -21,29 +30,21 @@ export const LowStockAlertsTable = ({ alerts }: LowStockAlertsTableProps) => (
     <Heading level={3} className="mb-4">
       Low Stock Alerts
     </Heading>
-    <Table>
-      <thead>
-        <tr>
-          <th>Item Name</th>
-          <th>Code</th>
-          <th>Current Quantity</th>
-          <th>Reorder Level</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table containerClassName="max-h-[280px] overflow-auto">
+      <DataTableHeader columns={LOW_STOCK_COLUMNS} />
+      <TableBody>
         {alerts.map((item, idx) => (
-          <tr key={idx}>
-            <td>{item.name}</td>
-            <td>{item.item_code || "N/A"}</td>
-            <td>{item.current_quantity}</td>
-            <td>{item.reorder_level}</td>
-            <td>
+          <TableRow key={idx}>
+            <TableCell>{item.name}</TableCell>
+            <TableCell>{item.item_code || "N/A"}</TableCell>
+            <TableCell>{item.current_quantity}</TableCell>
+            <TableCell>{item.reorder_level}</TableCell>
+            <TableCell>
               <Badge variant="danger">Low Stock</Badge>
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
+      </TableBody>
     </Table>
   </Card>
 );

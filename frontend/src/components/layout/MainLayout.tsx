@@ -1,10 +1,11 @@
 // Responsibility: Main responsive shell layout combining Sidebar, Header, and content outlet
 
+import { Suspense } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { Box } from "@/components/ui/Box";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { useHospital } from "@/contexts/useHospital";
 import { usePlatform } from "@/contexts";
 import { useHospitalBranding } from "@/lib/hooks/useHospitalBranding";
@@ -13,8 +14,8 @@ import { APP_ROUTES } from "@/constants";
 
 export const MainLayout = () => {
   const { user } = useAuth();
-  const { hospitals, currentHospital, loading, initialized } = useHospital();
-  const { isPlatformAdmin, loading: platformLoading } = usePlatform();
+  const { hospitals, currentHospital, initialized } = useHospital();
+  const { isPlatformAdmin } = usePlatform();
   const location = useLocation();
   useHospitalBranding();
 
@@ -26,7 +27,7 @@ export const MainLayout = () => {
       user?.app_metadata?.platform_role === "Support",
     );
 
-  if (!initialized || loading || (platformLoading && !isPlatformUser)) {
+  if (!initialized) {
     return <LoadingSpinner fullScreen />;
   }
 
@@ -48,7 +49,9 @@ export const MainLayout = () => {
       <Box className="lg:pl-64">
         <Header />
         <Box className="py-6 px-4 sm:px-6 lg:px-8">
-          <Outlet />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Outlet />
+          </Suspense>
         </Box>
       </Box>
     </Box>

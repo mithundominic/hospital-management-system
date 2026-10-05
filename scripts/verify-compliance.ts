@@ -39,9 +39,9 @@ Usage:
   npx tsx scripts/verify-compliance.ts [options]
 
 Options:
-  --quick, -q       Run only static analysis gates (Gates 1-7, 11-14, < 3s)
-  --full            Run all 14 gates including builds and typechecks (default)
-  --gate <number>   Execute only the specified gate number (1-14)
+  --quick, -q       Run only static analysis gates (Gates 1-7, 11-15, < 3s)
+  --full            Run all 15 gates including builds and typechecks (default)
+  --gate <number>   Execute only the specified gate number (1-15)
   --help, -h        Display this help message
 `);
   process.exit(0);
@@ -615,6 +615,63 @@ runGate(
           );
         }
       });
+    }
+
+    return violations;
+  },
+);
+
+// -------------------------------------------------------------
+// GATE 15: Rule 1 (Sequential, Collision-Free Database Migrations)
+// -------------------------------------------------------------
+runGate(
+  15,
+  "Rule 1 (Sequential, collision-free database migrations)",
+  () => {
+    const violations: string[] = [];
+    const migrationsDir = path.join(BACKEND_DIR, "migrations");
+    if (!fs.existsSync(migrationsDir)) {
+      return ["Migrations directory backend/migrations not found"];
+    }
+
+    const files = fs
+      .readdirSync(migrationsDir)
+      .filter((f) => f.endsWith(".sql"))
+      .sort();
+
+    const seenNumbers = new Map<number, string>();
+    const numbers: number[] = [];
+
+    for (const file of files) {
+      const match = file.match(/^(\d{4})_(.+)\.sql$/);
+      if (!match) {
+        violations.push(
+          `Migration ${file} does not follow standard 4-digit naming format (NNNN_description.sql)`,
+        );
+        continue;
+      }
+
+      const num = parseInt(match[1]!, 10);
+      if (seenNumbers.has(num)) {
+        violations.push(
+          `Duplicate migration number ${match[1]}: both '${seenNumbers.get(num)}' and '${file}' share the same sequence number`,
+        );
+      } else {
+        seenNumbers.set(num, file);
+        numbers.push(num);
+      }
+    }
+
+    // Verify continuous sequence starting from 1
+    for (let i = 0; i < numbers.length; i++) {
+      const expected = i + 1;
+      const actual = numbers[i];
+      if (actual !== expected) {
+        violations.push(
+          `Migration sequence gap: expected #${String(expected).padStart(4, "0")} but found #${String(actual).padStart(4, "0")} (${seenNumbers.get(actual!)})`,
+        );
+        break; // Stop after reporting first sequence gap to prevent cascading noise
+      }
     }
 
     return violations;

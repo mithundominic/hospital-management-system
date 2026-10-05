@@ -44,6 +44,9 @@ export const PlatformHospitalsPage = lazy(
 export const PlatformAnalyticsPage = lazy(
   () => import("@/pages/platform/PlatformAnalyticsPage"),
 );
+export const TenantManagementPage = lazy(
+  () => import("@/pages/platform/tenants/TenantManagementPage"),
+);
 export const HospitalSettingsPage = lazy(
   () => import("@/pages/settings/HospitalSettingsPage"),
 );

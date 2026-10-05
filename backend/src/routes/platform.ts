@@ -1,5 +1,5 @@
 // Responsibility: Platform admin API route registration
- 
+
 import { Router } from "express";
 import { requirePlatformPermission } from "../middleware/requirePlatformPermission";
 import { PERMISSIONS, API_ROUTES } from "../constants";
@@ -11,6 +11,11 @@ import {
   deactivateHospital,
   getPlatformStatus,
 } from "./platform.handlers";
+import {
+  getRevenueTimeSeriesData,
+  getHospitalComparisonData,
+  getStaffDistributionData,
+} from "./platformAnalytics.handlers";
 
 const router = Router();
 
@@ -44,6 +49,24 @@ router.patch(
   API_ROUTES.platform.deactivateHospital,
   requirePlatformPermission(PERMISSIONS.PLATFORM_MANAGE_HOSPITALS),
   deactivateHospital,
+);
+
+router.get(
+  "/platform/analytics/revenue-timeseries",
+  requirePlatformPermission(PERMISSIONS.PLATFORM_SUPPORT_ACCESS),
+  getRevenueTimeSeriesData,
+);
+
+router.get(
+  "/platform/analytics/hospital-comparison",
+  requirePlatformPermission(PERMISSIONS.PLATFORM_SUPPORT_ACCESS),
+  getHospitalComparisonData,
+);
+
+router.get(
+  "/platform/analytics/staff-distribution",
+  requirePlatformPermission(PERMISSIONS.PLATFORM_SUPPORT_ACCESS),
+  getStaffDistributionData,
 );
 
 export default router;

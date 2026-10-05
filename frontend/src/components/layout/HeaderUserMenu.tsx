@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, Globe, LogOut, Settings } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { useHospital } from "@/contexts/useHospital";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";

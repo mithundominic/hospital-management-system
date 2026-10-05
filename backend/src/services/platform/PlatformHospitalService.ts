@@ -60,3 +60,15 @@ export const toggleHospitalStatus = async (
   if (error) throw error;
   return data;
 };
+
+export const checkIsPlatformAdmin = async (
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<boolean> => {
+  const { data, error } = await supabase.rpc("is_platform_admin", {
+    p_user_id: userId,
+  });
+  if (error) return false;
+  return Boolean(data);
+};
+

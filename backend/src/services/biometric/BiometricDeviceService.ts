@@ -9,7 +9,7 @@ export const listDevices = async (
 ) => {
   const { data, error } = await supabase
     .from("biometric_devices")
-    .select("*")
+    .select("id, hospital_id, serial_number, name, location, model, ip_address, firmware_version, status, last_sync_at, created_at, updated_at")
     .eq("hospital_id", hospitalId)
     .order("created_at", { ascending: false });
 
@@ -20,7 +20,7 @@ export const listDevices = async (
 export const getDevice = async (supabase: SupabaseClient, deviceId: string) => {
   const { data, error } = await supabase
     .from("biometric_devices")
-    .select("*")
+    .select("id, hospital_id, serial_number, name, location, model, ip_address, firmware_version, status, last_sync_at, created_at, updated_at")
     .eq("id", deviceId)
     .single();
 

@@ -1,25 +1,23 @@
-// Responsibility: Patient portal data access - appointments and registrations
+// Responsibility: Patient portal data access - appointments, registrations, and roles
 
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export const queryMyPatientRegistrations = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase
     .from("patient_registrations")
-    .select(
-      `
-      id,
-      registration_date,
-      hospital:hospital_id (
-        id,
-        name
-      )
-    `,
-    )
+    .select("id, registration_date, hospital:hospital_id (id, name)")
     .order("registration_date", { ascending: false });
 
   if (error) throw error;
   return data;
 };
+
+const APPOINTMENT_SELECT = `
+  id, appointment_date, appointment_time, status, reason, notes,
+  doctor_membership:doctor_membership_id (id, doctor:doctor_profiles (full_name, specialization)),
+  department:department_id (name),
+  patient_registration:patient_registration_id (hospital:hospital_id (name))
+`;
 
 export const queryMyAppointments = async (
   supabase: SupabaseClient,
@@ -27,31 +25,7 @@ export const queryMyAppointments = async (
 ) => {
   let query = supabase
     .from("appointments")
-    .select(
-      `
-      id,
-      appointment_date,
-      appointment_time,
-      status,
-      reason,
-      notes,
-      doctor_membership:doctor_membership_id (
-        id,
-        doctor:doctor_profiles (
-          full_name,
-          specialization
-        )
-      ),
-      department:department_id (
-        name
-      ),
-      patient_registration:patient_registration_id (
-        hospital:hospital_id (
-          name
-        )
-      )
-    `,
-    )
+    .select(APPOINTMENT_SELECT)
     .order("appointment_date", { ascending: false });
 
   if (filters?.status) {
@@ -90,3 +64,20 @@ export const createAppointmentRequest = async (
   if (error) throw error;
   return data;
 };
+
+export const checkPatientRole = async (
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("role:roles!inner(name)")
+    .eq("user_id", userId)
+    .eq("role.name", "Patient")
+    .eq("status", "active")
+    .limit(1)
+    .single();
+
+  return !error && !!data;
+};
+

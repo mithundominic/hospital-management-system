@@ -9,7 +9,7 @@ export const getAdmissions: RouteHandler = async (req, res, next) => {
     const authReq = req as AuthenticatedRequest;
     let query = authReq
       .supabase!.from("admissions")
-      .select("*")
+      .select("id, hospital_id, encounter_id, patient_id, bed_id, admitting_doctor_membership_id, status, admitted_at, discharged_at, discharge_summary")
       .eq("hospital_id", req.params.hospitalId);
     if (req.query.status)
       query = query.eq("status", req.query.status as string);

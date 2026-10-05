@@ -1,16 +1,19 @@
 // Responsibility: Container page for operational analytics, charts, and inventory stock reports
 
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Download } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Button } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ReportsStatCards } from "./ReportsStatCards";
-import { ReportsCharts } from "./ReportsCharts";
 import { ReportsLowStockTable } from "./ReportsLowStockTable";
 import { buildReportsTabs, type ReportsTabId } from "./reports.config";
 import { useReportsPage } from "./useReportsPage";
+
+const ReportsCharts = lazy(() =>
+  import("./ReportsCharts").then((m) => ({ default: m.ReportsCharts })),
+);
 
 export default function ReportsPage() {
   const { bedOccupancy, revenue, lowStock, activeTab, setActiveTab } =
@@ -19,7 +22,11 @@ export default function ReportsPage() {
   const tabs = buildReportsTabs(lowStock.length);
 
   const tabContent: Record<ReportsTabId, ReactNode> = {
-    charts: <ReportsCharts bedOccupancy={bedOccupancy} revenue={revenue} />,
+    charts: (
+      <Suspense fallback={null}>
+        <ReportsCharts bedOccupancy={bedOccupancy} revenue={revenue} />
+      </Suspense>
+    ),
     low_stock: <ReportsLowStockTable lowStock={lowStock} />,
   };
 

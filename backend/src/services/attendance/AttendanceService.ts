@@ -12,7 +12,7 @@ export const queryAttendanceRecords = async (
 ) => {
   let query = supabase
     .from("attendance_records")
-    .select("*, user:auth.users(email)")
+    .select("id, hospital_id, user_id, check_in_time, check_out_time, status, notes, created_at, user:auth.users(email)")
     .eq("hospital_id", hospitalId)
     .order("check_in_time", { ascending: false });
 
@@ -43,7 +43,7 @@ export const queryMyAttendanceRecords = async (
 ) => {
   const { data, error } = await supabase
     .from("attendance_records")
-    .select("*")
+    .select("id, hospital_id, user_id, check_in_time, check_out_time, status, notes, created_at")
     .eq("hospital_id", hospitalId)
     .eq("user_id", userId)
     .order("check_in_time", { ascending: false })

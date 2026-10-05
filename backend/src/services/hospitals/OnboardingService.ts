@@ -18,6 +18,7 @@ export const onboardNewHospital = async (
   const password = payload.admin_password || payload.password;
 
   let hospital = null;
+  let organization = null;
   let userId: string | null = null;
   let session = null;
 
@@ -45,6 +46,7 @@ export const onboardNewHospital = async (
     }
 
     hospital = regData.hospital;
+    organization = regData.organization;
     userId = regData.user_id;
 
     const { data: signInData, error: signInError } =
@@ -88,6 +90,7 @@ export const onboardNewHospital = async (
   }
 
   return {
+    organization,
     hospital,
     admin: { id: userId, email: email || null },
     session,

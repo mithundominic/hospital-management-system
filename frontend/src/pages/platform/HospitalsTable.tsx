@@ -1,9 +1,8 @@
-// Responsibility: Display hospitals in table format with sorting and actions
- 
-import { Card } from "@/components/ui/Card";
-import { Table, TableBody } from "@/components/ui/Table";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+// Responsibility: Display hospitals in table or cards view using reusable DataTable
+import { Building2 } from "lucide-react";
+import { DataTable } from "@/components/common/DataTable";
 import { HospitalTableRow } from "./HospitalTableRow";
+import { HospitalCard } from "./HospitalCard";
 import { HOSPITALS_TABLE_COLUMNS } from "./platform.config";
 import type { PlatformHospital } from "@/types/platform";
 
@@ -21,24 +20,35 @@ export const HospitalsTable = ({
   onDeactivate,
   isActivating,
   isDeactivating,
-}: HospitalsTableProps) => {
-  return (
-    <Card className="overflow-hidden">
-      <Table>
-        <DataTableHeader columns={HOSPITALS_TABLE_COLUMNS} />
-        <TableBody>
-          {hospitals.map((hospital) => (
-            <HospitalTableRow
-              key={hospital.id}
-              hospital={hospital}
-              onActivate={onActivate}
-              onDeactivate={onDeactivate}
-              isActivating={isActivating}
-              isDeactivating={isDeactivating}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
+}: HospitalsTableProps) => (
+  <DataTable
+    columns={HOSPITALS_TABLE_COLUMNS}
+    data={hospitals}
+    showViewToggle={true}
+    emptyIcon={Building2}
+    emptyTitle="No hospitals onboarded"
+    emptyDescription="There are no hospitals in the system yet."
+    renderRow={(hospital) => (
+      <HospitalTableRow
+        key={hospital.id}
+        hospital={hospital}
+        onActivate={onActivate}
+        onDeactivate={onDeactivate}
+        isActivating={isActivating}
+        isDeactivating={isDeactivating}
+      />
+    )}
+    renderCard={(hospital) => (
+      <HospitalCard
+        key={hospital.id}
+        hospital={hospital}
+        onActivate={onActivate}
+        onDeactivate={onDeactivate}
+        isActivating={isActivating}
+        isDeactivating={isDeactivating}
+      />
+    )}
+  />
+);
+
+export default HospitalsTable;

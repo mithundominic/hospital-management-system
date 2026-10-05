@@ -1,14 +1,10 @@
 // Responsibility: Business logic for employee PIN mappings
 
 import { SupabaseClient } from "@supabase/supabase-js";
+import type { EmployeePinMapping } from "./types";
 
-export interface EmployeePinMapping {
-  id: string;
-  hospital_id: string;
-  user_id: string;
-  biometric_pin: string;
-  created_at: string;
-}
+export type { EmployeePinMapping };
+export { findUserByPin } from "./EmployeePinLookupService";
 
 export const listPinMappings = async (
   supabase: SupabaseClient,
@@ -16,7 +12,7 @@ export const listPinMappings = async (
 ) => {
   const { data, error } = await supabase
     .from("employee_pin_mappings")
-    .select("*, user:auth.users(email)")
+    .select("id, hospital_id, user_id, biometric_pin, created_at, user:auth.users(email)")
     .eq("hospital_id", hospitalId)
     .order("created_at", { ascending: false });
 
@@ -30,7 +26,7 @@ export const getPinMapping = async (
 ) => {
   const { data, error } = await supabase
     .from("employee_pin_mappings")
-    .select("*, user:auth.users(email)")
+    .select("id, hospital_id, user_id, biometric_pin, created_at, user:auth.users(email)")
     .eq("id", mappingId)
     .single();
 
@@ -84,20 +80,4 @@ export const deletePinMapping = async (
     .eq("id", mappingId);
 
   if (error) throw error;
-};
-
-export const findUserByPin = async (
-  supabase: SupabaseClient,
-  hospitalId: string,
-  biometricPin: string,
-) => {
-  const { data, error } = await supabase
-    .from("employee_pin_mappings")
-    .select("user_id")
-    .eq("hospital_id", hospitalId)
-    .eq("biometric_pin", biometricPin)
-    .maybeSingle();
-
-  if (error) throw error;
-  return data?.user_id || null;
 };

@@ -6,3 +6,4 @@ export * from "./clinical.types";
 export * from "./operations.types";
 export * from "./billing.types";
 export * from "./abdm.types";
+export * from "./organization.types";

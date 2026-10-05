@@ -11,7 +11,7 @@ export const queryEncounters = async (
 ) => {
   let query = supabase
     .from("encounters")
-    .select("*")
+    .select("id, hospital_id, patient_id, appointment_id, doctor_membership_id, department_id, encounter_type, status, chief_complaint, vitals, diagnosis, clinical_notes, started_at, ended_at, created_at")
     .eq("hospital_id", hospitalId);
 
   if (patientId) query = query.eq("patient_id", patientId);

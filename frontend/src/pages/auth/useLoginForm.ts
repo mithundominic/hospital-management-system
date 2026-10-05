@@ -2,9 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import toast from "react-hot-toast";
+import { useAuth } from "@/contexts/useAuth";
 import { useHospital } from "@/contexts/useHospital";
 import { getPlatformStatus } from "@/services/platform.service";
+import { patientPortalService } from "@/services/patientPortal.service";
 import { APP_ROUTES } from "@/constants";
 
 export const useLoginForm = () => {
@@ -22,8 +24,8 @@ export const useLoginForm = () => {
       const authData = await signIn(email, password);
       const isPlatformUser = Boolean(
         authData?.user?.app_metadata?.is_platform_admin ||
-        authData?.user?.app_metadata?.platform_role === "SuperAdmin" ||
-        authData?.user?.app_metadata?.platform_role === "Support",
+          authData?.user?.app_metadata?.platform_role === "SuperAdmin" ||
+          authData?.user?.app_metadata?.platform_role === "Support",
       );
 
       if (isPlatformUser) {
@@ -41,11 +43,28 @@ export const useLoginForm = () => {
         return;
       }
 
-      const list = await refreshHospitals();
-      if (list.length === 0) {
-        navigate(APP_ROUTES.ONBOARDING, { replace: true });
-      } else {
-        navigate(APP_ROUTES.DASHBOARD, { replace: true });
+      const patientStatus = await patientPortalService
+        .checkHasPatientRole()
+        .catch(() => ({ hasRole: false }));
+
+      if (patientStatus.hasRole) {
+        navigate(APP_ROUTES.PATIENT_PORTAL, { replace: true });
+        return;
+      }
+
+      try {
+        const list = await refreshHospitals();
+        if (list.length === 0) {
+          navigate(APP_ROUTES.ONBOARDING, { replace: true });
+        } else {
+          navigate(APP_ROUTES.DASHBOARD, { replace: true });
+        }
+      } catch (hospitalErr) {
+        const msg =
+          hospitalErr instanceof Error
+            ? hospitalErr.message
+            : "Failed to connect to hospital workspace";
+        toast.error(msg);
       }
     } catch {
       // Error notification handled in AuthContext

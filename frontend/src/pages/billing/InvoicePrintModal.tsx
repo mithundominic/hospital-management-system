@@ -23,13 +23,17 @@ export const InvoicePrintModal = ({ invoice, onClose }: InvoicePrintModalProps) 
     window.print();
   };
 
+  const docDate = invoice.invoice_date || invoice.issued_at || invoice.created_at;
+  const total = Number(invoice.total_amount) || 0;
+  const taxAmount = Number(invoice.tax_amount ?? ((invoice.cgst_total ?? 0) + (invoice.sgst_total ?? 0))) || 0;
+
   return (
     <Modal isOpen={Boolean(invoice)} onClose={onClose} title="Tax Invoice Preview" maxWidth="2xl">
       <Box className="p-6 bg-white print:p-0">
         <HospitalLetterhead
           documentTitle="TAX INVOICE / BILL"
           documentNumber={invoice.invoice_number}
-          documentDate={invoice.invoice_date || new Date().toISOString().split("T")[0]}
+          documentDate={docDate ? new Date(docDate).toLocaleDateString() : undefined}
           badgeVariant="success"
         />
 
@@ -51,17 +55,17 @@ export const InvoicePrintModal = ({ invoice, onClose }: InvoicePrintModalProps) 
           </Flex>
           <Flex justify="between" className="p-3 border-t border-gray-200 text-sm">
             <Text size="sm">Hospital Consultation & Clinical Services</Text>
-            <Text size="sm" weight="medium">{invoice.total_amount.toLocaleString("en-IN")}</Text>
+            <Text size="sm" weight="medium">{total.toLocaleString("en-IN")}</Text>
           </Flex>
-          {invoice.tax_amount > 0 && (
+          {taxAmount > 0 && (
             <Flex justify="between" className="p-2 bg-gray-50 text-xs text-gray-600 border-t border-gray-200">
               <Text size="xs">CGST / SGST Applicable</Text>
-              <Text size="xs">+{invoice.tax_amount.toLocaleString("en-IN")}</Text>
+              <Text size="xs">+{taxAmount.toLocaleString("en-IN")}</Text>
             </Flex>
           )}
           <Flex justify="between" className="p-3 bg-primary-50 text-sm font-bold text-gray-900 border-t-2 border-primary-200">
             <Text weight="bold">Total Bill Amount</Text>
-            <Text weight="bold" className="text-primary-700">{appConfig.currency.symbol}{invoice.total_amount.toLocaleString("en-IN")}</Text>
+            <Text weight="bold" className="text-primary-700">{appConfig.currency.symbol}{total.toLocaleString("en-IN")}</Text>
           </Flex>
         </Box>
 

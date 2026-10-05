@@ -6,26 +6,31 @@ export interface LabOrder {
   hospital_id: string;
   test_name: string;
   test_code?: string;
-  priority: "routine" | "urgent" | "stat";
-  status: "pending" | "in_progress" | "completed" | "cancelled";
-  ordered_date: string;
+  priority?: "routine" | "urgent" | "stat";
+  status: string;
+  ordered_date?: string;
+  ordered_at?: string;
   sample_collected_at?: string;
   result_available_at?: string;
   notes?: string;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface InventoryItem {
-  id: string;
+  id?: string;
+  inventory_item_id?: string;
   hospital_id: string;
-  item_name: string;
+  name?: string;
+  item_name?: string;
   item_code?: string;
-  category: string;
-  unit_price: number;
-  unit_of_measure: string;
+  category?: string;
+  unit_price?: number;
+  unit?: string;
+  unit_of_measure?: string;
   reorder_level: number;
+  current_stock?: number;
   quantity_in_stock?: number;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface Shift {

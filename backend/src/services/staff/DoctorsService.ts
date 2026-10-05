@@ -9,7 +9,7 @@ export const getDoctors: RouteHandler = async (req, res, next) => {
     const authReq = req as AuthenticatedRequest;
     const { data, error } = await authReq
       .supabase!.from("doctor_profiles")
-      .select("*, memberships!inner(hospital_id, user_id)")
+      .select("id, membership_id, department_id, specialization, registration_number, qualifications, consultation_fee, created_at, memberships!inner(hospital_id, user_id)")
       .eq("memberships.hospital_id", req.params.hospitalId);
     if (error) throw error;
     sendData(res, data);

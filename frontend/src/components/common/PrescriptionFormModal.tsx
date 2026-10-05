@@ -1,18 +1,15 @@
 // Responsibility: Modal container for creating prescriptions with itemized medications
 
-import { useState } from "react";
-import { Plus, Printer } from "lucide-react";
+import { useState, lazy, Suspense } from "react";
 import { FormModal } from "@/components/common/FormModal";
 import { Box } from "@/components/ui/Box";
-import { Flex } from "@/components/ui/Flex";
-import { Button } from "@/components/ui/Button";
-import { Text } from "@/components/ui/Text";
 import { HospitalLetterhead } from "@/components/common/HospitalLetterhead";
-import { PrescriptionPrintModal } from "./PrescriptionPrintModal";
 import { PrescriptionEncounterSelect } from "./PrescriptionEncounterSelect";
-import { PrescriptionItemRow } from "./PrescriptionItemRow";
+import { PrescriptionMedicationsSection } from "./PrescriptionMedicationsSection";
 import { usePrescriptionForm } from "./usePrescriptionForm";
 import type { PrescriptionFormModalProps } from "./prescription.types";
+
+const PrescriptionPrintModal = lazy(() => import("./PrescriptionPrintModal"));
 
 export const PrescriptionFormModal = ({
   onClose,
@@ -58,51 +55,24 @@ export const PrescriptionFormModal = ({
             />
           )}
 
-          <Flex justify="between" align="center">
-            <Text weight="semibold" size="sm">
-              Medications
-            </Text>
-            <Flex gap={2}>
-              <Button
-                variant="outline"
-                size="sm"
-                icon={<Printer className="h-4 w-4" />}
-                onClick={() => setShowPreview(true)}
-              >
-                Preview Rx
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                icon={<Plus className="h-4 w-4" />}
-                onClick={addItem}
-              >
-                Add Medicine
-              </Button>
-            </Flex>
-          </Flex>
-
-          <Box className="space-y-3 max-h-80 overflow-y-auto pr-1">
-            {items.map((item, index) => (
-              <PrescriptionItemRow
-                key={index}
-                item={item}
-                index={index}
-                canRemove={items.length > 1}
-                onUpdate={updateItem}
-                onRemove={removeItem}
-              />
-            ))}
-          </Box>
+          <PrescriptionMedicationsSection
+            items={items}
+            onAddItem={addItem}
+            onRemoveItem={removeItem}
+            onUpdateItem={updateItem}
+            onPreview={() => setShowPreview(true)}
+          />
         </Box>
       </FormModal>
 
       {showPreview && (
-        <PrescriptionPrintModal
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
-          items={items}
-        />
+        <Suspense fallback={null}>
+          <PrescriptionPrintModal
+            isOpen={showPreview}
+            onClose={() => setShowPreview(false)}
+            items={items}
+          />
+        </Suspense>
       )}
     </>
   );

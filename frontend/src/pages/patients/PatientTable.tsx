@@ -1,16 +1,16 @@
-// Responsibility: Render the patients data table or empty state
-
+// Responsibility: Render the patients data table or cards grid using reusable DataTable
 import { UserCircle } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Table, TableBody } from "@/components/ui/Table";
-import { EmptyState } from "@/components/common/EmptyState";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { DataTable } from "@/components/common/DataTable";
 import { PATIENT_TABLE_COLUMNS } from "./patient.config";
 import { PatientTableRow } from "./PatientTableRow";
+import { PatientCard } from "./PatientCard";
 import type { Patient } from "@/types";
+import type { ViewMode } from "@/types/table.types";
 
 export interface PatientTableProps {
   patients: (Patient & { hospital_patient_number?: string })[];
+  viewMode?: ViewMode;
+  isLoading?: boolean;
   onEdit: (p: Patient) => void;
   onSelect: (id: string) => void;
   onRegister: () => void;
@@ -18,41 +18,39 @@ export interface PatientTableProps {
 
 export const PatientTable = ({
   patients,
+  viewMode,
+  isLoading,
   onEdit,
   onSelect,
   onRegister,
-}: PatientTableProps) => {
-  if (patients.length === 0) {
-    return (
-      <Card className="p-6">
-        <EmptyState
-          icon={UserCircle}
-          title="No patients found"
-          description="Get started by registering your first patient."
-          actionLabel="Register Patient"
-          onAction={onRegister}
-        />
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <Table>
-        <DataTableHeader columns={PATIENT_TABLE_COLUMNS} />
-        <TableBody>
-          {patients.map((patient) => (
-            <PatientTableRow
-              key={patient.id}
-              patient={patient}
-              onEdit={onEdit}
-              onSelect={onSelect}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
+}: PatientTableProps) => (
+  <DataTable
+    columns={PATIENT_TABLE_COLUMNS}
+    data={patients}
+    viewMode={viewMode}
+    isLoading={isLoading}
+    emptyIcon={UserCircle}
+    emptyTitle="No patients found"
+    emptyDescription="Get started by registering your first patient."
+    emptyActionLabel="Register Patient"
+    onEmptyAction={onRegister}
+    renderRow={(patient) => (
+      <PatientTableRow
+        key={patient.id}
+        patient={patient}
+        onEdit={onEdit}
+        onSelect={onSelect}
+      />
+    )}
+    renderCard={(patient) => (
+      <PatientCard
+        key={patient.id}
+        patient={patient}
+        onEdit={onEdit}
+        onSelect={onSelect}
+      />
+    )}
+  />
+);
 
 export default PatientTable;

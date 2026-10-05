@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { HeaderUserMenu } from "./HeaderUserMenu";
 import { HospitalSwitcher } from "./HospitalSwitcher";
+import { OrganizationSwitcher } from "./OrganizationSwitcher";
 
 export const Header = () => {
   return (
@@ -21,6 +22,7 @@ export const Header = () => {
           </Box>
 
           <Flex align="center" gap={4}>
+            <OrganizationSwitcher />
             <HospitalSwitcher />
 
             <Button variant="ghost" size="sm" className="relative p-2">

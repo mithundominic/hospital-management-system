@@ -9,7 +9,7 @@ export const getDepartments: RouteHandler = async (req, res, next) => {
     const authReq = req as AuthenticatedRequest;
     const { data, error } = await authReq
       .supabase!.from("departments")
-      .select("*")
+      .select("id, hospital_id, name")
       .eq("hospital_id", req.params.hospitalId);
     if (error) throw error;
     sendData(res, data);

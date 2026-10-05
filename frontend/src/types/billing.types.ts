@@ -14,12 +14,18 @@ export interface Invoice {
   hospital_id: string;
   patient_id: string;
   invoice_number: string;
-  invoice_date: string;
+  invoice_date?: string;
+  issued_at?: string;
   due_date?: string;
-  subtotal_amount: number;
-  tax_amount: number;
+  due_at?: string;
+  subtotal?: number;
+  subtotal_amount?: number;
+  cgst_total?: number;
+  sgst_total?: number;
+  discount_amount?: number;
+  tax_amount?: number;
   total_amount: number;
-  status: "draft" | "pending" | "paid" | "overdue" | "cancelled";
+  status: string;
   notes?: string;
   created_at: string;
   line_items?: InvoiceLineItem[];
@@ -28,26 +34,25 @@ export interface Invoice {
 export interface InsuranceClaim {
   id: string;
   hospital_id: string;
-  policy_id: string;
+  policy_id?: string;
+  insurance_policy_id?: string;
+  invoice_id?: string;
   claim_number: string;
-  claim_date: string;
-  claim_amount: number;
-  approved_amount?: number;
-  status:
-    | "draft"
-    | "submitted"
-    | "under_review"
-    | "approved"
-    | "rejected"
-    | "settled";
-  claim_type: "cashless" | "reimbursement";
+  claim_date?: string;
+  submitted_at?: string;
+  claim_amount?: number;
+  claimed_amount?: number | string;
+  approved_amount?: number | string;
+  status: string;
+  claim_type: "cashless" | "reimbursement" | string;
   diagnosis?: string;
   treatment_details?: string;
   submitted_documents?: string[];
   approval_date?: string;
   settlement_date?: string;
+  settled_at?: string;
   rejection_reason?: string;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface RevenueData {

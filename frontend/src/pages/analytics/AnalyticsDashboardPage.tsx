@@ -1,19 +1,29 @@
 // Responsibility: Main analytics dashboard page with tabs and date range selection
 
-import { useState } from "react";
+import { useState, lazy, Suspense, type ComponentType } from "react";
 import { Box } from "@/components/ui/Box";
 import { Tabs, TabItem } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { DateRangePicker } from "@/components/analytics/DateRangePicker";
 import { useHospital } from "@/contexts/useHospital";
-import { OverviewTab } from "./components/OverviewTab";
-import { FinancialTab } from "./components/FinancialTab";
-import { OperationalTab } from "./components/OperationalTab";
-import { ClinicalTab } from "./components/ClinicalTab";
-import { InventoryTab } from "./components/InventoryTab";
 import { ANALYTICS_TABS, DATE_RANGE_PRESETS } from "./analytics.config";
 import { DateRange, AnalyticsCategory } from "./analytics.types";
-import type { ComponentType } from "react";
+
+const OverviewTab = lazy(() =>
+  import("./components/OverviewTab").then((m) => ({ default: m.OverviewTab })),
+);
+const FinancialTab = lazy(() =>
+  import("./components/FinancialTab").then((m) => ({ default: m.FinancialTab })),
+);
+const OperationalTab = lazy(() =>
+  import("./components/OperationalTab").then((m) => ({ default: m.OperationalTab })),
+);
+const ClinicalTab = lazy(() =>
+  import("./components/ClinicalTab").then((m) => ({ default: m.ClinicalTab })),
+);
+const InventoryTab = lazy(() =>
+  import("./components/InventoryTab").then((m) => ({ default: m.InventoryTab })),
+);
 
 interface TabProps {
   hospitalId: string;
@@ -47,7 +57,11 @@ export default function AnalyticsDashboardPage() {
       endDate: dateRange.endDate,
     };
 
-    return <TabComponent {...props} />;
+    return (
+      <Suspense fallback={null}>
+        <TabComponent {...props} />
+      </Suspense>
+    );
   };
 
   return (

@@ -9,7 +9,7 @@ export const getClaims: RouteHandler = async (req, res, next) => {
     const authReq = req as AuthenticatedRequest;
     const { data, error } = await authReq
       .supabase!.from("insurance_claims")
-      .select("*")
+      .select("id, hospital_id, invoice_id, insurance_policy_id, claim_number, claim_type, status, claimed_amount, approved_amount, handled_by, submitted_at, settled_at, rejection_reason, created_at")
       .eq("hospital_id", req.params.hospitalId);
     if (error) throw error;
     sendData(res, data);

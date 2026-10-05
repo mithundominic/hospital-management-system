@@ -3,12 +3,21 @@
 import { Card } from "@/components/ui/Card";
 import { Heading } from "@/components/ui/Heading";
 import { Box } from "@/components/ui/Box";
-import { Table } from "@/components/ui/Table";
+import { Table, TableBody, TableRow, TableCell } from "@/components/ui/Table";
+import { DataTableHeader } from "@/components/common/DataTableHeader";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useAnalytics } from "../hooks/useAnalytics";
 import { ClinicalAnalytics } from "../analytics.types";
 import { CHART_COLORS } from "../analytics.config";
+
+const DOCTOR_PERFORMANCE_COLUMNS = [
+  { key: "name", header: "Doctor Name" },
+  { key: "department", header: "Department" },
+  { key: "patients", header: "Patients Seen" },
+  { key: "encounters", header: "Encounters" },
+  { key: "revenue", header: "Revenue Generated" },
+] as const;
 
 interface ClinicalTabProps {
   hospitalId: string;
@@ -31,27 +40,19 @@ export const ClinicalTab = ({ hospitalId, startDate, endDate }: ClinicalTabProps
     <Box className="space-y-6">
       <Card className="p-6">
         <Heading level={3} className="mb-4">Doctor Performance</Heading>
-        <Table>
-          <thead>
-            <tr>
-              <th>Doctor Name</th>
-              <th>Department</th>
-              <th>Patients Seen</th>
-              <th>Encounters</th>
-              <th>Revenue Generated</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table containerClassName="max-h-[300px] overflow-auto">
+          <DataTableHeader columns={DOCTOR_PERFORMANCE_COLUMNS} />
+          <TableBody>
             {data.doctor_performance.map((doctor) => (
-              <tr key={doctor.doctor_id}>
-                <td>{doctor.doctor_name}</td>
-                <td>{doctor.department || "N/A"}</td>
-                <td>{doctor.patient_count}</td>
-                <td>{doctor.encounter_count}</td>
-                <td>₹{doctor.revenue.toLocaleString()}</td>
-              </tr>
+              <TableRow key={doctor.doctor_id}>
+                <TableCell>{doctor.doctor_name}</TableCell>
+                <TableCell>{doctor.department || "N/A"}</TableCell>
+                <TableCell>{doctor.patient_count}</TableCell>
+                <TableCell>{doctor.encounter_count}</TableCell>
+                <TableCell>₹{doctor.revenue.toLocaleString()}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
+          </TableBody>
         </Table>
       </Card>
 

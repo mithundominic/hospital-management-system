@@ -1,13 +1,14 @@
 // Responsibility: Biometric device management page
 
 import { useState } from "react";
-import { useHospital } from "../../contexts/useHospital";
+import { useHospital } from "@/contexts/useHospital";
 import { useBiometricDevices } from "./hooks/useBiometricDevices";
 import { DevicesTable } from "./components/DevicesTable";
 import { DeviceFormModal } from "./components/DeviceFormModal";
-import { Button } from "../../components/ui/Button";
-import { Card } from "../../components/ui/Card";
-import type { BiometricDevice } from "../../types/biometric";
+import { Button } from "@/components/ui/Button";
+import { Box } from "@/components/ui/Box";
+import { PageHeader } from "@/components/common/PageHeader";
+import type { BiometricDevice } from "@/types/biometric";
 
 const BiometricDevicesPage = () => {
   const { currentHospital } = useHospital();
@@ -43,30 +44,25 @@ const BiometricDevicesPage = () => {
     }
   };
 
-  if (isLoading) return <div>Loading devices...</div>;
+  if (isLoading) return <Box>Loading devices...</Box>;
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Biometric Devices</h1>
-          <p className="text-gray-600">
-            Manage ZKTeco biometric attendance devices
-          </p>
-        </div>
-        <Button onClick={handleAdd}>Add Device</Button>
-      </div>
+    <Box className="p-6">
+      <PageHeader
+        title="Biometric Devices"
+        description="Manage ZKTeco biometric attendance devices"
+        action={<Button onClick={handleAdd}>Add Device</Button>}
+        className="mb-6"
+      />
 
-      <Card>
-        <DevicesTable
-          devices={devices}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onToggleStatus={(deviceId, status) =>
-            updateDeviceStatus({ deviceId, status })
-          }
-        />
-      </Card>
+      <DevicesTable
+        devices={devices}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onToggleStatus={(deviceId, status) =>
+          updateDeviceStatus({ deviceId, status })
+        }
+      />
 
       <DeviceFormModal
         open={showModal}
@@ -79,7 +75,7 @@ const BiometricDevicesPage = () => {
         }}
         device={editingDevice}
       />
-    </div>
+    </Box>
   );
 };
 

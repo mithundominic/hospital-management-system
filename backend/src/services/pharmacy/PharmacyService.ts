@@ -7,12 +7,32 @@ export const queryCurrentInventory = async (
   supabase: SupabaseClient,
   hospitalId: string,
 ) => {
-  const { data, error } = await supabase
+  const { data: stockData, error: stockErr } = await supabase
     .from("inventory_current_stock")
-    .select("*")
+    .select("inventory_item_id, hospital_id, name, unit, reorder_level, current_stock")
     .eq("hospital_id", hospitalId);
-  if (error) throw error;
-  return data;
+  if (stockErr) throw stockErr;
+
+  const { data: itemData } = await supabase
+    .from("inventory_items")
+    .select("id, category")
+    .eq("hospital_id", hospitalId);
+
+  const categoryMap = new Map(itemData?.map((i) => [i.id, i.category]) || []);
+
+  return stockData?.map((item) => ({
+    id: item.inventory_item_id,
+    inventory_item_id: item.inventory_item_id,
+    item_name: item.name,
+    name: item.name,
+    category: categoryMap.get(item.inventory_item_id) || "medicine",
+    unit: item.unit,
+    unit_of_measure: item.unit,
+    reorder_level: item.reorder_level,
+    quantity_in_stock: Number(item.current_stock),
+    current_stock: Number(item.current_stock),
+    hospital_id: item.hospital_id,
+  }));
 };
 
 export const createNewInventoryItem = async (

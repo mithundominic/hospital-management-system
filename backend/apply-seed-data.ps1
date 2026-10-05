@@ -26,7 +26,7 @@ Write-Host "Project Reference: $projectRef" -ForegroundColor Yellow
 
 # Read SQL migration file
 Write-Host "Reading migration file..." -ForegroundColor Cyan
-$sqlContent = Get-Content "migrations\0020_seed_comprehensive_demo_data.sql" -Raw
+$sqlContent = Get-Content "migrations\0034_seed_comprehensive_demo_data.sql" -Raw
 
 # Prepare API request to execute SQL
 $headers = @{

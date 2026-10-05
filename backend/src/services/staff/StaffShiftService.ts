@@ -15,7 +15,7 @@ export const queryStaffShifts = async (
 ) => {
   let query = supabase
     .from("staff_shifts")
-    .select("*")
+    .select("id, hospital_id, membership_id, department_id, shift_date, start_time, end_time, status, notes, created_at")
     .eq("hospital_id", hospitalId);
 
   if (filters.date) {

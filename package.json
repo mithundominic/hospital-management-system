@@ -1,0 +1,16 @@
+{
+  "name": "hospital-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hospital Management SaaS",
+  "scripts": {
+    "prepare": "husky",
+    "pre-commit": "node scripts/pre-commit-gate.cjs",
+    "check": "node scripts/pre-commit-gate.cjs --all",
+    "check:quick": "node scripts/pre-commit-gate.cjs --all --quick",
+    "test": "node scripts/pre-commit-gate.cjs --all"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

@@ -3,6 +3,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Flex } from "@/components/ui/Flex";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import type { BiometricDevice } from "@/types/biometric";
 import {
@@ -40,7 +41,7 @@ export const DeviceTableRow = ({
         : "Never"}
     </TableCell>
     <TableCell>
-      <div className="flex gap-2">
+      <Flex gap={2}>
         <Button size="sm" variant="outline" onClick={() => onEdit(device)}>
           Edit
         </Button>
@@ -59,7 +60,7 @@ export const DeviceTableRow = ({
         <Button size="sm" variant="danger" onClick={() => onDelete(device.id)}>
           Delete
         </Button>
-      </div>
+      </Flex>
     </TableCell>
   </TableRow>
 );

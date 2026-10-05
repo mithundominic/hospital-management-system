@@ -22,3 +22,20 @@ export interface CreateDeviceInput {
   model?: string;
   ip_address?: string;
 }
+
+export interface EmployeePinMapping {
+  id: string;
+  hospital_id: string;
+  user_id: string;
+  biometric_pin: string;
+  created_at: string;
+}
+
+export interface ParsedAttendanceRecord {
+  pin: string;
+  timestamp: string;
+  status: number;
+  verifyMode: number;
+  workCode?: string;
+}
+

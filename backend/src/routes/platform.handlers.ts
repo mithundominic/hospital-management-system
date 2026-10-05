@@ -1,10 +1,11 @@
 // Responsibility: HTTP request handler functions for platform admin routes
- 
+
 import { sendData } from "../utils/respond";
 import {
   queryAllHospitals,
   queryHospitalStats,
   toggleHospitalStatus,
+  checkIsPlatformAdmin,
 } from "../services/platform/PlatformHospitalService";
 import { getPlatformAnalytics } from "../services/platform/PlatformAnalyticsService";
 import { AuthenticatedRequest, RouteHandler } from "../types";
@@ -73,16 +74,12 @@ export const deactivateHospital: RouteHandler = async (req, res, next) => {
 export const getPlatformStatus: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase.rpc("is_platform_admin", {
-      p_user_id: authReq.userId,
-    });
-    if (error) {
-      sendData(res, { isPlatformAdmin: false });
-      return;
-    }
-    sendData(res, { isPlatformAdmin: Boolean(data) });
+    const isPlatformAdmin = await checkIsPlatformAdmin(
+      authReq.supabase,
+      authReq.userId,
+    );
+    sendData(res, { isPlatformAdmin });
   } catch (err) {
     next(err);
   }
 };
-

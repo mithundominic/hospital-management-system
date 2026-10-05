@@ -9,18 +9,21 @@ import {
 } from "react";
 import { cn } from "@/lib/utils";
 
-export const Table = forwardRef<
-  HTMLTableElement,
-  TableHTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full text-left text-sm", className)}
-      {...props}
-    />
-  </div>
-));
+export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
+  containerClassName?: string;
+}
+
+export const Table = forwardRef<HTMLTableElement, TableProps>(
+  ({ className, containerClassName, ...props }, ref) => (
+    <div className={cn("w-full overflow-auto", containerClassName)}>
+      <table
+        ref={ref}
+        className={cn("w-full text-left text-sm", className)}
+        {...props}
+      />
+    </div>
+  ),
+);
 Table.displayName = "Table";
 
 export const TableHeader = forwardRef<

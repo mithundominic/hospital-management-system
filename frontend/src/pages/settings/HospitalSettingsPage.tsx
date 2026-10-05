@@ -5,6 +5,7 @@ import { Save } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Button } from "@/components/ui/Button";
+import { Form } from "@/components/ui/Form";
 import { Tabs } from "@/components/ui/Tabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { HospitalIdentitySection } from "./HospitalIdentitySection";
@@ -37,7 +38,7 @@ export const HospitalSettingsPage = () => {
         onChange={setActiveTab}
       />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <Form onSubmit={handleSubmit} className="space-y-6">
         {tabContent[activeTab]}
 
         <Flex justify="end" className="pt-2">
@@ -51,7 +52,7 @@ export const HospitalSettingsPage = () => {
             Save Hospital Settings
           </Button>
         </Flex>
-      </form>
+      </Form>
     </Box>
   );
 };

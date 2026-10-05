@@ -65,6 +65,13 @@ export const PERMISSIONS = {
   // Analytics
   ANALYTICS_READ: "analytics.read",
   ANALYTICS_EXPORT: "analytics.export",
+  // Organization / Tenant Tier
+  ORG_READ: "org.read",
+  ORG_WRITE: "org.write",
+  ORG_FACILITIES_CREATE: "org.facilities.create",
+  ORG_BILLING_MANAGE: "org.billing.manage",
+  ORG_REPORTS_READ: "org.reports.read",
+  ORG_STAFF_MANAGE: "org.staff.manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

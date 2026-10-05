@@ -2,7 +2,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Hospital, ArrowRight, LayoutDashboard } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Heading } from "@/components/ui/Heading";

@@ -1,5 +1,6 @@
 // Responsibility: Render single appointment item card in timeline view
 
+import { memo } from "react";
 import { format } from "date-fns";
 import { Clock, User, Edit, XCircle } from "lucide-react";
 import { Box } from "@/components/ui/Box";
@@ -17,7 +18,7 @@ export interface AppointmentItemCardProps {
   onCancel: (apt: Appointment) => void;
 }
 
-export const AppointmentItemCard = ({
+export const AppointmentItemCard = memo(({
   apt,
   onEdit,
   onCancel,
@@ -82,4 +83,8 @@ export const AppointmentItemCard = ({
       )}
     </Flex>
   );
-};
+});
+
+AppointmentItemCard.displayName = "AppointmentItemCard";
+
+export default AppointmentItemCard;

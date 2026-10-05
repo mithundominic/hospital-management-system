@@ -1,5 +1,6 @@
 // Responsibility: Universal configuration-driven table row cell renderer
 
+import { memo } from "react";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import type { TableColumn } from "@/types/table.types";
 
@@ -10,7 +11,7 @@ export interface DataTableRowProps<T> {
   className?: string;
 }
 
-export function DataTableRow<T>({
+function DataTableRowInner<T>({
   item,
   columns,
   onClick,
@@ -32,4 +33,5 @@ export function DataTableRow<T>({
   );
 }
 
+export const DataTableRow = memo(DataTableRowInner) as typeof DataTableRowInner;
 export default DataTableRow;

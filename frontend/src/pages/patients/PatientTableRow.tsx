@@ -1,5 +1,6 @@
 // Responsibility: Render individual patient table row with MRN, age, and quick edit action
 
+import { memo } from "react";
 import { Edit, UserCircle } from "lucide-react";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Flex } from "@/components/ui/Flex";
@@ -16,7 +17,7 @@ export interface PatientTableRowProps {
   onSelect: (id: string) => void;
 }
 
-export const PatientTableRow = ({
+export const PatientTableRow = memo(({
   patient,
   onEdit,
   onSelect,
@@ -68,4 +69,8 @@ export const PatientTableRow = ({
       </TableCell>
     </TableRow>
   );
-};
+});
+
+PatientTableRow.displayName = "PatientTableRow";
+
+export default PatientTableRow;

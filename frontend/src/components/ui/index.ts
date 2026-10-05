@@ -16,3 +16,7 @@ export * from "./Modal";
 export * from "./Form";
 export * from "./Tabs";
 export * from "./Image";
+export * from "./Label";
+export * from "./RadioGroup";
+export * from "./ChartContainer";
+export * from "./Link";

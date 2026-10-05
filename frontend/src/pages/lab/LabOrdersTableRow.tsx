@@ -1,5 +1,6 @@
 // Responsibility: Render single lab order row with priority and status chips
 
+import { memo } from "react";
 import { format } from "date-fns";
 import { Printer } from "lucide-react";
 import { TableRow, TableCell } from "@/components/ui/Table";
@@ -15,11 +16,17 @@ export interface LabOrdersTableRowProps {
   onPrint?: (order: LabOrder) => void;
 }
 
-export const LabOrdersTableRow = ({ order: o, onPrint }: LabOrdersTableRowProps) => {
+export const LabOrdersTableRow = memo(({ order: o, onPrint }: LabOrdersTableRowProps) => {
   const badgeConfig = labOrderStatusConfig[o.status as LabOrderStatus] || {
-    label: o.status.replace("_", " "),
+    label: (o.status || "ordered").replace("_", " "),
     variant: "default" as const,
   };
+  const priority = o.priority || "routine";
+  const priorityConfig = labOrderPriorityConfig[priority] || {
+    label: priority.toUpperCase(),
+    variant: "default" as const,
+  };
+  const dateStr = o.ordered_date || o.ordered_at || o.created_at;
 
   return (
     <TableRow>
@@ -33,17 +40,12 @@ export const LabOrdersTableRow = ({ order: o, onPrint }: LabOrdersTableRowProps)
       </TableCell>
       <TableCell>
         <Text size="sm">
-          {o.ordered_date
-            ? format(new Date(o.ordered_date), "dd MMM yyyy")
-            : "N/A"}
+          {dateStr ? format(new Date(dateStr), "dd MMM yyyy") : "N/A"}
         </Text>
       </TableCell>
       <TableCell>
-        <Badge
-          variant={labOrderPriorityConfig[o.priority]?.variant || "default"}
-        >
-          {labOrderPriorityConfig[o.priority]?.label ||
-            o.priority.toUpperCase()}
+        <Badge variant={priorityConfig.variant}>
+          {priorityConfig.label}
         </Badge>
       </TableCell>
       <TableCell>
@@ -62,6 +64,8 @@ export const LabOrdersTableRow = ({ order: o, onPrint }: LabOrdersTableRowProps)
       </TableCell>
     </TableRow>
   );
-};
+});
+
+LabOrdersTableRow.displayName = "LabOrdersTableRow";
 
 export default LabOrdersTableRow;

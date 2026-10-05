@@ -1,6 +1,6 @@
 // Responsibility: Manage patients listing state, query fetching, and search filtering
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useHospital } from "@/contexts/useHospital";
 import {
@@ -13,6 +13,7 @@ import type { Patient } from "@/types";
 export const usePatientsPage = () => {
   const { currentHospital } = useHospital();
   const [searchTerm, setSearchTerm] = useState("");
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [showModal, setShowModal] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
 
@@ -42,13 +43,13 @@ export const usePatientsPage = () => {
     () =>
       patients.filter(
         (p) =>
-          p.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.full_name?.toLowerCase().includes(deferredSearchTerm.toLowerCase()) ||
           p.hospital_patient_number
             ?.toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          p.phone?.includes(searchTerm),
+            .includes(deferredSearchTerm.toLowerCase()) ||
+          p.phone?.includes(deferredSearchTerm),
       ),
-    [patients, searchTerm],
+    [patients, deferredSearchTerm],
   );
 
   return {

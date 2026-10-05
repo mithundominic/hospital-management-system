@@ -45,7 +45,7 @@ const executeStatements = async (statements: string[]): Promise<void> => {
 
 const applySeedData = async (): Promise<void> => {
   console.log("🌱 Starting seed data application...\n");
-  const sqlPath = path.join(__dirname, "migrations", "0020_seed_comprehensive_demo_data.sql");
+  const sqlPath = path.join(__dirname, "migrations", "0034_seed_comprehensive_demo_data.sql");
   const sqlContent = fs.readFileSync(sqlPath, "utf8");
 
   const { data, error } = await supabase.rpc("exec_sql", { sql_query: sqlContent });

@@ -7,14 +7,7 @@ import { PatientBuilder } from "./PatientBuilder";
 import { EncounterBuilder } from "./EncounterBuilder";
 import { MedicationRequestBuilder } from "./MedicationRequestBuilder";
 import { DiagnosticReportBuilder } from "./DiagnosticReportBuilder";
-
-interface BundleData {
-  patient: Parameters<typeof PatientBuilder.build>[0];
-  encounter?: Parameters<typeof EncounterBuilder.build>[0];
-  prescriptionItems?: Parameters<typeof MedicationRequestBuilder.build>[0];
-  labOrder?: Parameters<typeof DiagnosticReportBuilder.buildReport>[0];
-  labResults?: Parameters<typeof DiagnosticReportBuilder.buildReport>[1];
-}
+import type { BundleData } from "./fhirBuilder.types";
 
 export class FhirBundleBuilder {
   constructor(private hipId: string) {}

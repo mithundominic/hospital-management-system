@@ -55,9 +55,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+          <span className={cn("inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin", children && "mr-2")} />
         ) : icon ? (
-          <span className="mr-2 inline-flex items-center">{icon}</span>
+          <span className={cn("inline-flex items-center", children && "mr-2")}>{icon}</span>
         ) : null}
         {children}
       </button>

@@ -9,7 +9,7 @@ export const queryUserHospitals = async (
 ) => {
   const { data, error } = await supabase
     .from("hospitals")
-    .select("*, memberships!inner(user_id, status)")
+    .select("id, name, registration_number, address, city, state, pincode, is_active, created_at, updated_at, memberships!inner(user_id, status)")
     .eq("memberships.user_id", userId)
     .eq("memberships.status", "active");
   if (error) throw error;
@@ -22,7 +22,7 @@ export const queryHospitalById = async (
 ) => {
   const { data, error } = await supabase
     .from("hospitals")
-    .select("*")
+    .select("id, name, registration_number, address, city, state, pincode, is_active, created_at, updated_at")
     .eq("id", hospitalId)
     .single();
   if (error) throw error;

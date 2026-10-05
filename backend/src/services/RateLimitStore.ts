@@ -9,9 +9,15 @@ interface MemoryRecord {
 }
 
 export class DatabaseRateLimitStore implements Store {
+  readonly localKeys = false;
+  prefix: string;
   private windowMs = 900000;
   private maxRequests = 300;
   private memoryFallback = new Map<string, MemoryRecord>();
+
+  constructor(prefix: string = "") {
+    this.prefix = prefix;
+  }
 
   init(options: Options): void {
     this.windowMs = options.windowMs;
@@ -19,10 +25,11 @@ export class DatabaseRateLimitStore implements Store {
   }
 
   async increment(key: string): Promise<ClientRateLimitInfo> {
+    const fullKey = `${this.prefix}${key}`;
     try {
       const windowSec = Math.ceil(this.windowMs / 1000);
       const { data, error } = await publicClient.rpc("check_rate_limit", {
-        p_key: key,
+        p_key: fullKey,
         p_window_seconds: windowSec,
         p_max_requests: this.maxRequests,
       });
@@ -43,7 +50,7 @@ export class DatabaseRateLimitStore implements Store {
     } catch (err) {
       console.warn("[RateLimitStore] RPC call failed, using memory", err);
     }
-    return this.incrementMemory(key);
+    return this.incrementMemory(fullKey);
   }
 
   private incrementMemory(key: string): ClientRateLimitInfo {
@@ -61,11 +68,13 @@ export class DatabaseRateLimitStore implements Store {
   }
 
   async decrement(key: string): Promise<void> {
-    const record = this.memoryFallback.get(key);
+    const fullKey = `${this.prefix}${key}`;
+    const record = this.memoryFallback.get(fullKey);
     if (record && record.count > 0) record.count -= 1;
   }
 
   async resetKey(key: string): Promise<void> {
-    this.memoryFallback.delete(key);
+    const fullKey = `${this.prefix}${key}`;
+    this.memoryFallback.delete(fullKey);
   }
 }

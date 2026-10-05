@@ -6,6 +6,7 @@ import {
   queryMyAppointments,
   createAppointmentRequest,
   queryMyPatientRegistrations,
+  checkPatientRole,
 } from "../services/patientPortal/PatientPortalService";
 import { queryMyLabResults } from "../services/patientPortal/LabResultsService";
 import { queryMyPrescriptions } from "../services/patientPortal/PrescriptionService";
@@ -66,17 +67,10 @@ export const getMyPrescriptions: RouteHandler = async (req, res, next) => {
 export const checkHasPatientRole: RouteHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthenticatedRequest;
-    const { data, error } = await authReq.supabase
-      .from("memberships")
-      .select("role:roles!inner(name)")
-      .eq("user_id", authReq.userId)
-      .eq("role.name", "Patient")
-      .eq("status", "active")
-      .limit(1)
-      .single();
-
-    sendData(res, { hasRole: !error && !!data });
+    const hasRole = await checkPatientRole(authReq.supabase, authReq.userId);
+    sendData(res, { hasRole });
   } catch (err) {
     next(err);
   }
 };
+

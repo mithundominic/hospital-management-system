@@ -38,7 +38,7 @@ export const ShiftsScheduleTable = ({
 
   return (
     <Card className="overflow-hidden">
-      <Table>
+      <Table containerClassName="max-h-[520px] overflow-auto">
         <DataTableHeader columns={columns} />
         <TableBody>
           {shifts.slice(0, 10).map((shift) => (

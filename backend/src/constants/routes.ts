@@ -1,6 +1,9 @@
 // Responsibility: Canonical API route path definitions for backend Express routers
 
+import { ORG_ROUTES } from "./routes.org";
+
 export const API_ROUTES = {
+  ...ORG_ROUTES,
   hospitals: { list: "/hospitals", detail: "/hospitals/:hospitalId" },
   patients: { list: "/hospitals/:hospitalId/patients", detail: "/hospitals/:hospitalId/patients/:patientId" },
   appointments: { list: "/hospitals/:hospitalId/appointments", detail: "/hospitals/:hospitalId/appointments/:apptId" },

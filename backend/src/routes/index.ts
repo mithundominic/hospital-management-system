@@ -20,6 +20,8 @@ import membershipsRouter from "./memberships";
 import abdmRouter from "./abdm";
 import patientPortalRouter from "./patientPortal";
 import analyticsRouter from "./analytics";
+import tenantsRouter from "./tenants";
+import organizationsRouter from "./organizations";
 
 /**
  * Register all protected routes
@@ -46,4 +48,6 @@ export const registerRoutes = (app: Express): void => {
   app.use(abdmRouter);
   app.use(patientPortalRouter);
   app.use(analyticsRouter);
+  app.use(tenantsRouter);
+  app.use(organizationsRouter);
 };

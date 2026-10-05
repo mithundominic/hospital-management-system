@@ -19,7 +19,7 @@ export const queryHospitalPatients = async (
 ) => {
   const { data, error } = await supabase
     .from("patient_registrations")
-    .select("hospital_patient_number, registered_at, patients(*)")
+    .select("id, hospital_patient_number, registered_at, patients(id, full_name, dob, gender, phone, email, blood_group, abha_id, created_at)")
     .eq("hospital_id", hospitalId);
   if (error) throw error;
   return data;
@@ -31,7 +31,7 @@ export const queryPatientById = async (
 ) => {
   const { data, error } = await supabase
     .from("patients")
-    .select("*, patient_registrations(*)")
+    .select("id, full_name, dob, gender, phone, email, blood_group, abha_id, created_at, patient_registrations(id, hospital_id, hospital_patient_number, registered_at)")
     .eq("id", patientId)
     .single();
   if (error) throw error;

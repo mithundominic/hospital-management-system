@@ -2,36 +2,9 @@
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import { findUserByPin } from "./EmployeePinService";
+import type { ParsedAttendanceRecord } from "./types";
+import { STATUS_MAP, parseAttendanceLog } from "./attendanceLog.utils";
 
-interface ParsedAttendanceRecord {
-  pin: string;
-  timestamp: string;
-  status: number;
-  verifyMode: number;
-  workCode?: string;
-}
-
-const STATUS_MAP: Record<number, string> = {
-  0: "checked_in",
-  1: "checked_out",
-  2: "checked_in",
-  3: "checked_in",
-  4: "checked_in",
-  5: "checked_out",
-};
-
-const parseAttendanceLog = (logLine: string): ParsedAttendanceRecord | null => {
-  const parts = logLine.trim().split("\t");
-  if (parts.length < 3 || !parts[0] || !parts[1] || !parts[2]) return null;
-
-  return {
-    pin: parts[0],
-    timestamp: parts[1],
-    status: parseInt(parts[2], 10),
-    verifyMode: parseInt(parts[3] || "0", 10),
-    workCode: parts[4] || undefined,
-  };
-};
 
 export const processAttendanceLogs = async (
   supabase: SupabaseClient,
@@ -98,3 +71,18 @@ export const processAttendanceLogs = async (
 
   return results;
 };
+
+export const getDeviceForWebhook = async (
+  supabase: SupabaseClient,
+  serialNumber: string,
+) => {
+  const { data, error } = await supabase
+    .from("biometric_devices")
+    .select("id, hospital_id, status")
+    .eq("serial_number", serialNumber)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+

@@ -20,7 +20,7 @@ export const queryLeaveBalance = async (
 ) => {
   const { data, error } = await supabase
     .from("leave_balances")
-    .select("*")
+    .select("id, hospital_id, user_id, year, casual_leave, sick_leave, earned_leave")
     .eq("hospital_id", hospitalId)
     .eq("user_id", userId)
     .eq("year", year)

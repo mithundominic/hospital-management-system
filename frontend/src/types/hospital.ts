@@ -2,7 +2,10 @@
 
 export interface Hospital {
   id: string;
+  tenant_id?: string;
   name: string;
+  code?: string;
+  facility_type?: string;
   registration_number?: string;
   address?: string;
   city?: string;

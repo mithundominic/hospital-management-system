@@ -1,18 +1,15 @@
 // Responsibility: React context managing available hospitals and current active hospital selection
 
-import { createContext, useEffect, useState, type ReactNode } from "react";
-import { useLocation } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { useEffect, useState, useMemo, type ReactNode } from "react";
+import { useAuth } from "./useAuth";
+import { useOrganization } from "./useOrganization";
 import { getHospitals } from "@/services/hospital.service";
 import type { Hospital, HospitalContextType } from "@/types/hospital";
-
-export const HospitalContext = createContext<HospitalContextType | undefined>(
-  undefined,
-);
+import { HospitalContext } from "./useHospital";
 
 export const HospitalProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const location = useLocation();
+  const { currentOrganization } = useOrganization();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [currentHospital, setCurrentHospital] = useState<Hospital | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,25 +56,38 @@ export const HospitalProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    if (location.pathname === "/login" || location.pathname === "/onboarding") {
-      return;
+    if (!initialized) {
+      loadHospitals();
     }
+  }, [user, initialized]);
 
-    loadHospitals();
-  }, [user, location.pathname]);
+  useEffect(() => {
+    if (!currentOrganization || hospitals.length === 0) return;
+    const orgHospitals = hospitals.filter(
+      (h) => h.tenant_id === currentOrganization.id,
+    );
+    if (orgHospitals.length > 0) {
+      if (!currentHospital || currentHospital.tenant_id !== currentOrganization.id) {
+        setCurrentHospital(orgHospitals[0]);
+      }
+    }
+  }, [currentOrganization, hospitals, currentHospital]);
+
+  const value = useMemo(
+    () => ({
+      hospitals,
+      currentHospital,
+      setCurrentHospital,
+      refreshHospitals: loadHospitals,
+      loading,
+      initialized,
+      error,
+    }),
+    [hospitals, currentHospital, loading, initialized, error],
+  );
 
   return (
-    <HospitalContext.Provider
-      value={{
-        hospitals,
-        currentHospital,
-        setCurrentHospital,
-        refreshHospitals: loadHospitals,
-        loading,
-        initialized,
-        error,
-      }}
-    >
+    <HospitalContext.Provider value={value}>
       {children}
     </HospitalContext.Provider>
   );

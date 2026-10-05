@@ -25,6 +25,7 @@ export const APP_ROUTES = {
   PLATFORM_HOSPITALS: "/platform/hospitals",
   PLATFORM_ANALYTICS: "/platform/analytics",
   SETTINGS: "/settings",
+  PATIENT_PORTAL: "/patient-portal",
 } as const;
 
 export const buildPatientDetailRoute = (patientId: string): string =>

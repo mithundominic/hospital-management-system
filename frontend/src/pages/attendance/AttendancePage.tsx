@@ -62,20 +62,12 @@ export const AttendancePage = () => {
       {canViewAll ? (
         <Box className="space-y-4">
           <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-          <Card>
-            <CardContent className="pt-6">
-              <AttendanceTable
-                records={activeTab === "my" ? myRecords : allRecords}
-              />
-            </CardContent>
-          </Card>
+          <AttendanceTable
+            records={activeTab === "my" ? myRecords : allRecords}
+          />
         </Box>
       ) : (
-        <Card>
-          <CardContent className="pt-6">
-            <AttendanceTable records={myRecords} />
-          </CardContent>
-        </Card>
+        <AttendanceTable records={myRecords} />
       )}
     </Box>
   );

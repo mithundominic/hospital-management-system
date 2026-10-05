@@ -1,5 +1,6 @@
 // Responsibility: Render single invoice table row with formatted currency and status badge
 
+import { memo } from "react";
 import { format } from "date-fns";
 import { Printer } from "lucide-react";
 import { TableRow, TableCell } from "@/components/ui/Table";
@@ -15,11 +16,14 @@ export interface BillingTableRowProps {
   onPrint?: (invoice: Invoice) => void;
 }
 
-export const BillingTableRow = ({ invoice: inv, onPrint }: BillingTableRowProps) => {
+export const BillingTableRow = memo(({ invoice: inv, onPrint }: BillingTableRowProps) => {
   const badgeConfig = invoiceStatusConfig[inv.status as InvoiceStatus] || {
-    label: inv.status,
+    label: (inv.status || "draft").replace("_", " "),
     variant: "default" as const,
   };
+  const dateStr = inv.invoice_date || inv.issued_at || inv.created_at;
+  const total = Number(inv.total_amount) || 0;
+  const tax = Number(inv.tax_amount ?? ((inv.cgst_total ?? 0) + (inv.sgst_total ?? 0))) || 0;
 
   return (
     <TableRow>
@@ -30,21 +34,19 @@ export const BillingTableRow = ({ invoice: inv, onPrint }: BillingTableRowProps)
       </TableCell>
       <TableCell>
         <Text size="sm">
-          {inv.invoice_date
-            ? format(new Date(inv.invoice_date), "dd MMM yyyy")
-            : "N/A"}
+          {dateStr ? format(new Date(dateStr), "dd MMM yyyy") : "N/A"}
         </Text>
       </TableCell>
       <TableCell>
         <Text weight="semibold">
           {appConfig.currency.symbol}
-          {inv.total_amount.toLocaleString("en-IN")}
+          {total.toLocaleString("en-IN")}
         </Text>
       </TableCell>
       <TableCell>
         <Text size="sm" variant="muted">
           {appConfig.currency.symbol}
-          {inv.tax_amount.toLocaleString("en-IN")}
+          {tax.toLocaleString("en-IN")}
         </Text>
       </TableCell>
       <TableCell>
@@ -63,6 +65,8 @@ export const BillingTableRow = ({ invoice: inv, onPrint }: BillingTableRowProps)
       </TableCell>
     </TableRow>
   );
-};
+});
+
+BillingTableRow.displayName = "BillingTableRow";
 
 export default BillingTableRow;

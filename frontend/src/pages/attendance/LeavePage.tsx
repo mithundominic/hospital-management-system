@@ -2,12 +2,10 @@
  
 "use client";
 
-import { Calendar, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Box } from "@/components/ui/Box";
-import { Flex } from "@/components/ui/Flex";
 import { Button } from "@/components/ui/Button";
-import { Heading } from "@/components/ui/Heading";
-import { Card, CardContent } from "@/components/ui/Card";
+import { PageHeader } from "@/components/common/PageHeader";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { LeaveTable } from "./LeaveTable";
 import { LeaveFormModal } from "./LeaveFormModal";
@@ -31,28 +29,22 @@ export const LeavePage = () => {
 
   return (
     <Box className="space-y-6">
-      <Flex align="center" justify="between">
-        <Heading level={1}>Leave Management</Heading>
-        <Button onClick={openModal}>
-          <Plus className="h-4 w-4 mr-2" />
-          Apply for Leave
-        </Button>
-      </Flex>
+      <PageHeader
+        title="Leave Management"
+        description="Track employee leave applications and approval workflows"
+        action={
+          <Button onClick={openModal} icon={<Plus className="h-4 w-4" />}>
+            Apply for Leave
+          </Button>
+        }
+      />
 
-      <Card>
-        <CardContent className="p-6">
-          <Heading level={2} className="flex items-center gap-2 mb-4">
-            <Calendar className="h-5 w-5" />
-            Leave Applications
-          </Heading>
-          <LeaveTable
-            applications={leaveApplications}
-            canApprove={canApprove}
-            onApprove={handleApprove}
-            onReject={handleReject}
-          />
-        </CardContent>
-      </Card>
+      <LeaveTable
+        applications={leaveApplications}
+        canApprove={canApprove}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
 
       <LeaveFormModal
         isOpen={isModalOpen}

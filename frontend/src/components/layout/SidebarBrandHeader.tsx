@@ -1,6 +1,6 @@
 // Responsibility: Render active hospital tenant or platform administration brand header in sidebar
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { useHospital } from "@/contexts/useHospital";
 import { usePlatform } from "@/contexts";
 import { Box } from "@/components/ui/Box";

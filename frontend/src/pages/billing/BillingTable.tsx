@@ -1,18 +1,17 @@
-// Responsibility: Render the invoices data table with financial amounts and status badges
-
+// Responsibility: Render the invoices data table or cards grid using reusable DataTable
 import { Receipt } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Table, TableBody } from "@/components/ui/Table";
-import { EmptyState } from "@/components/common/EmptyState";
-import { SkeletonTable } from "@/components/common/SkeletonTable";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { DataTable } from "@/components/common/DataTable";
 import { BILLING_TABLE_COLUMNS } from "./billing.config";
 import { BillingTableRow } from "./BillingTableRow";
+import { BillingCard } from "./BillingCard";
 import type { Invoice } from "@/types";
+import type { ViewMode } from "@/types/table.types";
 
 export interface BillingTableProps {
   invoices: Invoice[];
   isLoading: boolean;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
   onNew: () => void;
   onPrint?: (invoice: Invoice) => void;
 }
@@ -20,43 +19,30 @@ export interface BillingTableProps {
 export const BillingTable = ({
   invoices,
   isLoading,
+  viewMode,
+  onViewModeChange,
   onNew,
   onPrint,
-}: BillingTableProps) => {
-  if (isLoading) {
-    return (
-      <Card className="p-4">
-        <SkeletonTable rows={6} columns={5} />
-      </Card>
-    );
-  }
-
-  if (invoices.length === 0) {
-    return (
-      <Card className="p-6">
-        <EmptyState
-          icon={Receipt}
-          title="No invoices found"
-          description="Generate billing records for consultations, lab, and pharmacy."
-          actionLabel="New Invoice"
-          onAction={onNew}
-        />
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <Table>
-        <DataTableHeader columns={BILLING_TABLE_COLUMNS} />
-        <TableBody>
-          {invoices.map((inv) => (
-            <BillingTableRow key={inv.id} invoice={inv} onPrint={onPrint} />
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
+}: BillingTableProps) => (
+  <DataTable
+    columns={BILLING_TABLE_COLUMNS}
+    data={invoices}
+    isLoading={isLoading}
+    viewMode={viewMode}
+    onViewModeChange={onViewModeChange}
+    showViewToggle={true}
+    emptyIcon={Receipt}
+    emptyTitle="No invoices found"
+    emptyDescription="Generate billing records for consultations, lab, and pharmacy."
+    emptyActionLabel="New Invoice"
+    onEmptyAction={onNew}
+    renderRow={(inv) => (
+      <BillingTableRow key={inv.id} invoice={inv} onPrint={onPrint} />
+    )}
+    renderCard={(inv) => (
+      <BillingCard key={inv.id} invoice={inv} onPrint={onPrint} />
+    )}
+  />
+);
 
 export default BillingTable;

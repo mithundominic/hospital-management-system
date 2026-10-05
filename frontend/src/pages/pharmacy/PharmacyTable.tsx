@@ -1,53 +1,48 @@
-// Responsibility: Render inventory items table with stock levels, units, and status badges
-
+// Responsibility: Render inventory items table or cards grid using reusable DataTable
 import { Pill } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Table, TableBody } from "@/components/ui/Table";
-import { EmptyState } from "@/components/common/EmptyState";
-import { SkeletonTable } from "@/components/common/SkeletonTable";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { DataTable } from "@/components/common/DataTable";
 import { PHARMACY_TABLE_COLUMNS } from "./pharmacy.config";
 import { PharmacyTableRow } from "./PharmacyTableRow";
+import { PharmacyCard } from "./PharmacyCard";
 import type { InventoryItem } from "@/types";
+import type { ViewMode } from "@/types/table.types";
 
 export interface PharmacyTableProps {
   items: InventoryItem[];
   isLoading: boolean;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
-export const PharmacyTable = ({ items, isLoading }: PharmacyTableProps) => {
-  if (isLoading) {
-    return (
-      <Card className="p-4">
-        <SkeletonTable rows={6} columns={6} />
-      </Card>
-    );
-  }
-
-  if (items.length === 0) {
-    return (
-      <Card className="p-6">
-        <EmptyState
-          icon={Pill}
-          title="No inventory items"
-          description="Medicine catalog and pharmacy stock will appear here."
-        />
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <Table>
-        <DataTableHeader columns={PHARMACY_TABLE_COLUMNS} />
-        <TableBody>
-          {items.map((item) => (
-            <PharmacyTableRow key={item.id} item={item} />
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
+export const PharmacyTable = ({
+  items,
+  isLoading,
+  viewMode,
+  onViewModeChange,
+}: PharmacyTableProps) => (
+  <DataTable
+    columns={PHARMACY_TABLE_COLUMNS}
+    data={items}
+    isLoading={isLoading}
+    viewMode={viewMode}
+    onViewModeChange={onViewModeChange}
+    showViewToggle={true}
+    emptyIcon={Pill}
+    emptyTitle="No inventory items"
+    emptyDescription="Medicine catalog and pharmacy stock will appear here."
+    renderRow={(item) => (
+      <PharmacyTableRow
+        key={item.id || item.inventory_item_id || item.name}
+        item={item}
+      />
+    )}
+    renderCard={(item) => (
+      <PharmacyCard
+        key={item.id || item.inventory_item_id || item.name}
+        item={item}
+      />
+    )}
+  />
+);
 
 export default PharmacyTable;

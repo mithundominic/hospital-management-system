@@ -9,7 +9,7 @@ export const queryHospitalMemberships = async (
 ) => {
   const { data, error } = await supabase
     .from("memberships")
-    .select("*, roles(name)")
+    .select("id, user_id, hospital_id, role_id, status, created_at, roles(name)")
     .eq("hospital_id", hospitalId);
   if (error) throw error;
   return data;

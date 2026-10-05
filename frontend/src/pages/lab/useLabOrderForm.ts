@@ -24,7 +24,7 @@ export const useLabOrderForm = (
     encounter_id: labOrder?.encounter_id || "",
     test_name: labOrder?.test_name || "",
     sample_type: "blood",
-    priority: labOrder?.priority || "routine",
+    priority: (labOrder?.priority === "urgent" || labOrder?.priority === "stat") ? labOrder.priority : "routine",
     instructions: "",
   });
 

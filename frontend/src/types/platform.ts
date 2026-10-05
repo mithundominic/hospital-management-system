@@ -40,3 +40,5 @@ export interface PlatformAnalytics {
   total_revenue?: number;
   recent_hospitals?: PlatformHospital[];
 }
+
+export * from "./tenant.types";

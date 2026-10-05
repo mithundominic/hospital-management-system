@@ -1,56 +1,42 @@
-// Responsibility: Render the insurance claims data table with policy numbers, amounts, and workflow status
-
+// Responsibility: Render the insurance claims data table or cards grid using reusable DataTable
 import { Shield } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Table, TableBody } from "@/components/ui/Table";
-import { EmptyState } from "@/components/common/EmptyState";
-import { SkeletonTable } from "@/components/common/SkeletonTable";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { DataTable } from "@/components/common/DataTable";
 import { INSURANCE_CLAIMS_COLUMNS } from "./insurance.config";
 import { InsuranceClaimsTableRow } from "./InsuranceClaimsTableRow";
+import { InsuranceClaimCard } from "./InsuranceClaimCard";
 import type { InsuranceClaim } from "@/types";
+import type { ViewMode } from "@/types/table.types";
 
 export interface InsuranceClaimsTableProps {
   claims: InsuranceClaim[];
   isLoading: boolean;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
 export const InsuranceClaimsTable = ({
   claims,
   isLoading,
-}: InsuranceClaimsTableProps) => {
-  if (isLoading) {
-    return (
-      <Card className="p-4">
-        <SkeletonTable rows={5} columns={5} />
-      </Card>
-    );
-  }
-
-  if (claims.length === 0) {
-    return (
-      <Card className="p-6">
-        <EmptyState
-          icon={Shield}
-          title="No claims filed"
-          description="Track insurance claims, pre-authorizations, and TPA settlements here."
-        />
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <Table>
-        <DataTableHeader columns={INSURANCE_CLAIMS_COLUMNS} />
-        <TableBody>
-          {claims.map((claim) => (
-            <InsuranceClaimsTableRow key={claim.id} claim={claim} />
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
+  viewMode,
+  onViewModeChange,
+}: InsuranceClaimsTableProps) => (
+  <DataTable
+    columns={INSURANCE_CLAIMS_COLUMNS}
+    data={claims}
+    isLoading={isLoading}
+    viewMode={viewMode}
+    onViewModeChange={onViewModeChange}
+    showViewToggle={true}
+    emptyIcon={Shield}
+    emptyTitle="No claims filed"
+    emptyDescription="Track insurance claims, pre-authorizations, and TPA settlements here."
+    renderRow={(claim) => (
+      <InsuranceClaimsTableRow key={claim.id} claim={claim} />
+    )}
+    renderCard={(claim) => (
+      <InsuranceClaimCard key={claim.id} claim={claim} />
+    )}
+  />
+);
 
 export default InsuranceClaimsTable;

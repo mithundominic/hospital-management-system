@@ -33,7 +33,7 @@ export const PharmacyStatCards = ({
     },
     {
       label: "Estimated Value",
-      value: `₹${totalValue.toLocaleString("en-IN")}`,
+      value: Number.isFinite(totalValue) && totalValue > 0 ? `₹${totalValue.toLocaleString("en-IN")}` : "₹0",
       icon: Package,
       iconColor: "text-green-600",
     },

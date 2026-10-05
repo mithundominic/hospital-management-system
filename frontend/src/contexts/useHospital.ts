@@ -1,7 +1,11 @@
 // Responsibility: Hook for consuming HospitalContext
 
-import { useContext } from "react";
-import { HospitalContext } from "./HospitalContext";
+import { createContext, useContext } from "react";
+import type { HospitalContextType } from "@/types/hospital";
+
+export const HospitalContext = createContext<HospitalContextType | undefined>(
+  undefined,
+);
 
 export const useHospital = () => {
   const context = useContext(HospitalContext);

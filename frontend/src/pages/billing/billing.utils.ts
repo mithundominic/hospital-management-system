@@ -14,7 +14,9 @@ export function computeBillingMetrics(invoices: Invoice[]): BillingMetrics {
   return {
     total: invoices.length,
     paid: invoices.filter((i) => i.status === INVOICE_STATUS.PAID).length,
-    pending: invoices.filter((i) => i.status === INVOICE_STATUS.PENDING).length,
+    pending: invoices.filter((i) =>
+      ["pending", "issued", "partially_paid", "draft"].includes(i.status),
+    ).length,
     overdue: invoices.filter((i) => i.status === INVOICE_STATUS.OVERDUE).length,
   };
 }

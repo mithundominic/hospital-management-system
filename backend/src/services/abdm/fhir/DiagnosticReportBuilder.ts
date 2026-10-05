@@ -5,23 +5,7 @@ import {
   FhirObservation,
 } from "../../../types/fhir.types";
 import { FHIR_PROFILES, FHIR_SYSTEMS, COMMON_CODINGS } from "./fhirCodes.data";
-
-interface LabOrderData {
-  id: string;
-  test_name: string;
-  patient_id: string;
-  encounter_id: string;
-  ordered_at: string;
-  status: string;
-}
-
-interface LabResultData {
-  id: string;
-  parameter: string;
-  value: string;
-  unit?: string;
-  reported_at: string;
-}
+import type { LabOrderData, LabResultData } from "./fhirBuilder.types";
 
 export class DiagnosticReportBuilder {
   static buildReport(

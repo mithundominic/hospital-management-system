@@ -1,18 +1,17 @@
-// Responsibility: Render the lab orders data table with priority and status chips
-
+// Responsibility: Render the lab orders data table or cards grid using reusable DataTable
 import { TestTube } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Table, TableBody } from "@/components/ui/Table";
-import { EmptyState } from "@/components/common/EmptyState";
-import { SkeletonTable } from "@/components/common/SkeletonTable";
-import { DataTableHeader } from "@/components/common/DataTableHeader";
+import { DataTable } from "@/components/common/DataTable";
 import { LAB_ORDERS_COLUMNS } from "./lab.config";
 import { LabOrdersTableRow } from "./LabOrdersTableRow";
+import { LabOrderCard } from "./LabOrderCard";
 import type { LabOrder } from "@/types";
+import type { ViewMode } from "@/types/table.types";
 
 export interface LabOrdersTableProps {
   orders: LabOrder[];
   isLoading: boolean;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
   onNew: () => void;
   onPrint?: (order: LabOrder) => void;
 }
@@ -20,43 +19,30 @@ export interface LabOrdersTableProps {
 export const LabOrdersTable = ({
   orders,
   isLoading,
+  viewMode,
+  onViewModeChange,
   onNew,
   onPrint,
-}: LabOrdersTableProps) => {
-  if (isLoading) {
-    return (
-      <Card className="p-4">
-        <SkeletonTable rows={5} columns={4} />
-      </Card>
-    );
-  }
-
-  if (orders.length === 0) {
-    return (
-      <Card className="p-6">
-        <EmptyState
-          icon={TestTube}
-          title="No lab orders"
-          description="Create diagnostic orders for patient encounters."
-          actionLabel="New Lab Order"
-          onAction={onNew}
-        />
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <Table>
-        <DataTableHeader columns={LAB_ORDERS_COLUMNS} />
-        <TableBody>
-          {orders.map((o) => (
-            <LabOrdersTableRow key={o.id} order={o} onPrint={onPrint} />
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
+}: LabOrdersTableProps) => (
+  <DataTable
+    columns={LAB_ORDERS_COLUMNS}
+    data={orders}
+    isLoading={isLoading}
+    viewMode={viewMode}
+    onViewModeChange={onViewModeChange}
+    showViewToggle={true}
+    emptyIcon={TestTube}
+    emptyTitle="No lab orders"
+    emptyDescription="Create diagnostic orders for patient encounters."
+    emptyActionLabel="New Lab Order"
+    onEmptyAction={onNew}
+    renderRow={(o) => (
+      <LabOrdersTableRow key={o.id} order={o} onPrint={onPrint} />
+    )}
+    renderCard={(o) => (
+      <LabOrderCard key={o.id} order={o} onPrint={onPrint} />
+    )}
+  />
+);
 
 export default LabOrdersTable;

@@ -1,7 +1,7 @@
 // Responsibility: Modal form for creating/editing biometric devices
 
 import { FormModal } from "@/components/common/FormModal";
-import { Box } from "@/components/ui/Box";
+import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { useDeviceForm } from "../hooks/useDeviceForm";
 import type { BiometricDevice, CreateDeviceInput } from "@/types/biometric";
@@ -36,10 +36,7 @@ export const DeviceFormModal = ({
       title={device ? "Edit Device" : "Add Device"}
       submitLabel={device ? "Update" : "Add"}
     >
-      <Box>
-        <label className="block text-sm font-medium mb-1">
-          Serial Number *
-        </label>
+      <FormField label="Serial Number" required>
         <Input
           value={formData.serial_number}
           onChange={(e) => setField("serial_number", e.target.value)}
@@ -47,44 +44,40 @@ export const DeviceFormModal = ({
           disabled={!!device}
           placeholder="DEVICE001"
         />
-      </Box>
+      </FormField>
 
-      <Box>
-        <label className="block text-sm font-medium mb-1">Device Name *</label>
+      <FormField label="Device Name" required>
         <Input
           value={formData.name}
           onChange={(e) => setField("name", e.target.value)}
           required
           placeholder="Main Entrance Device"
         />
-      </Box>
+      </FormField>
 
-      <Box>
-        <label className="block text-sm font-medium mb-1">Location</label>
+      <FormField label="Location">
         <Input
           value={formData.location}
           onChange={(e) => setField("location", e.target.value)}
           placeholder="Floor 1, Main Entrance"
         />
-      </Box>
+      </FormField>
 
-      <Box>
-        <label className="block text-sm font-medium mb-1">Model</label>
+      <FormField label="Model">
         <Input
           value={formData.model}
           onChange={(e) => setField("model", e.target.value)}
           placeholder="ZKTeco K40"
         />
-      </Box>
+      </FormField>
 
-      <Box>
-        <label className="block text-sm font-medium mb-1">IP Address</label>
+      <FormField label="IP Address">
         <Input
           value={formData.ip_address}
           onChange={(e) => setField("ip_address", e.target.value)}
           placeholder="192.168.1.100"
         />
-      </Box>
+      </FormField>
     </FormModal>
   );
 };

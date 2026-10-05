@@ -1,5 +1,6 @@
 // Responsibility: Main appointments management page with date selection and booking modal
 
+import { useCallback } from "react";
 import { Plus } from "lucide-react";
 import { Box } from "@/components/ui/Box";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +10,7 @@ import { AppointmentFormModal } from "./AppointmentFormModal";
 import { AppointmentsTimeline } from "./AppointmentsTimeline";
 import { AppointmentsDateFilter } from "./AppointmentsDateFilter";
 import { useAppointmentsPage } from "./useAppointmentsPage";
+import type { Appointment } from "@/types";
 
 export const AppointmentsPage = () => {
   const {
@@ -26,16 +28,34 @@ export const AppointmentsPage = () => {
     handleConfirmCancel,
   } = useAppointmentsPage();
 
+  const handleOpenNew = useCallback(() => setShowModal(true), [setShowModal]);
+  const handleEdit = useCallback(
+    (apt: Appointment) => {
+      setEditingApt(apt);
+      setShowModal(true);
+    },
+    [setEditingApt, setShowModal],
+  );
+  const handleCancel = useCallback(
+    (apt: Appointment) => setCancellingApt(apt),
+    [setCancellingApt],
+  );
+  const handleCloseModal = useCallback(() => {
+    setShowModal(false);
+    setEditingApt(null);
+  }, [setShowModal, setEditingApt]);
+  const handleCloseConfirm = useCallback(
+    () => setCancellingApt(null),
+    [setCancellingApt],
+  );
+
   return (
     <Box className="space-y-6">
       <PageHeader
         title="Appointments"
         description="Manage patient appointments and scheduling"
         action={
-          <Button
-            onClick={() => setShowModal(true)}
-            icon={<Plus className="h-5 w-5" />}
-          >
+          <Button onClick={handleOpenNew} icon={<Plus className="h-5 w-5" />}>
             New Appointment
           </Button>
         }
@@ -50,28 +70,22 @@ export const AppointmentsPage = () => {
       <AppointmentsTimeline
         isLoading={isLoading}
         appointments={appointments}
-        onEdit={(apt) => {
-          setEditingApt(apt);
-          setShowModal(true);
-        }}
-        onCancel={(apt) => setCancellingApt(apt)}
-        onNew={() => setShowModal(true)}
+        onEdit={handleEdit}
+        onCancel={handleCancel}
+        onNew={handleOpenNew}
       />
 
       {showModal && (
         <AppointmentFormModal
           appointment={editingApt}
-          onClose={() => {
-            setShowModal(false);
-            setEditingApt(null);
-          }}
-          onSuccess={() => refetch()}
+          onClose={handleCloseModal}
+          onSuccess={refetch}
         />
       )}
 
       <ConfirmDialog
         isOpen={!!cancellingApt}
-        onClose={() => setCancellingApt(null)}
+        onClose={handleCloseConfirm}
         onConfirm={handleConfirmCancel}
         title="Cancel Appointment"
         message="Are you sure you want to cancel this appointment?"

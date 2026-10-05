@@ -1,49 +1,38 @@
-// Responsibility: Platform-level permission authorization middleware
+// Responsibility: Platform-level permission enforcement for SuperAdmin/Support
 
-import { Request, Response, NextFunction, RequestHandler } from "express";
-import { AuthenticatedRequest } from "../types";
+import { Request, Response, NextFunction } from "express";
 import { sendError } from "../utils/respond";
+import { AuthenticatedRequest } from "../types";
 
-/**
- * Middleware to check if user has platform-level permission
- * Used for SuperAdmin/Support routes that need cross-hospital access
- */
-export function requirePlatformPermission(permission: string): RequestHandler {
+export const requirePlatformPermission = (permission: string) => {
   return async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     const authReq = req as AuthenticatedRequest;
+
     try {
-      const { data, error } = await authReq.supabase.rpc(
+      const { data: hasPerm, error } = await authReq.supabase.rpc(
         "has_platform_permission",
-        {
-          p_user_id: authReq.userId,
-          p_permission: permission,
-        },
+        { user_id: authReq.userId, permission_key: permission },
       );
 
-      if (error) {
-        console.error("Platform permission check failed:", error);
-        sendError(res, 500, "INTERNAL_ERROR", "Permission check failed");
-        return;
-      }
+      if (error) throw error;
 
-      if (!data) {
+      if (!hasPerm) {
         sendError(
           res,
           403,
           "FORBIDDEN",
-          "You do not have permission to perform this action.",
+          "You do not have platform-level permission for this action",
         );
         return;
       }
 
       next();
     } catch (err) {
-      console.error("Platform permission middleware error:", err);
-      sendError(res, 500, "INTERNAL_ERROR", "Authorization error");
+      next(err);
     }
   };
-}
+};

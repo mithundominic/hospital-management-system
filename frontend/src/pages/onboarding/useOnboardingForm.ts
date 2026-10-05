@@ -4,6 +4,7 @@ import { useState, useCallback, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useHospital } from "@/contexts/useHospital";
+import { useOrganization } from "@/contexts/useOrganization";
 import { onboardHospital } from "@/services/hospital.service";
 import { APP_ROUTES } from "@/constants";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ export interface OnboardingFormState {
 
 export const useOnboardingForm = () => {
   const { setCurrentHospital, refreshHospitals } = useHospital();
+  const { refreshOrganizations } = useOrganization();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<OnboardingFormState>({
@@ -66,6 +68,7 @@ export const useOnboardingForm = () => {
           });
         }
 
+        await refreshOrganizations();
         await refreshHospitals();
         setCurrentHospital(result.hospital);
         toast.success("Hospital onboarded successfully!");

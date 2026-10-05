@@ -13,7 +13,7 @@ export const queryBedOccupancySummary = async (
 ) => {
   const { data, error } = await supabase
     .from("bed_occupancy_summary")
-    .select("*")
+    .select("hospital_id, department_id, total_beds, occupied_beds, available_beds, maintenance_beds, occupancy_pct")
     .eq("hospital_id", hospitalId);
   if (error) throw error;
   return data;
@@ -26,7 +26,7 @@ export const queryDailyRevenueSummary = async (
 ) => {
   let query = supabase
     .from("daily_revenue_summary")
-    .select("*")
+    .select("hospital_id, revenue_date, total_collected, invoices_touched")
     .eq("hospital_id", hospitalId);
 
   if (range.from) query = query.gte("revenue_date", range.from);
@@ -45,7 +45,7 @@ export const queryLowStockAlerts = async (
 ) => {
   const { data, error } = await supabase
     .from("low_stock_alert")
-    .select("*")
+    .select("hospital_id, inventory_item_id, name, unit, current_stock, reorder_level")
     .eq("hospital_id", hospitalId);
   if (error) throw error;
   return data;

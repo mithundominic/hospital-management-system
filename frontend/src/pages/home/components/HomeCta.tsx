@@ -2,7 +2,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, LayoutDashboard } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { Box } from "@/components/ui/Box";
 import { Flex } from "@/components/ui/Flex";
 import { Heading } from "@/components/ui/Heading";

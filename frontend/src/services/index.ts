@@ -13,3 +13,4 @@ export * from "./shift.service";
 export * from "./staff.service";
 export * from "./reports.service";
 export * from "./abdm.service";
+export * from "./organization.service";

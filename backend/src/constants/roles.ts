@@ -11,6 +11,9 @@ export const ROLES = {
   LAB_TECH: "LabTech",
   BILLING_CLERK: "BillingClerk",
   PATIENT: "Patient",
+  ORG_ADMIN: "OrgAdmin",
+  ORG_BILLING_MANAGER: "OrgBillingManager",
+  ORG_AUDITOR: "OrgAuditor",
 } as const;
 
 export type SystemRole = (typeof ROLES)[keyof typeof ROLES];
